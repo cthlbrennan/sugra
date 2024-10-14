@@ -11,27 +11,25 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
+import os 
+if os.path.isfile('env.py'):
+    import env
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1acr6#62y5+#cgimm183vfy9i7=6#n8q(04m5rqwjz%=iqb86#'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+SECRET_KEY = os.environ.get('SECRET_KEY')
+DEBUG = os.environ.get('DEBUG', False)
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 ALLOWED_HOSTS = [
     '8000-cthlbrennan-sugra-1ziytqium8c.ws.codeinstitute-ide.net',
-    '.herokuapp.com',
+    '.herokuapp.com', 
+    "127.0.0.1:8000",
 ]
 
-
-# Application definition
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -58,7 +56,7 @@ ROOT_URLCONF = 'sugra.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATES_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,14 +72,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'sugra.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
 
 
@@ -125,3 +117,16 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.codeinstitute-ide.net/",
+    "https://*.herokuapp.com"
+]
+
+# below code allows for form submission in virtual environment
+# on VS Code IDE on home desktop computer
+
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS += [
+        "http://127.0.0.1:8000",
+    ]
