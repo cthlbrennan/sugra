@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'store',
+    'cloudinary_storage',
+    'cloudinary',
+
     ]
 
 MIDDLEWARE = [
@@ -133,3 +136,8 @@ if DEBUG:
     CSRF_TRUSTED_ORIGINS += [
         "http://127.0.0.1:8000",
     ]
+
+CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
+cloudinary.config(cloudinary_url=CLOUDINARY_URL)
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+MEDIA_URL = 'https://res.cloudinary.com/dlj0yqxoi/'
