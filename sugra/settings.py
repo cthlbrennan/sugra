@@ -11,8 +11,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import dj_database_url
 import os 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+import dj_database_url
 if os.path.isfile('env.py'):
     import env
 
@@ -141,3 +144,5 @@ CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
 cloudinary.config(cloudinary_url=CLOUDINARY_URL)
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = 'https://res.cloudinary.com/dlj0yqxoi/'
+
+AUTH_USER_MODEL = 'store.User'

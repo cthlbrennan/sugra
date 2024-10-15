@@ -16,7 +16,7 @@ class User(AbstractUser):
     account_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-    return f"User: {self.user}"
+        return f"User: {self.username}"
 
 class Game(models.Model):
     GAME_GENRE_CHOICES = [
@@ -52,7 +52,7 @@ class Game(models.Model):
     thumbnail = CloudinaryField('thumbnail', blank=True, null=True)
 
     def __str__(self):
-    return f"Game: {self.title}"
+        return f"Game: {self.title}"
 
 class Wishlist(models.Model):
     wishlist_id = models.AutoField(primary_key=True)
@@ -60,7 +60,7 @@ class Wishlist(models.Model):
     games = models.ManyToManyField(Game)
 
     def __str__(self):
-    return f"Wishlist for {self.user}"
+        return f"Wishlist for {self.user}"
 
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
@@ -70,7 +70,7 @@ class Order(models.Model):
     stripe_pid = models.CharField(max_length=255)
 
     def __str__(self):
-    return f"Order by {self.customer} as part of Order {self.order}"
+        return f"Order by {self.customer} as part of Order {self.order}"
 
 class OrderLine(models.Model):
     orderline_id = models.AutoField(primary_key=True)
@@ -79,7 +79,7 @@ class OrderLine(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-    return f"Orderline: {self.game} as part of Order {self.order}"
+        return f"Orderline: {self.game} as part of Order {self.order}"
 
 class Review(models.Model):
     review_id = models.AutoField(primary_key=True)
@@ -91,7 +91,7 @@ class Review(models.Model):
     like_count = models.IntegerField(default=0)
 
     def __str__(self):
-    return f"Review by {self.customer} for {self.game}"
+        return f"Review by {self.customer} for {self.game}"
 
 class Screenshot(models.Model):
     screenshot_id = models.AutoField(primary_key=True)
@@ -100,7 +100,7 @@ class Screenshot(models.Model):
     alt_text = models.CharField(max_length=255)
 
     def __str__(self):
-    return f"Screenshot {self.screenshot_id} for {self.game}"
+        return f"Screenshot {self.screenshot_id} for {self.game}"
 
 class Message(models.Model):
     message_id = models.AutoField(primary_key=True)
@@ -110,4 +110,4 @@ class Message(models.Model):
     read = models.BooleanField(default=False)
 
     def __str__(self):
-    return f"Message: {self.message_id} from {self.user}"
+        return f"Message: {self.message_id} from {self.user}"
