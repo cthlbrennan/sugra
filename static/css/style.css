@@ -1,0 +1,11 @@
+/* applying border box to all elements
+https://tinyurl.com/2s493p8b */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+h2 {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
