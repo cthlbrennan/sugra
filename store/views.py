@@ -6,6 +6,9 @@ from .decorators import gamer_required, developer_required  # Import your decora
 def index(request):
     return render(request, 'index.html')
 
+def about(request):
+    return render(request, 'about.html')
+
 @gamer_required
 def gamer_dashboard(request):
     return render(request, 'gamer_dashboard.html')

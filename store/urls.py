@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('gamer/dashboard/', views.gamer_dashboard, name='gamer_dashboard'),  # Add gamer dashboard URL
-    path('developer/dashboard/', views.developer_dashboard, name='developer_dashboard'),  # Add developer dashboard URL
+    path('gamer/dashboard/', views.gamer_dashboard, name='gamer_dashboard'),  
+    path('developer/dashboard/', views.developer_dashboard, name='developer_dashboard'),
+    path('about/', views.about, name='about'),
 ]
