@@ -25,6 +25,9 @@
                 {% endelement %}
                 {{ redirect_field }}
             {% endslot %}
+            {% element field form.user_type %}
+                {% slot label %}{% trans "Account Type" %}{% endslot %}
+            {% endelement %}
             {% slot actions %}
                 {% element button tags="prominent,signup" type="submit" %}
                     {% trans "Sign Up" %}

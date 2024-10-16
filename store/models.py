@@ -4,8 +4,8 @@ from cloudinary.models import CloudinaryField
 
 class User(AbstractUser):
     USER_TYPE_CHOICES = [
-        ('regular', 'Regular'),
-        ('admin', 'Admin'),
+        ('gamer', 'Gamer'),
+        ('developer', 'Developer'),
     ]
     user_id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=25, unique=True)   
