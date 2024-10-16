@@ -28,6 +28,7 @@ ALLOWED_HOSTS = [
     '8000-cthlbrennan-sugra-1ziytqium8c.ws.codeinstitute-ide.net',
     '.herokuapp.com', 
     "127.0.0.1:8000",
+    "127.0.0.1",
 ]
 
 SITE_ID = 1
@@ -71,6 +72,37 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     "allauth.account.middleware.AccountMiddleware",
 ]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID'),
+            'secret': os.environ.get('GOOGLE_CLIENT_SECRET'),
+            'key': ''
+        }
+    }
+}
+
+# Provider specific settings
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google': {
+#         # For each OAuth based provider, either add a ``SocialApp``
+#         # (``socialaccount`` app) containing the required client
+#         # credentials, or list them here:
+#         'APP': {
+#             'client_id': 'YOUR_GOOGLE_CLIENT_ID',
+#             'secret': 'YOUR_GOOGLE_CLIENT_SECRET',
+#             'key': ''
+#         }
+#     },
+#     'facebook': {
+#         'APP': {
+#             'client_id': 'YOUR_FACEBOOK_APP_ID',
+#             'secret': 'YOUR_FACEBOOK_APP_SECRET',
+#             'key': ''
+#         }
+#     }
+# }
 
 ROOT_URLCONF = 'sugra.urls'
 
@@ -144,10 +176,13 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'store.User'
 
 CSRF_TRUSTED_ORIGINS = [
     "https://*.codeinstitute-ide.net/",
@@ -167,7 +202,15 @@ cloudinary.config(cloudinary_url=CLOUDINARY_URL)
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = 'https://res.cloudinary.com/dlj0yqxoi/'
 
-AUTH_USER_MODEL = 'store.User'
+if os.environ.get('DEVELOPMENT') == 'True':
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'sugragames@example.com'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_USE_TLS = True
+    EMAIL_PORT = 587
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASS')
+    DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
