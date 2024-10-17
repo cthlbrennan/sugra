@@ -1,5 +1,8 @@
 from django.shortcuts import render
-from .decorators import gamer_required, developer_required  # Import your decorators
+from .decorators import gamer_required, developer_required
+from allauth.account.views import SignupView
+from .forms import CustomSignupForm
+
 
 # Create your views here.
 
@@ -16,3 +19,10 @@ def gamer_dashboard(request):
 @developer_required
 def developer_dashboard(request):
     return render(request, 'developer_dashboard.html')
+
+class CustomSignupView(SignupView):
+    form_class = CustomSignupForm
+
+    def form_valid(self, form):
+        user = form.save(self.request)
+        return redirect('account_login')  # Redirect to login or any other page after successful signup

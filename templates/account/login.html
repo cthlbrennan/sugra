@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load allauth account %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Sign In</h2>
+    <p class="text-center">If you have not created an account yet, please <a class='link'
+            href="{% url 'account_signup' %}">sign up</a> first.</p>
+
+    <form action="{% url 'account_login' %}" method="POST"
+        class="needs-validation col-10 offset-1 col-md-6 offset-md-3 text-center" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label for="username" class="form-label">Username:</label>
+            <input type="text" id="username" name="login" class="form-control" required
+                value="{{ form.login.value|default_if_none:'' }}">
+            {% if form.login.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.login.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+            {% if form.password.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.password.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-success">Sign In</button>
+    </form>
+</div>
+{% endblock %}

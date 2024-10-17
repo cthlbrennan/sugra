@@ -6,4 +6,6 @@ urlpatterns = [
     path('gamer/dashboard/', views.gamer_dashboard, name='gamer_dashboard'),  
     path('developer/dashboard/', views.developer_dashboard, name='developer_dashboard'),
     path('about/', views.about, name='about'),
+    path('accounts/signup/', views.CustomSignupView.as_view(), name='account_signup'),
+
 ]

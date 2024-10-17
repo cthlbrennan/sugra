@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load allauth i18n %}
+
+{% block title %}
+Sign up
+{% endblock %}
+
+{% block body %}
+<div class="container p-2 text-center justify-content-center">
+    <h1 class="mb-3 mt-5">{% trans "Sign Up" %}</h1>
+
+    <p class="lead">
+        Already have an account? Please <a class="link" href="{% url 'account_login' %}">sign in</a>.
+    </p>
+
+    {% if not SOCIALACCOUNT_ONLY %}
+    <form method="post" action="{% url 'account_signup' %}" class="form-signup">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="mb-3">
+            <label for="{{ form.username.id_for_label }}" class="form-label">{% trans "Username" %}</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.email.id_for_label }}" class="form-label">{% trans "Email" %}</label>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.user_type.id_for_label }}" class="form-label">{% trans "Account Type" %}</label>
+            {{ form.user_type }}
+            {{ form.user_type.errors }}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.password1.id_for_label }}" class="form-label">{% trans "Password" %}</label>
+            {{ form.password1 }}
+            {{ form.password1.errors }}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.password2.id_for_label }}" class="form-label">{% trans "Confirm Password" %}</label>
+            {{ form.password2 }}
+            {{ form.password2.errors }}
+        </div>
+        <input type="hidden" name="next" value="{{ redirect_field }}">
+        <button type="submit" class="btn btn-success">{% trans "Sign Up" %}</button>
+    </form>
+    {% endif %}
+
+    {% if SOCIALACCOUNT_ENABLED %}
+    {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+    {% endif %}
+</div>
+{% endblock body %}
