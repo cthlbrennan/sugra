@@ -1,3 +1,4 @@
+from allauth.account.views import EmailVerificationSentView
 from django.urls import path
 from . import views
 
@@ -7,5 +8,6 @@ urlpatterns = [
     path('developer/dashboard/', views.developer_dashboard, name='developer_dashboard'),
     path('about/', views.about, name='about'),
     path('accounts/signup/', views.CustomSignupView.as_view(), name='account_signup'),
+    path("accounts/confirm-email/", EmailVerificationSentView.as_view(), name="account_email_verification_sent"),
 
 ]
