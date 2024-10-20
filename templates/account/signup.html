@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load allauth i18n %}
+{% load account socialaccount %}
 
 {% block title %}
 Sign up
@@ -35,8 +36,25 @@ Sign up
     </form>
     {% endif %}
 
-    {% if SOCIALACCOUNT_ENABLED %}
-    {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+    {% get_providers as socialaccount_providers %}
+
+    {% if socialaccount_providers %}
+    <div class="mt-4">
+        <p>{% trans "Or sign up with:" %}</p>
+        <div class="socialaccount_ballot">
+            {% for provider in socialaccount_providers %}
+                {% if provider.id == "google" %}
+                    <a href="{% provider_login_url provider.id process='login' scope=scope auth_params=auth_params %}"
+                       class="btn btn-outline-dark">
+                        <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google icon">
+                        Sign up with Google
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
     {% endif %}
+
+
 </div>
 {% endblock body %}

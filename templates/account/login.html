@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load allauth account %}
+{% load allauth socialaccount account %}
 
 {% block title %}
 Login
@@ -50,5 +50,23 @@ Login
 
         <button type="submit" class="btn btn-success">Sign In</button>
     </form>
+    {% get_providers as socialaccount_providers %}
+
+    {% if socialaccount_providers %}
+    <div class="mt-4 text-center">
+        <p>{% trans "Or sign in with:" %}</p>
+        <div class="socialaccount_ballot">
+            {% for provider in socialaccount_providers %}
+                {% if provider.id == "google" %}
+                    <a href="{% provider_login_url provider.id process='login' scope=scope auth_params=auth_params %}"
+                       class="btn btn-outline-dark">
+                        <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google icon">
+                        Sign in with Google
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
