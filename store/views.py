@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from allauth.account.views import SignupView
-from .forms import CustomSignupForm
+from .forms import CustomSignupForm, UserTypeForm
 from .decorators import gamer_required, developer_required
 
 
@@ -12,6 +13,31 @@ def index(request):
 
 def about(request):
     return render(request, 'about.html')
+
+@login_required
+def set_user_type(request):
+    user = request.user
+    if user.user_type:
+        return redirect('gamer_dashboard' if user.user_type == 'gamer' else 'developer_dashboard')
+    
+    if request.method == 'POST':
+        form = UserTypeForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "User type set successfully!")
+            return redirect('gamer_dashboard' if user.user_type == 'gamer' else 'developer_dashboard')
+    else:
+        form = UserTypeForm(instance=user)
+    
+    return render(request, 'set_user_type.html', {'form': form})
+
+def login_redirect(request):
+    if request.user.is_authenticated:
+        if not request.user.user_type:
+            return redirect('set_user_type')
+        return redirect('gamer_dashboard' if request.user.user_type == 'gamer' else 'developer_dashboard')
+    return redirect('account_login')
+
 
 @gamer_required
 def gamer_dashboard(request):

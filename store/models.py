@@ -9,7 +9,7 @@ class User(AbstractUser):
     ]
     user_id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=25, unique=True)   
-    user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
+    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, null=True, blank=True)
     bio = models.TextField(blank=True)
     email = models.EmailField()  #unique = true ?
     profile_picture = CloudinaryField('profile_picture', blank=True, null=True)

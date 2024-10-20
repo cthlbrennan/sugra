@@ -33,15 +33,17 @@ ALLOWED_HOSTS = [
 
 SITE_ID = 4
 
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = True
 ACCOUNT_USERNAME_MIN_LENGTH = 4
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'login_redirect'
 LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_FORMS = {'signup': 'store.forms.CustomSignupForm'}
+ACCOUNT_USERNAME_REQUIRED = False
+SOCIALACCOUNT_AUTO_SIGNUP = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -84,6 +86,9 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+ACCOUNT_ADAPTER = 'allauth.account.adapter.DefaultAccountAdapter'
+
+SOCIALACCOUNT_ADAPTER = 'allauth.socialaccount.adapter.DefaultSocialAccountAdapter'
 
 # Provider specific settings
 # SOCIALACCOUNT_PROVIDERS = {

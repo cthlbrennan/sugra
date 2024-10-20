@@ -14,3 +14,8 @@ class CustomSignupForm(SignupForm):
         user.user_type = self.cleaned_data['user_type']
         user.save()
         return user
+    
+class UserTypeForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['user_type']

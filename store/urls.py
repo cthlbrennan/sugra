@@ -9,5 +9,6 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('accounts/signup/', views.CustomSignupView.as_view(), name='account_signup'),
     path("accounts/confirm-email/", EmailVerificationSentView.as_view(), name="account_email_verification_sent"),
+    path('set-user-type/', views.set_user_type, name='set_user_type'),
 
 ]
