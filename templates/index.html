@@ -5,17 +5,21 @@ Sugra Games
 {% endblock %}
 {% block body %}
 <div class="container-fluid px-0">
-    <!-- Hero Section -->
-    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            {% for i in "1234" %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <img src="{% static 'images/hero-image-'|add:i|add:'.jpg' %}" class="d-block w-100" alt="Hero Image {{ i }}">
-                <div class="carousel-caption d-none d-md-block">
-                    <h1 class="display-4">Slogan over Hero Image {{ i }}</h1>
+    <div class="position-relative hero-container">
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for i in "1234" %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{% static 'images/hero-image-'|add:i|add:'.jpg' %}" class="d-block w-100"
+                        alt="Hero Image {{ i }}">
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+        </div>
+        <div class="carousel-overlay"></div>
+        <div class="carousel-static-content">
+            <h1 class="display-4">Welcome to Sugra Games</h1>
+            <p class="lead">Discover and play amazing games</p>
         </div>
     </div>
 
