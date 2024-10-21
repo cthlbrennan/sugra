@@ -10,13 +10,16 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
    <link rel="stylesheet" href="{% static 'css/style.css' %}">
    <link rel="icon" type="image/x-icon" href="{% static 'images/sugra_logo.png' %}">
+   <link
+      href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&family=Roboto:wght@400;700&family=Noto+Sans:wght@400;700&family=Press+Start+2P&display=swap"
+      rel="stylesheet">
    <title>{% block title %}{% endblock %}</title>
 </head>
 
-<body>
+<body class="font-main">
    <nav class="navbar navbar-expand-lg navbar-light bg-white">
       <div class="container-fluid">
-         <a class="navbar-brand" href="{% url 'index' %}">
+         <a class="navbar-brand font-banner" href="{% url 'index' %}">
             <img src="{% static 'images/sugra_logo.png' %}" alt="Sugra Games Logo" height="30"
                class="d-inline-block align-top me-2">
             Sugra Games
@@ -26,7 +29,7 @@
             <span class="navbar-toggler-icon"></span>
          </button>
          <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 font-headers">
                <li class="nav-item">
                   <a class="nav-link {% if request.path == index_url %}active{% endif %}" aria-current="page"
                      href="{% url 'index' %}">Store</a>
@@ -62,7 +65,7 @@
       </div>
    </nav>
    {% if messages %}
-   <ul class="messages">
+   <ul class="messages font-main">
       {% for message in messages %}
       <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
          {% endfor %}
@@ -70,13 +73,14 @@
    {% endif %}
    <main class="flex-shrink-0 main-bg">
       {% if user.is_authenticated %}
-      <p class="text-end m-3">You are logged in as {{ user }}</p>
+      <p class="text-end m-3 font-main">You are logged in as {{ user }}</p>
       {% else %}
-      <p class="text-end m-3">You are not logged in</p>
+      <p class="text-end m-3 font-main">You are not logged in</p>
       {% endif %}
       {% block body %}
       {% endblock %}
    </main>
+
 
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -85,16 +89,16 @@
    <script src="{% static 'js/script.js' %}"></script>
 </body>
 <!-- footer -->
-<footer class="py-3">
+<footer class="py-3 font-main">
    <div class="container">
       <hr class="footer-divider">
       <div class="row">
          <div class="col-md-4 text-center">
-            <h5 class="text-dark-accent">Sugra Games</h5>
+            <h5 class="text-dark-accent font-banner">Sugra Games</h5>
             <p>Your gateway to amazing indie games.</p>
          </div>
          <div class="col-md-4 text-center">
-            <h5 class="text-dark-accent">Quick Links</h5>
+            <h5 class="text-dark-accent font-headers">Quick Links</h5>
             <ul class="list-unstyled">
                <li><a href="{% url 'index' %}" class="footer-link">Store</a></li>
                <li><a href="{% url 'about' %}" class="footer-link">About</a></li>
@@ -107,7 +111,7 @@
             </ul>
          </div>
          <div class="col-md-4 text-center">
-            <h5 class="text-dark-accent">Connect With Us</h5>
+            <h5 class="text-dark-accent font-headers">Connect With Us</h5>
             <ul class="list-inline">
                <li class="list-inline-item footer-icon"><a href="https://www.facebook.com" target="_blank"
                      rel="noopener" aria-label="Facebook"><i class="fab fa-facebook"></i></a></li>
@@ -122,7 +126,7 @@
       </div>
       <hr class="footer-divider">
       <div class="row">
-         <div class="col-12 text-center">
+         <div class="col-12 text-center font-banner">
             <p>&copy; {% now "Y" %} Sugra Games. All rights reserved.</p>
          </div>
       </div>

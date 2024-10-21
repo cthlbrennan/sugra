@@ -18,8 +18,8 @@ Sugra Games
         </div>
         <div class="carousel-overlay"></div>
         <div class="carousel-static-content">
-            <h1 class="display-4">Welcome to Sugra Games</h1>
-            <p class="lead">Discover and play amazing games</p>
+            <h1 class="display-4 font-banner">Welcome to Sugra Games</h1>
+            <p class="lead font-headers">Discover and play amazing games</p>
         </div>
     </div>
 
@@ -28,14 +28,14 @@ Sugra Games
         <div class="row">
             <div class="col-md-8 mx-auto">
                 <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
+                    <input class="form-control me-2 font-main" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success font-cta" type="submit">Search</button>
                 </form>
             </div>
         </div>
         <div class="row mt-3">
             <div class="col-md-4">
-                <select class="form-select" aria-label="Sort by Category">
+                <select class="form-select font-main" aria-label="Sort by Category">
                     <option selected>Sort by Category</option>
                     <option value="1">Category 1</option>
                     <option value="2">Category 2</option>
@@ -44,9 +44,9 @@ Sugra Games
             </div>
             <div class="col-md-8">
                 <div class="btn-group w-100" role="group" aria-label="Filters">
-                    <button type="button" class="btn btn-outline-primary">Filter by Price</button>
-                    <button type="button" class="btn btn-outline-primary">Filter by Customer Ratings</button>
-                    <button type="button" class="btn btn-outline-primary">Filter by Popularity</button>
+                    <button type="button" class="btn btn-outline-primary font-cta">Filter by Price</button>
+                    <button type="button" class="btn btn-outline-primary font-cta">Filter by Customer Ratings</button>
+                    <button type="button" class="btn btn-outline-primary font-cta">Filter by Popularity</button>
                 </div>
             </div>
         </div>
@@ -59,8 +59,8 @@ Sugra Games
             <div class="col">
                 <div class="card h-100">
                     <img src="{% static 'images/game-placeholder.jpg' %}" class="card-img-top" alt="Game Image">
-                    <div class="card-body">
-                        <h5 class="card-title">Game Title</h5>
+                    <div class="card-body font-main">
+                        <h5 class="card-title font-headers">Game Title</h5>
                         <p class="card-text">
                             <small class="text-muted">Tagline</small><br>
                             Categories<br>
@@ -72,4 +72,5 @@ Sugra Games
             {% endfor %}
         </div>
     </div>
-</div>{% endblock %}
+</div>
+{% endblock %}

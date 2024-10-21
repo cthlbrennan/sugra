@@ -6,8 +6,35 @@ https://tinyurl.com/2s493p8b */
     box-sizing: border-box;
 }
 
-h2 {
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+:root {
+    --font-banner: 'Oxanium', cursive;
+    --font-headers: 'Roboto', sans-serif;
+    --font-main: 'Noto Sans', sans-serif;
+    --font-cta: 'Press Start 2P', cursive;
+}
+
+body {
+    font-family: var(--font-main);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-headers);
+}
+
+.font-banner {
+    font-family: var(--font-banner);
+}
+
+.font-headers {
+    font-family: var(--font-headers);
+}
+
+.font-main {
+    font-family: var(--font-main);
+}
+
+.font-cta {
+    font-family: var(--font-cta);
 }
 
 .hero-container {
@@ -34,6 +61,7 @@ h2 {
 }
 
 .carousel-static-content {
+    font-family: var(--font-banner);
     position: absolute;
     top: 50%;
     left: 50%;
