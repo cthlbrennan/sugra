@@ -84,16 +84,18 @@ h1, h2, h3, h4, h5, h6 {
     z-index: 10;
 }
 
-.content-wrapper {
-    flex: 1 0 auto;
-}
-
-footer {
-    flex-shrink: 0;
+#messages-container {
+    position: fixed;
+    top: 60;
+    z-index: 50;
     width: 100%;
+    background-color: var(--bright-yellow-color);
+    color: var(--main-text-color);
+    text-align: center;
+    padding: 10px;
+    transition: opacity 1s ease-out;
 }
 
-.container-fluid {
-    padding-left: 0;
-    padding-right: 0;
+#messages-container p {
+    margin: 0;
 }

@@ -67,12 +67,11 @@
          </div>
       </nav>
       {% if messages %}
-      <ul class="messages font-main"
-         style="background-color: var(--bright-yellow-color); color: var(--main-text-color);">
-         {% for message in messages %}
-         <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-            {% endfor %}
-      </ul>
+      <div id="messages-container" class="font-main">
+          {% for message in messages %}
+          <p{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</p>
+          {% endfor %}
+      </div>
       {% endif %}
       <main class="flex-shrink-0 main-bg" style="background-color: var(--off-white-color);">
          {% block body %}

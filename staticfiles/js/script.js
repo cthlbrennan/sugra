@@ -4,3 +4,17 @@ document.addEventListener('DOMContentLoaded', function() {
         direction: 'left'  // Animate from right to left
     });
 });
+
+// Add this to the end of your existing script.js file
+
+document.addEventListener('DOMContentLoaded', function() {
+    const messagesContainer = document.getElementById('messages-container');
+    if (messagesContainer) {
+        setTimeout(function() {
+            messagesContainer.style.opacity = '0';
+            setTimeout(function() {
+                messagesContainer.style.display = 'none';
+            }, 1000);
+        }, 5000);
+    }
+});

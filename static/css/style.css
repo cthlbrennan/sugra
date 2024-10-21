@@ -83,3 +83,19 @@ h1, h2, h3, h4, h5, h6 {
     color: white;
     z-index: 10;
 }
+
+#messages-container {
+    position: fixed;
+    top: 60;
+    z-index: 50;
+    width: 100%;
+    background-color: var(--bright-yellow-color);
+    color: var(--main-text-color);
+    text-align: center;
+    padding: 10px;
+    transition: opacity 1s ease-out;
+}
+
+#messages-container p {
+    margin: 0;
+}

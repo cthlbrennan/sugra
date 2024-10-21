@@ -4,7 +4,7 @@
 Sugra Games
 {% endblock %}
 {% block body %}
-<div class="container-fluid">
+<div class="container-fluid px-0">
     <div class="position-relative hero-container">
         <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
@@ -26,15 +26,15 @@ Sugra Games
     <!-- Search and Filter Section -->
     <div class="container mt-4">
         <div class="row">
-            <div class="col-md-8 mx-auto">
+            <div class="col-12 col-md-8 mx-auto mb-3">
                 <form class="d-flex">
                     <input class="form-control me-2 font-main" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success font-cta" type="submit">Search</button>
                 </form>
             </div>
         </div>
-        <div class="row mt-3">
-            <div class="col-md-4">
+        <div class="row">
+            <div class="col-12 col-md-4 mb-3">
                 <select class="form-select font-main" aria-label="Sort by Category">
                     <option selected>Sort by Category</option>
                     <option value="1">Category 1</option>
@@ -42,8 +42,8 @@ Sugra Games
                     <option value="3">Category 3</option>
                 </select>
             </div>
-            <div class="col-md-8">
-                <div class="btn-group w-100" role="group" aria-label="Filters">
+            <div class="col-12 col-md-8">
+                <div class="d-flex flex-column flex-md-row gap-2">
                     <button type="button" class="btn btn-outline-primary font-cta">Filter by Price</button>
                     <button type="button" class="btn btn-outline-primary font-cta">Filter by Customer Ratings</button>
                     <button type="button" class="btn btn-outline-primary font-cta">Filter by Popularity</button>
@@ -53,10 +53,10 @@ Sugra Games
     </div>
 
     <!-- Game Cards Section -->
-    <div class="mt-4 mb-4">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="container mt-4">
+        <div class="row row-cols-1 row-cols-md-3 g-4 mx-sm-0 mx-3">
             {% for i in "123456" %}
-            <div class="col mb-4">
+            <div class="col">
                 <div class="card h-100">
                     <img src="{% static 'images/game-placeholder.jpg' %}" class="card-img-top" alt="Game Image">
                     <div class="card-body font-main">
