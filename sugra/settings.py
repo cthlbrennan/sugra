@@ -31,7 +31,10 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
-SITE_ID = 4
+if os.environ.get('DEVELOPMENT') == 'True':
+    SITE_ID = 4
+else:
+    SITE_ID = int(os.environ.get('SITE_ID'))
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
