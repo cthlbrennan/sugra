@@ -4,7 +4,7 @@
 Sugra Games
 {% endblock %}
 {% block body %}
-<div class="container-fluid px-0">
+<div class="container-fluid">
     <div class="position-relative hero-container">
         <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
@@ -53,10 +53,10 @@ Sugra Games
     </div>
 
     <!-- Game Cards Section -->
-    <div class="container mt-4">
+    <div class="mt-4 mb-4">
         <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for i in "123456" %}
-            <div class="col">
+            <div class="col mb-4">
                 <div class="card h-100">
                     <img src="{% static 'images/game-placeholder.jpg' %}" class="card-img-top" alt="Game Image">
                     <div class="card-body font-main">

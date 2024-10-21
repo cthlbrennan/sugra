@@ -11,10 +11,19 @@ https://tinyurl.com/2s493p8b */
     --font-headers: 'Roboto', sans-serif;
     --font-main: 'Noto Sans', sans-serif;
     --font-cta: 'Press Start 2P', cursive;
+    --main-bg-color: #41B49D;
+    --main-text-color: #393939;
+    --light-accent-color: #F0D8CC;
+    --dark-accent-color: #993333;
+    --bright-yellow-color: #FFC246;
+    --off-white-color: #F5F5F5;
 }
 
 body {
     font-family: var(--font-main);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -35,6 +44,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .font-cta {
     font-family: var(--font-cta);
+}
+
+.text-justify {
+    text-align: justify;
 }
 
 .hero-container {
@@ -69,4 +82,18 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     color: white;
     z-index: 10;
+}
+
+.content-wrapper {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.container-fluid {
+    padding-left: 0;
+    padding-right: 0;
 }
