@@ -24,11 +24,11 @@ Login
         {% endif %}
 
         <div class="mb-3">
-            <label for="username" class="form-label">Username:</label>
-            <input type="text" id="username" name="login" class="form-control" required
+            <label for="login" class="form-label">Username or Email:</label>
+            <input type="text" id="login" name="login" class="form-control" required
                 value="{{ form.login.value|default_if_none:'' }}">
             {% if form.login.errors %}
-            <div class="invalid-feedback">
+            <div class="invalid-feedback d-block">
                 {% for error in form.login.errors %}
                 <p>{{ error }}</p>
                 {% endfor %}
@@ -57,13 +57,13 @@ Login
         <p>{% trans "Or sign in with:" %}</p>
         <div class="socialaccount_ballot">
             {% for provider in socialaccount_providers %}
-                {% if provider.id == "google" %}
-                    <a href="{% provider_login_url provider.id process='login' scope=scope auth_params=auth_params %}"
-                       class="btn btn-outline-dark">
-                        <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google icon">
-                        Sign in with Google
-                    </a>
-                {% endif %}
+            {% if provider.id == "google" %}
+            <a href="{% provider_login_url provider.id process='login' scope=scope auth_params=auth_params %}"
+                class="btn btn-outline-dark">
+                <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google icon">
+                Sign in with Google
+            </a>
+            {% endif %}
             {% endfor %}
         </div>
     </div>

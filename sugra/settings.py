@@ -36,7 +36,7 @@ if os.environ.get('DEVELOPMENT') == 'True':
 else:
     SITE_ID = int(os.environ.get('SITE_ID'))
 
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = True
@@ -45,8 +45,11 @@ LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = 'login_redirect'
 LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_FORMS = {'signup': 'store.forms.CustomSignupForm'}
-ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USERNAME_REQUIRED = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
+ACCOUNT_UNIQUE_EMAIL = True
+
+SOCIALACCOUNT_ADAPTER = 'store.adapters.CustomSocialAccountAdapter'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -78,6 +81,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     "allauth.account.middleware.AccountMiddleware",
+    'store.middleware.ProfileSetupMiddleware',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {

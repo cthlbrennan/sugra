@@ -2,21 +2,29 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
 
+
 class User(AbstractUser):
     USER_TYPE_CHOICES = [
         ('gamer', 'Gamer'),
         ('developer', 'Developer'),
+        ('admin', 'Admin'),
     ]
     user_id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=25, unique=True)   
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, null=True, blank=True)
     bio = models.TextField(blank=True)
-    email = models.EmailField()  #unique = true ?
+    email = models.EmailField()
     profile_picture = CloudinaryField('profile_picture', blank=True, null=True)
     account_created = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        if self.is_superuser and self.user_type != 'admin':
+            self.user_type = 'admin'
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"User: {self.username}"
+
 
 class Game(models.Model):
     GAME_GENRE_CHOICES = [
