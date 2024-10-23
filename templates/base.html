@@ -21,7 +21,7 @@
    <div class="content-wrapper flex-grow-1">
       <nav class="navbar navbar-expand-lg navbar-light" style="background-color: var(--main-bg-color);">
          <div class="container-fluid">
-            <a class="navbar-brand font-banner" href="{% url 'index' %}" style="color: var(--dark-accent-color);">
+            <a class="navbar-brand font-banner" href="{% url 'index' %}" style="color: var(--bright-yellow-color);">
                <img src="{% static 'images/sugra_logo.png' %}" alt="Sugra Games Logo" height="30"
                   class="d-inline-block align-top me-2">
                Sugra Games
@@ -31,35 +31,37 @@
                <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
-               <ul class="navbar-nav me-auto mb-2 mb-lg-0 font-headers">
+               <ul class="navbar-nav ms-auto mb-2 mb-lg-0 font-headers">
                   <li class="nav-item">
                      <a class="nav-link {% if request.path == index_url %}active{% endif %}" aria-current="page"
-                        href="{% url 'index' %}" style="color: var(--main-text-color);">Store</a>
+                        href="{% url 'index' %}" style="color: var(--off-white-color);">Store</a>
                   </li>
                   <li class="nav-item">
                      <a class="nav-link {% if request.path == about_url %}active{% endif %}" aria-current="page"
-                        href="{% url 'about' %}" style="color: var(--main-text-color);">About</a>
+                        href="{% url 'about' %}" style="color: var(--off-white-color);">About</a>
                   </li>
                   {% if user.is_authenticated %}
                   <li class="nav-item">
                      {% if user.user_type == 'gamer' %}
-                     <a class="nav-link" href="{% url 'gamer_dashboard' %}">Dashboard</a>
+                     <a class="nav-link" href="{% url 'gamer_dashboard' %}"
+                        style="color: var(--off-white-color);">Dashboard</a>
                      {% elif user.user_type == 'developer' %}
-                     <a class="nav-link" href="{% url 'developer_dashboard' %}">Dashboard</a>
+                     <a class="nav-link" href="{% url 'developer_dashboard' %}"
+                        style="color: var(--off-white-color);">Dashboard</a>
                      {% endif %}
                   </li>
                   <li class="nav-item">
                      <a class="nav-link {% if request.path == logout_url %}active{% endif %}" aria-current="page"
-                        href="{% url 'account_logout' %}">Logout</a>
+                        href="{% url 'account_logout' %}" style="color: var(--off-white-color);">Logout</a>
                   </li>
                   {% else %}
                   <li class="nav-item">
                      <a class="nav-link {% if request.path == signup_url %}active{% endif %}" aria-current="page"
-                        href="{% url 'account_signup' %}">Register</a>
+                        href="{% url 'account_signup' %}" style="color: var(--off-white-color);">Register</a>
                   </li>
                   <li class="nav-item">
                      <a class="nav-link {% if request.path == login_url %}active{% endif %}" aria-current="page"
-                        href="{% url 'account_login' %}">Sign in</a>
+                        href="{% url 'account_login' %}" style="color: var(--off-white-color);">Sign in</a>
                   </li>
                   {% endif %}
                </ul>
@@ -68,9 +70,9 @@
       </nav>
       {% if messages %}
       <div id="messages-container" class="font-main">
-          {% for message in messages %}
-          <p{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</p>
-          {% endfor %}
+         {% for message in messages %}
+         <p{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</p>
+            {% endfor %}
       </div>
       {% endif %}
       <main class="flex-shrink-0 main-bg" style="background-color: var(--off-white-color);">
@@ -84,7 +86,7 @@
          <div class="row">
             <div class="col-md-4 text-center">
                <h5 class="text-dark-accent font-banner" style="color: var(--bright-yellow-color);">Sugra Games</h5>
-               <p>Your gateway to amazing indie games.</p>
+               <p style="color: var(--off-white-color);">Your gateway to amazing indie games.</p>
             </div>
             <div class="col-md-4 text-center">
                <h5 class="text-dark-accent font-headers" style="color: var(--bright-yellow-color);">Quick Links</h5>

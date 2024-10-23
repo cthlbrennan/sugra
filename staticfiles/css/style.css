@@ -99,3 +99,20 @@ h1, h2, h3, h4, h5, h6 {
 #messages-container p {
     margin: 0;
 }
+
+.btn-outline-custom {
+    color: var(--main-bg-color);
+    border-color: var(--main-bg-color);
+}
+
+.btn-outline-custom:hover,
+.btn-outline-custom:focus,
+.btn-outline-custom:active {
+    color: var(--off-white-color);
+    background-color: var(--main-bg-color);
+    border-color: var(--main-bg-color);
+}
+
+.btn-outline-custom:focus {
+    box-shadow: 0 0 0 0.25rem rgba(65, 180, 157, 0.5);
+}
