@@ -3,15 +3,15 @@
 {% load account socialaccount %}
 
 {% block title %}
-Sign up
+Sign Up
 {% endblock %}
 
 {% block body %}
 <div class="container p-2 text-center justify-content-center">
-    <h1 class="mb-3 mt-5">{% trans "Sign Up" %}</h1>
+    <h1 class="mb-3 mt-5 font-headers">{% trans "Sign Up" %}</h1>
 
-    <p class="lead">
-        Already have an account? Please <a class="link" href="{% url 'account_login' %}">sign in</a>.
+    <p class="lead font-main">
+        Already have an account? Please <a class="link" href="{% url 'account_login' %}" style="color: var(--main-bg-color);">sign in</a>.
     </p>
 
     {% if not SOCIALACCOUNT_ONLY %}
@@ -21,10 +21,10 @@ Sign up
         
         <!-- Explicitly render username field -->
         <div class="mb-3">
-            <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}</label>
+            <label for="{{ form.username.id_for_label }}" class="form-label font-main">{{ form.username.label }}</label>
             {{ form.username }}
             {% if form.username.errors %}
-                <div class="invalid-feedback d-block">
+                <div class="errorlist">
                     {% for error in form.username.errors %}
                         {{ error }}
                     {% endfor %}
@@ -35,10 +35,10 @@ Sign up
         {% for field in form %}
             {% if field.name != 'username' %}  <!-- Skip username as we've added it manually -->
                 <div class="mb-3">
-                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    <label for="{{ field.id_for_label }}" class="form-label font-main">{{ field.label }}</label>
                     {{ field }}
                     {% if field.errors %}
-                        <div class="invalid-feedback d-block">
+                        <div class="errorlist">
                             {% for error in field.errors %}
                                 {{ error }}
                             {% endfor %}
@@ -48,7 +48,7 @@ Sign up
             {% endif %}
         {% endfor %}
         <input type="hidden" name="next" value="{{ redirect_field }}">
-        <button type="submit" class="btn btn-success">{% trans "Sign Up" %}</button>
+        <button type="submit" class="btn btn-outline-custom font-cta">{% trans "Sign Up" %}</button>
     </form>
     {% endif %}
 
@@ -56,12 +56,12 @@ Sign up
 
     {% if socialaccount_providers %}
     <div class="mt-4">
-        <p>{% trans "Or sign up with:" %}</p>
+        <p class="font-main">{% trans "Or sign up with:" %}</p>
         <div class="socialaccount_ballot">
             {% for provider in socialaccount_providers %}
                 {% if provider.id == "google" %}
                     <a href="{% provider_login_url provider.id process='login' scope=scope auth_params=auth_params %}"
-                       class="btn btn-outline-dark">
+                       class="btn btn-outline-custom font-cta">
                         <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google icon">
                         Sign up with Google
                     </a>
@@ -70,7 +70,6 @@ Sign up
         </div>
     </div>
     {% endif %}
-
 
 </div>
 {% endblock body %}
