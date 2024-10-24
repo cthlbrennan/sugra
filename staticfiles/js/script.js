@@ -39,3 +39,20 @@ document.addEventListener('DOMContentLoaded', function () {
         descriptionLabel.parentNode.insertBefore(lineBreak, descriptionLabel.nextSibling);
     }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const toastElement = document.getElementById('deleteToast');
+    const toast = new bootstrap.Toast(toastElement);
+    let formToSubmit;
+
+    document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', function () {
+            formToSubmit = this.closest('form');
+            toast.show();
+        });
+    });
+
+    document.getElementById('confirmDelete').addEventListener('click', function () {
+        formToSubmit.submit();
+    });
+});

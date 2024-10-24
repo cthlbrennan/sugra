@@ -98,12 +98,12 @@ def developer_inbox(request):
     return render(request, 'developer_inbox.html', context)
 
 @developer_required
-def mark_inbox_message_read(request, message_id):
+def delete_inbox_message(request, message_id):
+    message = get_object_or_404(InboxMessage, message_id=message_id, developer=request.user)
     if request.method == 'POST':
-        message = get_object_or_404(InboxMessage, message_id=message_id, developer=request.user)
-        message.is_read = True
-        message.save()
-    return redirect('developer_dashboard')
+        message.delete()
+        messages.success(request, "Message deleted successfully.")
+    return redirect('developer_inbox')
 
 class CustomSignupView(SignupView):
     form_class = CustomSignupForm
