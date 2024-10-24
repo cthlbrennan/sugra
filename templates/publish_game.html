@@ -7,7 +7,7 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8 text-center">
-            <h1 class="font-banner mb-4">Publish Your Game</h1>
+            <h1 class="font-banner mb-4">Submit Your Game for Review</h1>
             <form method="post" enctype="multipart/form-data" class="font-main">
                 {% csrf_token %}
                 {% for field in form %}
@@ -25,8 +25,7 @@
                 </div>
                 {% endfor %}
                 <button type="submit" class="btn btn-outline-custom font-cta mb-4"
-                    style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">Publish
-                    Game</button>
+                    style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">Submit Game for Review</button>
             </form>
         </div>
     </div>

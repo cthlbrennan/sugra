@@ -53,7 +53,13 @@ class UserTypeAndPasswordForm(SetPasswordForm):
 class GameForm(forms.ModelForm):
     class Meta:
         model = Game
-        fields = ['title', 'description', 'genre', 'price', 'release_date', 'thumbnail']
+        fields = ['title', 'description', 'genre', 'price', 'thumbnail']
         widgets = {
-            'release_date': forms.DateInput(attrs={'type': 'date'}),
+            'description': forms.Textarea(attrs={'rows': 4}),
         }
+
+    def clean_price(self):
+        price = self.cleaned_data.get('price')
+        if price is not None and price < 0:
+            raise forms.ValidationError("Price must be 0 or greater.")
+        return price

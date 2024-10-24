@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Developer Inbox
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="font-banner mb-4">Inbox Messages</h1>
+    {% if inbox_messages %}
+    <ul class="list-group">
+        {% for message in inbox_messages %}
+        <li class="list-group-item">
+            <strong>Title:</strong> {{ message.game_title }} <br>
+            <strong>Message:</strong>
+            {% if message.status == 'approved' %}
+            Your game '{{ message.game_title }}' was approved! It is now available for customers to purchase and review
+            on the marketplace.
+            {% elif message.status == 'rejected' %}
+            {{ message.content }}
+            {% endif %}
+            <br>
+            <small class="text-muted">Sent: {{ message.created_at|date:"F d, Y" }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No messages in your inbox.</p>
+    {% endif %}
+</div>
+{% endblock %}

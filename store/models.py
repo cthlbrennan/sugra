@@ -54,9 +54,7 @@ class Game(models.Model):
     genre = models.CharField(max_length=100, choices=GAME_GENRE_CHOICES)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     developer = models.ForeignKey(User, on_delete=models.CASCADE)
-    release_date = models.DateField()
     is_published = models.BooleanField(default=False)
-    created = models.DateTimeField(auto_now_add=True)
     thumbnail = CloudinaryField('thumbnail', blank=True, null=True)
 
     def __str__(self):
@@ -119,3 +117,15 @@ class Message(models.Model):
 
     def __str__(self):
         return f"Message: {self.message_id} from {self.user}"
+
+class InboxMessage(models.Model):
+    message_id = models.AutoField(primary_key=True)
+    developer = models.ForeignKey(User, on_delete=models.CASCADE)
+    game_title = models.CharField(max_length=100)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    status = models.CharField(max_length=10, choices=[('approved', 'Approved'), ('rejected', 'Rejected')])
+
+    def __str__(self):
+        return f"Message for {self.developer} about {self.game_title}"

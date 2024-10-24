@@ -1,0 +1,44 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block content %}
+{% if messages %}
+
+{% endif %}
+{% if games %}
+<form method="post">
+    {% csrf_token %}
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Developer</th>
+                <th>Genre</th>
+                <th>Price</th>
+                <th>Reasons for Rejection</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in games %}
+            <tr>
+                <td>{{ game.title }}</td>
+                <td>{{ game.developer.username }}</td>
+                <td>{{ game.get_genre_display }}</td>
+                <td>${{ game.price }}</td>
+                <td>
+                    <textarea name="criticism_{{ game.game_id }}" rows="3" cols="30"></textarea>
+                </td>
+                <td>
+                    <button type="submit" name="action" value="approve_{{ game.game_id }}">Approve</button>
+                    <button type="submit" name="action" value="reject_{{ game.game_id }}">Reject</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+{% else %}
+<p>No games to review at this time.</p>
+{% endif %}
+{% endblock %}

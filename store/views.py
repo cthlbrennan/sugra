@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -6,6 +6,7 @@ from allauth.account.views import SignupView, LoginView
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm
 from .decorators import gamer_required, developer_required
 from django.urls import reverse  
+from .models import InboxMessage, Game
 
 
 # Create your views here.
@@ -80,7 +81,29 @@ def gamer_dashboard(request):
 
 @developer_required
 def developer_dashboard(request):
-    return render(request, 'developer_dashboard.html')
+    unread_messages_count = InboxMessage.objects.filter(developer=request.user, is_read=False).count()
+    games_awaiting_review = Game.objects.filter(developer=request.user, is_published=False)
+    context = {
+        'unread_messages_count': unread_messages_count,
+        'games_awaiting_review': games_awaiting_review,
+    }
+    return render(request, 'developer_dashboard.html', context)
+
+@developer_required
+def developer_inbox(request):
+    inbox_messages = InboxMessage.objects.filter(developer=request.user).order_by('-created_at')
+    context = {
+        'inbox_messages': inbox_messages,
+    }
+    return render(request, 'developer_inbox.html', context)
+
+@developer_required
+def mark_inbox_message_read(request, message_id):
+    if request.method == 'POST':
+        message = get_object_or_404(InboxMessage, message_id=message_id, developer=request.user)
+        message.is_read = True
+        message.save()
+    return redirect('developer_dashboard')
 
 class CustomSignupView(SignupView):
     form_class = CustomSignupForm
@@ -111,7 +134,9 @@ def publish_game(request):
         if form.is_valid():
             game = form.save(commit=False)
             game.developer = request.user
+            game.is_published = False  # Set to False by default
             game.save()
+            messages.success(request, "Your game has been submitted for review.")
             return redirect('developer_dashboard')
     else:
         form = GameForm()

@@ -14,5 +14,7 @@ urlpatterns = [
     path('set-user-type/', views.set_user_type, name='set_user_type'),
     path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
     path('publish-game/', views.publish_game, name='publish_game'),
+    path('mark_message_read/<int:message_id>/', views.mark_inbox_message_read, name='mark_inbox_message_read'),
+    path('developer/inbox/', views.developer_inbox, name='developer_inbox'),
 
 ]
