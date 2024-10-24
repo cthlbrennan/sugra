@@ -30,6 +30,12 @@ class GameAdmin(admin.ModelAdmin):
                     if action_type == 'approve':
                         game.is_published = True
                         game.save()
+                        InboxMessage.objects.create(
+                            developer=game.developer,
+                            game_title=game.title,
+                            content=f"Your game '{game.title}' was approved! It is now available for customers to purchase and review on the marketplace.",
+                            status='approved'
+                        )
                         self.message_user(request, f"Game '{game.title}' has been approved.", messages.SUCCESS)
                     elif action_type == 'reject':
                         message_content = f"Your game '{game.title}' has been rejected. Reasons: {criticism}"

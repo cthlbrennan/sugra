@@ -2,15 +2,7 @@
 
 {% block sidebar %}
 {{ block.super }}
-{% if games_to_review > 0 %}
-<div class="module">
-    <h2>Games Awaiting Review</h2>
-    <p>There {% if games_to_review == 1 %}is 1 game{% else %}are {{ games_to_review }} games{% endif %} that require{% if games_to_review == 1 %}s{% endif %} review.</p>
-    <ul>
-        <li><a href="{% url 'admin:review_games' %}" style="color: red; font-weight: bold;">Review Games Now</a></li>
-    </ul>
-</div>
-{% endif %}
+
 <div class="module">
     <h2>Game Review</h2>
     <ul>
