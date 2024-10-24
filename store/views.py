@@ -3,7 +3,7 @@ from django.contrib.auth import login as auth_login, update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from allauth.account.views import SignupView, LoginView
-from .forms import CustomSignupForm, UserTypeAndPasswordForm
+from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm
 from .decorators import gamer_required, developer_required
 from django.urls import reverse  
 
@@ -103,3 +103,16 @@ class CustomSignupView(SignupView):
             return reverse('developer_dashboard')
         else:
             return reverse('set_user_type')
+
+@developer_required
+def publish_game(request):
+    if request.method == 'POST':
+        form = GameForm(request.POST, request.FILES)
+        if form.is_valid():
+            game = form.save(commit=False)
+            game.developer = request.user
+            game.save()
+            return redirect('developer_dashboard')
+    else:
+        form = GameForm()
+    return render(request, 'publish_game.html', {'form': form})

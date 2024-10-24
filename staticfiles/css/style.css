@@ -122,3 +122,8 @@ h1, h2, h3, h4, h5, h6 {
     list-style-type: none;
     padding-left: 0;
 }
+
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+}

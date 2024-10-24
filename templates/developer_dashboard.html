@@ -1,8 +1,112 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}
 Developer Dashboard
 {% endblock %}
 
 {% block body %}
-<h1>Developer Dashboard</h1>
+<div class="container mt-4 text-center">
+    <h1 class="font-banner mb-4" style="color: var(--bright-yellow-color);">Welcome back, {{ user.username }}!</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-light-accent">
+                <div class="card-body">
+                    <h5 class="card-title font-headers text-dark-accent">Published Games</h5>
+                    <p class="card-text font-main display-4">{{ published_games_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-main">
+                <div class="card-body">
+                    <h5 class="card-title font-headers text-off-white">Total Sales</h5>
+                    <p class="card-text font-main display-4 text-off-white">{{ total_sales }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-bright-yellow">
+                <div class="card-body">
+                    <h5 class="card-title font-headers text-main-text">Aggregate Customer Rating</h5>
+                    <p class="card-text font-main display-4 text-main-text">{{ aggregate_rating }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="{% url 'publish_game' %}" class="btn btn-outline-custom font-cta mb-4"
+        style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">Publish Game</a>
+
+    <h3 class="font-headers mb-3 text-dark-accent">Published Games</h3>
+    <div class="table-responsive mb-4">
+        <table class="table table-striped">
+            <thead class="bg-main text-off-white">
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>File URL</th>
+                    <th>Store Page</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in published_games %}
+                <tr>
+                    <td>{{ game.title }}</td>
+                    <td>{{ game.description }}</td>
+                    <td>{{ game.category }}</td>
+                    <td>{{ game.price }}</td>
+                    <td><a href="{{ game.file_url }}" class="btn btn-sm btn-outline-custom font-cta">Download</a></td>
+                    <td><a href="{{ game.store_page_url }}" class="btn btn-sm btn-outline-custom font-cta">View</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="font-headers mb-3 text-dark-accent">Reviews</h3>
+    <div class="row mb-4">
+        {% for review in recent_reviews %}
+        <div class="col-md-4 mb-3">
+            <div class="card bg-light-accent">
+                <div class="card-body">
+                    <h5 class="card-title font-headers text-main-text">Review left by {{ review.user }}</h5>
+                    <p class="card-text font-main">{{ review.content|truncatewords:20 }}</p>
+                    <a href="{{ review.full_review_url }}" class="btn btn-sm btn-custom font-cta">Read full review</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h3 class="font-headers mb-3 text-dark-accent">Recent Sales</h3>
+    <div class="table-responsive mb-4">
+        <table class="table table-striped">
+            <thead class="bg-bright-yellow text-main-text">
+                <tr>
+                    <th>Title</th>
+                    <th>Date Bought</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in recent_sales %}
+                <tr>
+                    <td>{{ sale.title }}</td>
+                    <td>{{ sale.date_bought }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="font-headers mb-3 text-dark-accent">Earnings</h3>
+    <div class="card mb-4 bg-main text-off-white">
+        <div class="card-body">
+            <p class="font-main">{{ earnings_breakdown|linebreaks }}</p>
+        </div>
+    </div>
+</div>
 {% endblock %}

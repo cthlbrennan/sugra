@@ -2,7 +2,7 @@ from django import forms
 from allauth.account.forms import SignupForm
 from django.contrib.auth.forms import SetPasswordForm
 from django.core.exceptions import ValidationError
-from .models import User
+from .models import User, Game
 
 class CustomSignupForm(SignupForm):
     USER_TYPE_CHOICES = [
@@ -49,3 +49,11 @@ class UserTypeAndPasswordForm(SetPasswordForm):
         if commit:
             user.save()
         return user
+
+class GameForm(forms.ModelForm):
+    class Meta:
+        model = Game
+        fields = ['title', 'description', 'genre', 'price', 'release_date', 'thumbnail']
+        widgets = {
+            'release_date': forms.DateInput(attrs={'type': 'date'}),
+        }

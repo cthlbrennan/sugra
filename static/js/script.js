@@ -31,3 +31,11 @@ document.addEventListener('DOMContentLoaded', function () {
         emailField.placeholder = 'Enter your email';
     }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const descriptionLabel = document.querySelector('label[for="id_description"]');
+    if (descriptionLabel) {
+        const lineBreak = document.createElement('br');
+        descriptionLabel.parentNode.insertBefore(lineBreak, descriptionLabel.nextSibling);
+    }
+});
