@@ -6,7 +6,8 @@ Developer Inbox
 {% endblock %}
 
 {% block body %}
-<div class="toast-container d-flex justify-content-center align-items-center position-fixed top-50 start-50 translate-middle">
+<div
+    class="toast-container d-flex justify-content-center align-items-center position-fixed top-50 start-50 translate-middle">
     <div id="deleteToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
             <strong class="me-auto">Confirm Deletion</strong>
@@ -21,31 +22,35 @@ Developer Inbox
         </div>
     </div>
 </div>
-<div class="container mt-4">
-    <h1 class="font-banner mb-4">Inbox Messages</h1>
-    {% if inbox_messages %}
-    <ul class="list-group">
-        {% for message in inbox_messages %}
-        <li class="list-group-item">
-            <strong>Title:</strong> {{ message.game_title }} <br>
-            <strong>Message:</strong>
-            {% if message.status == 'approved' %}
-            Your game '{{ message.game_title }}' was approved! It is now available for customers to purchase and review
-            on the marketplace.
-            {% elif message.status == 'rejected' %}
-            {{ message.content }}
-            {% endif %}
-            <br>
-            <small class="text-muted">Sent: {{ message.created_at|date:"F d, Y" }}</small>
-            <form method="post" action="{% url 'delete_inbox_message' message.message_id %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="button" class="btn btn-danger btn-sm delete-button">Delete</button>
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>No messages in your inbox.</p>
-    {% endif %}
+<div class="d-flex justify-content-center text-center">
+    <div class="container mt-4">
+        <h1 class="font-banner mb-4">Inbox Messages</h1>
+        {% if inbox_messages %}
+        <ul class="list-group">
+            {% for message in inbox_messages %}
+            <li class="list-group-item">
+                <strong>Title:</strong> {{ message.game_title }} <br>
+                <strong>Message:</strong>
+                {% if message.status == 'approved' %}
+                Your game '{{ message.game_title }}' was approved! It is now available for customers to purchase and
+                review
+                on the marketplace.
+                {% elif message.status == 'rejected' %}
+                {{ message.content }}
+                {% endif %}
+                <br>
+                <small class="text-muted">Received: {{ message.created_at|date:"F d, Y" }}</small>
+                <form method="post" action="{% url 'delete_inbox_message' message.message_id %}"
+                    style="display:inline;">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-danger btn-sm delete-button">Delete</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No messages in your inbox.</p>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

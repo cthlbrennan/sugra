@@ -81,9 +81,11 @@ def gamer_dashboard(request):
 
 @developer_required
 def developer_dashboard(request):
+    published_games = Game.objects.filter(developer=request.user, is_published=True)
     unread_messages_count = InboxMessage.objects.filter(developer=request.user, is_read=False).count()
     games_awaiting_review = Game.objects.filter(developer=request.user, is_published=False)
     context = {
+        'published_games': published_games,
         'unread_messages_count': unread_messages_count,
         'games_awaiting_review': games_awaiting_review,
     }
@@ -104,6 +106,10 @@ def delete_inbox_message(request, message_id):
         message.delete()
         messages.success(request, "Message deleted successfully.")
     return redirect('developer_inbox')
+
+def game_detail(request, game_id):
+    game = get_object_or_404(Game, game_id=game_id)
+    return render(request, 'game_detail.html', {'game': game})
 
 class CustomSignupView(SignupView):
     form_class = CustomSignupForm

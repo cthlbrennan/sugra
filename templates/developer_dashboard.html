@@ -42,9 +42,6 @@ Developer Dashboard
         </div>
     </div>
 
-    <a href="{% url 'publish_game' %}" class="btn btn-outline-custom font-cta mb-4"
-        style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">Publish Game</a>
-
     <h3 class="font-headers mb-3 text-dark-accent">Published Games</h3>
     <div class="table-responsive mb-4">
         <table class="table table-striped">
@@ -52,7 +49,7 @@ Developer Dashboard
                 <tr>
                     <th>Title</th>
                     <th>Description</th>
-                    <th>Category</th>
+                    <th>Genre</th>
                     <th>Price</th>
                     <th>File URL</th>
                     <th>Store Page</th>
@@ -61,17 +58,24 @@ Developer Dashboard
             <tbody>
                 {% for game in published_games %}
                 <tr>
-                    <td>{{ game.title }}</td>
+                    <td><a class="btn btn-sm btn-outline-custom font-cta" href="{% url 'game_detail' game.game_id %}">{{ game.title }}</a></td>
                     <td>{{ game.description }}</td>
-                    <td>{{ game.category }}</td>
+                    <td>{{ game.genre }}</td>
                     <td>{{ game.price }}</td>
                     <td><a href="{{ game.file_url }}" class="btn btn-sm btn-outline-custom font-cta">Download</a></td>
                     <td><a href="{{ game.store_page_url }}" class="btn btn-sm btn-outline-custom font-cta">View</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No published games.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <a href="{% url 'publish_game' %}" class="btn btn-outline-custom font-cta mb-4"
+        style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">Publish A New Game</a>
 
     <h3 class="font-headers mb-3 text-dark-accent">Reviews</h3>
     <div class="row mb-4">

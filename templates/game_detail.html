@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ game.title }}
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4 text-center">
+    <h1 class="font-banner mb-4" style="color: var(--bright-yellow-color);">{{ game.title }}</h1>
+    <p class="font-main"><strong>Description:</strong> {{ game.description }}</p>
+    <p class="font-main"><strong>Category:</strong> {{ game.category }}</p>
+    <p class="font-main"><strong>Price:</strong> {{ game.price }}</p>
+    <!-- Add more details as needed -->
+    <a href="{{ game.file_url }}" class="btn btn-outline-custom font-cta" style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">Download</a>
+    <!-- Add purchase functionality here in the future -->
+</div>
+{% endblock %}
