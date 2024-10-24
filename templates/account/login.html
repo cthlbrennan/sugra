@@ -7,13 +7,13 @@ Login
 {% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h2 class="mb-4 text-center">Sign In</h2>
-    <p class="text-center">If you have not created an account yet, please <a class='link'
-            href="{% url 'account_signup' %}">sign up</a> first.</p>
+<div class="container p-2 text-center justify-content-center">
+    <h1 class="mb-3 mt-5 font-banner">{% trans "Sign In" %}</h1>
+    <p class="lead font-main">If you have not created an account yet, please <a class='link'
+            href="{% url 'account_signup' %}" style="color: var(--main-bg-color);">sign up</a> first.</p>
 
     <form action="{% url 'account_login' %}" method="POST"
-        class="needs-validation col-10 offset-1 col-md-6 offset-md-3 text-center" novalidate>
+        class="form-login mb-3 col-10 offset-1 col-md-6 offset-md-3 text-center" novalidate>
         {% csrf_token %}
         {% if form.non_field_errors %}
         <div class="alert alert-danger">
@@ -24,11 +24,11 @@ Login
         {% endif %}
 
         <div class="mb-3">
-            <label for="login" class="form-label">Username or Email:</label>
+            <label for="login" class="form-label font-main">Username or Email:</label>
             <input type="text" id="login" name="login" class="form-control" required
                 value="{{ form.login.value|default_if_none:'' }}">
             {% if form.login.errors %}
-            <div class="invalid-feedback d-block">
+            <div class="errorlist">
                 {% for error in form.login.errors %}
                 <p>{{ error }}</p>
                 {% endfor %}
@@ -37,10 +37,10 @@ Login
         </div>
 
         <div class="mb-3">
-            <label for="password" class="form-label">Password:</label>
+            <label for="password" class="form-label font-main">Password:</label>
             <input type="password" id="password" name="password" class="form-control" required>
             {% if form.password.errors %}
-            <div class="invalid-feedback">
+            <div class="errorlist">
                 {% for error in form.password.errors %}
                 <p>{{ error }}</p>
                 {% endfor %}
@@ -48,18 +48,18 @@ Login
             {% endif %}
         </div>
 
-        <button type="submit" class="btn btn-success">Sign In</button>
+        <button type="submit" class="btn btn-outline-custom font-cta">{% trans "Sign In" %}</button>
     </form>
     {% get_providers as socialaccount_providers %}
 
     {% if socialaccount_providers %}
-    <div class="mt-4 text-center">
-        <p>{% trans "Or sign in with:" %}</p>
+    <div class="mt-4 mb-4">
+        <p class="font-main">{% trans "Or sign in with:" %}</p>
         <div class="socialaccount_ballot">
             {% for provider in socialaccount_providers %}
             {% if provider.id == "google" %}
             <a href="{% provider_login_url provider.id process='login' scope=scope auth_params=auth_params %}"
-                class="btn btn-outline-dark">
+                class="btn btn-outline-custom font-cta">
                 <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google icon">
                 Sign in with Google
             </a>
@@ -68,5 +68,12 @@ Login
         </div>
     </div>
     {% endif %}
+
+    <div class="mb-3">
+        <a href="{% url 'account_reset_password' %}" class="btn btn-outline-custom font-cta"
+            style="color: var(--dark-accent-color); border-color: var(--dark-accent-color);">
+            Forgot Password?
+        </a>
+    </div>
 </div>
 {% endblock %}

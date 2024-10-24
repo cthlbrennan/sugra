@@ -2,13 +2,13 @@
 {% load i18n %}
 {% load allauth %}
 {% block head_title %}
-    {% trans "Sign Up Closed" %}
+{% trans "Sign Up Closed" %}
 {% endblock head_title %}
-{% block content %}
-    {% element h1 %}
-        {% trans "Sign Up Closed" %}
-    {% endelement %}
-    {% element p %}
-        {% trans "We are sorry, but the sign up is currently closed." %}
-    {% endelement %}
-{% endblock content %}
+{% block body %}
+<div class="container p-2 text-center justify-content-center">
+    <h1 class="mb-3 mt-5 font-banner">Sign Up Closed</h1>
+    <p class="lead font-main">
+        We are sorry, but the sign up is currently closed.
+    </p>
+</div>
+{% endblock body %}

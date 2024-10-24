@@ -3,18 +3,18 @@
 {% load allauth %}
 
 {% block head_title %}
-    {% trans "Verify Your Email Address" %}
+{% trans "Verify Your Email Address" %}
 {% endblock head_title %}
 
 {% block body %}
 <div class="container p-2 text-center justify-content-center">
-    {% element h1 %}
-        {% trans "Verify Your Email Address" %}
-    {% endelement %}
+    <h1 class="mb-3 mt-5 font-banner">{% trans "Verify Your Email Address" %}</h1>
 
-    {% element p %}
-        {% blocktrans %}We have sent an email to you for verification. Follow the link provided to finalize the signup process. If you do not see the verification email in your main inbox, check your spam folder. Please contact us if you do not receive the verification email within a few minutes.{% endblocktrans %}
-    {% endelement %}
+    <p class="lead font-main">
+        We have sent an email to you for verification. Follow the link provided to finalize the signup
+        process. If you do not see the verification email in your main inbox, check your spam folder. Please contact us if
+        you do not receive the verification email within a few minutes.
+    </p>
 
     <a href="{% url 'account_email' %}" class="btn btn-outline-custom font-cta mt-3">
         {% trans "Re-send Verification Email" %}

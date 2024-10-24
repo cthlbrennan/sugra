@@ -1,20 +1,33 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var heroCarousel = new bootstrap.Carousel(document.getElementById('heroCarousel'), {
         interval: 5000,  // Change slide every 5 seconds
         direction: 'left'  // Animate from right to left
     });
 });
 
-// Add this to the end of your existing script.js file
-
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const messagesContainer = document.getElementById('messages-container');
     if (messagesContainer) {
-        setTimeout(function() {
+        setTimeout(function () {
             messagesContainer.style.opacity = '0';
-            setTimeout(function() {
+            setTimeout(function () {
                 messagesContainer.style.display = 'none';
             }, 1000);
         }, 5000);
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    var usernameField = document.getElementById('id_username');
+    if (usernameField) {
+        usernameField.placeholder = 'Username';
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    var emailField = document.getElementById('{{ form.email.id_for_label }}');
+    if (emailField) {
+        emailField.classList.add('form-control');
+        emailField.placeholder = 'Enter your email';
     }
 });
