@@ -38,7 +38,8 @@ class CustomLoginView(LoginView):
         return super().form_invalid(form)
 
 def index(request):
-    return render(request, 'index.html')
+    games = Game.objects.filter(is_published=True)
+    return render(request, 'index.html', {'games': games})
 
 def about(request):
     return render(request, 'about.html')
