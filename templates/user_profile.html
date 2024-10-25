@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Profile{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="font-banner mb-4">Your Profile</h1>
+
+    <!-- Current Profile Section -->
+    <div class="row mb-5">
+        <div class="col-md-4">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3">
+            {% else %}
+                <img src="{% static 'images/default-profile-photo.png' %}" alt="Default Profile Picture" class="img-fluid rounded-circle mb-3">
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <h2 class="font-headers">{{ user.username }}</h2>
+            <p class="font-main"><strong>Email:</strong> {{ user.email }}</p>
+            <p class="font-main"><strong>User Type:</strong> {{ user.get_user_type_display }}</p>
+            <p class="font-main"><strong>Joined:</strong> {{ user.account_created|date:"F d, Y" }}</p>
+            <p class="font-main"><strong>Bio:</strong> {{ user.bio|default:"No bio provided." }}</p>
+        </div>
+    </div>
+
+    <!-- Edit Profile Picture Section -->
+    <h2 class="font-headers mb-4">Update Profile Picture</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ picture_form.as_p }}
+        <button type="submit" name="update_picture" class="btn btn-outline-custom font-cta mt-2">Update Picture</button>
+    </form>
+
+    <h2 class="font-headers mb-4 mt-5">Update Bio</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ bio_form.as_p }}
+        <button type="submit" name="update_bio" class="btn btn-outline-custom font-cta">Update Bio</button>
+    </form>
+</div>
+{% endblock %}

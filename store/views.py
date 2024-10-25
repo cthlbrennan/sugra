@@ -1,3 +1,5 @@
+import os
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, update_session_auth_hash
 from django.contrib import messages
@@ -6,7 +8,8 @@ from allauth.account.views import SignupView, LoginView
 from django.http import JsonResponse
 from django.urls import reverse
 from django.db.models import Q
-from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm
+from django.core.files.base import ContentFile
+from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm, UserProfilePictureForm, UserBioForm
 from .decorators import gamer_required, developer_required
 from .models import InboxMessage, Game, Message, User
 
@@ -124,6 +127,12 @@ class CustomSignupView(SignupView):
 
     def form_valid(self, form):
         response = super(CustomSignupView, self).form_valid(form)
+        user = self.user
+        if not user.profile_picture:
+            default_image_path = os.path.join(settings.STATIC_ROOT, 'images', 'default-profile-photo.png')
+            with open(default_image_path, 'rb') as f:
+                django_file = ContentFile(f.read())
+                user.profile_picture.save('default-profile-photo.png', django_file, save=True)
         messages.success(self.request, "Signup successful! Welcome to our site.")
         return response
 
@@ -206,3 +215,27 @@ def filter_games(request):
     } for game in games]
     
     return JsonResponse(games_data, safe=False)
+
+@login_required
+def user_profile(request):
+    bio_form = UserBioForm(instance=request.user)
+    picture_form = UserProfilePictureForm(instance=request.user)
+
+    if request.method == 'POST':
+        if 'update_bio' in request.POST:
+            bio_form = UserBioForm(request.POST, instance=request.user)
+            if bio_form.is_valid():
+                bio_form.save()
+                messages.success(request, 'Your bio has been updated.')
+        elif 'update_picture' in request.POST:
+            picture_form = UserProfilePictureForm(request.POST, request.FILES, instance=request.user)
+            if picture_form.is_valid():
+                picture_form.save()
+                messages.success(request, 'Your profile picture has been updated.')
+
+    context = {
+        'bio_form': bio_form,
+        'picture_form': picture_form,
+        'user': request.user
+    }
+    return render(request, 'user_profile.html', context)

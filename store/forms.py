@@ -2,6 +2,7 @@ from django import forms
 from allauth.account.forms import SignupForm
 from django.contrib.auth.forms import SetPasswordForm
 from django.core.exceptions import ValidationError
+from cloudinary.forms import CloudinaryFileField
 from .models import User, Game
 
 class CustomSignupForm(SignupForm):
@@ -63,3 +64,26 @@ class GameForm(forms.ModelForm):
         if price is not None and price < 0:
             raise forms.ValidationError("Price must be 0 or greater.")
         return price
+
+class UserBioForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['bio']
+        widgets = {
+            'bio': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
+        }
+
+class UserProfilePictureForm(forms.ModelForm):
+    profile_picture = CloudinaryFileField(
+        options = {
+            'crop': 'thumb',
+            'width': 200,
+            'height': 200,
+            'folder': 'profile_pictures'
+        },
+        required=False
+    )
+
+    class Meta:
+        model = User
+        fields = ['profile_picture']
