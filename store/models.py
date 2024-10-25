@@ -1,6 +1,14 @@
+import io
+import os
+from PIL import Image, ImageDraw, ImageFont
+from django.core.files.base import ContentFile
+from django.utils import timezone
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
+from cloudinary.uploader import upload
+
 
 
 class User(AbstractUser):
@@ -56,9 +64,56 @@ class Game(models.Model):
     developer = models.ForeignKey(User, on_delete=models.CASCADE)
     is_published = models.BooleanField(default=False)
     thumbnail = CloudinaryField('thumbnail', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)  
 
     def __str__(self):
         return f"Game: {self.title}"
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def get_thumbnail(self):
+        if self.thumbnail:
+            return self.thumbnail.url
+        else:
+            return self.generate_default_thumbnail()
+
+    def generate_default_thumbnail(self):
+        # Create a bright yellow image
+        img = Image.new('RGB', (400, 400), color='#FFC246')  # Bright yellow color
+        d = ImageDraw.Draw(img)
+        
+        # Use Oxanium font with a larger size
+        font_size = 40
+        font_path = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Oxanium-Bold.ttf')
+        try:
+            font = ImageFont.truetype(font_path, font_size)
+        except IOError:
+            # Fallback to default font if Oxanium is not available
+            font = ImageFont.load_default().font_variant(size=font_size)
+        
+        # Draw the text
+        text = self.title
+        left, top, right, bottom = d.textbbox((0, 0), text, font=font)
+        text_width = right - left
+        text_height = bottom - top
+        x = (400 - text_width) / 2
+        y = (400 - text_height) / 2
+        d.text((x, y), text, font=font, fill='#993333')  # Dark accent color
+        
+        # Save the image to a bytes buffer
+        buffer = io.BytesIO()
+        img.save(buffer, format='PNG')
+        buffer.seek(0)
+        
+        # Upload the image to Cloudinary
+        result = upload(buffer, folder="game_thumbnails", public_id=f"{self.title}_default")
+        
+        # Save the Cloudinary URL to the thumbnail field
+        self.thumbnail = result['url']
+        self.save()
+        
+        return self.thumbnail
 
 class Wishlist(models.Model):
     wishlist_id = models.AutoField(primary_key=True)

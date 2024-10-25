@@ -49,7 +49,7 @@ Sugra Games
             {% for game in games %}
             <div class="col">
                 <div class="card h-100">
-                    <img src="{{ game.thumbnail.url }}" class="card-img-top" alt="Game Image">
+                    <img src="{{ game.get_thumbnail }}" class="card-img-top" alt="Game Image">
                     <div class="card-body font-main">
                         <h5 class="card-title font-headers">{{ game.title }}</h5>
                         <p class="card-text">
@@ -64,4 +64,5 @@ Sugra Games
             {% endfor %}
         </div>
     </div>
+</div>
 {% endblock %}
