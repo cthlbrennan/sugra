@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.urls import reverse  
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm
 from .decorators import gamer_required, developer_required
-from .models import InboxMessage, Game
+from .models import InboxMessage, Game, Message
 
 
 # Create your views here.
@@ -167,3 +167,16 @@ def filter_games(request):
     } for game in games]
     
     return JsonResponse(games_data, safe=False)
+
+@login_required
+def contact(request):
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            Message.objects.create(user=request.user, content=content)
+            messages.success(request, "Your message has been sent.")
+            if request.user.user_type == 'gamer':
+                return redirect('gamer_dashboard')
+            elif request.user.user_type == 'developer':
+                return redirect('developer_dashboard')
+    return render(request, 'contact.html')

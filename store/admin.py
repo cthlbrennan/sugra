@@ -68,6 +68,17 @@ class GameAdmin(admin.ModelAdmin):
         extra_context['games_to_review'] = games_to_review
         return super().index(request, extra_context=extra_context)
 
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('user', 'content', 'timestamp', 'read')
+    list_filter = ('read', 'timestamp')
+    search_fields = ('user__username', 'content')
+    actions = ['mark_as_read']
+
+    def mark_as_read(self, request, queryset):
+        queryset.update(read=True)
+    mark_as_read.short_description = "Mark selected messages as read"
+
 # Register other models
 admin.site.register(User)
 admin.site.register(Wishlist)
@@ -75,5 +86,4 @@ admin.site.register(Order)
 admin.site.register(OrderLine)
 admin.site.register(Review)
 admin.site.register(Screenshot)
-admin.site.register(Message)
 admin.site.register(InboxMessage)

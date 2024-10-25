@@ -18,5 +18,5 @@ urlpatterns = [
     path('developer/inbox/delete/<int:message_id>/', views.delete_inbox_message, name='delete_inbox_message'),
     path('game/<int:game_id>/', views.game_detail, name='game_detail'),
     path('filter-games/', views.filter_games, name='filter_games'),
-
+    path('contact/', views.contact, name='contact'),
 ]

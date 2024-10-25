@@ -165,7 +165,7 @@ class Screenshot(models.Model):
 
 class Message(models.Model):
     message_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     content = models.TextField(max_length=3000)
     timestamp = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)

@@ -47,6 +47,9 @@
                      {% endif %}
                   </li>
                   <li class="nav-item">
+                     <a class="nav-link" href="{% url 'contact' %}" style="color: var(--off-white-color);">Contact</a>
+                 </li>
+                  <li class="nav-item">
                      <a class="nav-link {% if request.path == logout_url %}active{% endif %}" aria-current="page"
                         href="{% url 'account_logout' %}" style="color: var(--off-white-color);">Logout</a>
                   </li>
