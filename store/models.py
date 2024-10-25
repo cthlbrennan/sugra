@@ -63,7 +63,7 @@ class Game(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     developer = models.ForeignKey(User, on_delete=models.CASCADE)
     is_published = models.BooleanField(default=False)
-    thumbnail = CloudinaryField('thumbnail', blank=True, null=True)
+    thumbnail = CloudinaryField('thumbnail', blank=True, null=True, help_text="Recommended image ratio: 7:5")
     created_at = models.DateTimeField(default=timezone.now)  
 
     def __str__(self):
@@ -79,8 +79,9 @@ class Game(models.Model):
             return self.generate_default_thumbnail()
 
     def generate_default_thumbnail(self):
-        # Create a bright yellow image
-        img = Image.new('RGB', (400, 400), color='#FFC246')  # Bright yellow color
+        # Create a square bright yellow image
+        img_size = (400, 400)
+        img = Image.new('RGB', img_size, color='#FFC246')  # Bright yellow color
         d = ImageDraw.Draw(img)
         
         # Use Oxanium font with a larger size
@@ -89,7 +90,6 @@ class Game(models.Model):
         try:
             font = ImageFont.truetype(font_path, font_size)
         except IOError:
-            # Fallback to default font if Oxanium is not available
             font = ImageFont.load_default().font_variant(size=font_size)
         
         # Draw the text
@@ -97,8 +97,8 @@ class Game(models.Model):
         left, top, right, bottom = d.textbbox((0, 0), text, font=font)
         text_width = right - left
         text_height = bottom - top
-        x = (400 - text_width) / 2
-        y = (400 - text_height) / 2
+        x = (img_size[0] - text_width) / 2
+        y = (img_size[1] - text_height) / 2
         d.text((x, y), text, font=font, fill='#993333')  # Dark accent color
         
         # Save the image to a bytes buffer

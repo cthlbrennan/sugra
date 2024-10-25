@@ -48,14 +48,16 @@ Sugra Games
         <div class="row row-cols-1 row-cols-md-3 g-4 mx-sm-0 mx-3">
             {% for game in games %}
             <div class="col">
-                <div class="card h-100">
-                    <img src="{{ game.get_thumbnail }}" class="card-img-top" alt="Game Image">
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="{{ game.get_thumbnail }}" class="card-img-top" alt="Game Image">
+                    </div>
                     <div class="card-body font-main">
                         <h5 class="card-title font-headers">{{ game.title }}</h5>
-                        <p class="card-text">
-                            <small class="text-muted">{{ game.genre }}</small><br>
-                            {{ game.description|truncatechars:50 }}
-                        </p>
+                        <div class="card-text">
+                            <small class="text-muted">{{ game.genre }}</small>
+                            <div class="card-description">{{ game.description|truncatechars:100 }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
