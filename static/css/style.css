@@ -149,7 +149,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card-body {
-    height: 150px;
+    height: 200px;
     display: flex;
     flex-direction: column;
 }
@@ -169,4 +169,21 @@ h1, h2, h3, h4, h5, h6 {
 .card-text small {
     display: block;
     margin-bottom: 0.25em;
+}
+
+.game-title-link {
+    color: var(--dark-accent-color);
+    font-size: 1.2rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+    display: inline-block;
+}
+
+.game-title-link:hover, .game-title-link:focus {
+    color: var(--bright-yellow-color);
+    transform: translateY(-2px);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-title {
+    margin-bottom: 0.5rem;
 }

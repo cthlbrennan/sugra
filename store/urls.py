@@ -17,5 +17,6 @@ urlpatterns = [
     path('developer/inbox/', views.developer_inbox, name='developer_inbox'),
     path('developer/inbox/delete/<int:message_id>/', views.delete_inbox_message, name='delete_inbox_message'),
     path('game/<int:game_id>/', views.game_detail, name='game_detail'),
+    path('filter-games/', views.filter_games, name='filter_games'),
 
 ]

@@ -3,9 +3,10 @@ from django.contrib.auth import login as auth_login, update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from allauth.account.views import SignupView, LoginView
+from django.http import JsonResponse
+from django.urls import reverse  
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm
 from .decorators import gamer_required, developer_required
-from django.urls import reverse  
 from .models import InboxMessage, Game
 
 
@@ -148,3 +149,21 @@ def publish_game(request):
     else:
         form = GameForm()
     return render(request, 'publish_game.html', {'form': form})
+
+def filter_games(request):
+    filter_type = request.GET.get('filter')
+    if filter_type == 'price':
+        games = Game.objects.filter(is_published=True).order_by('price')
+    else:
+        games = Game.objects.filter(is_published=True)
+    
+    games_data = [{
+        'game_id': game.game_id,
+        'title': game.title,
+        'description': game.description,
+        'genre': game.get_genre_display(),
+        'price': float(game.price),
+        'thumbnail': game.get_thumbnail()
+    } for game in games]
+    
+    return JsonResponse(games_data, safe=False)

@@ -56,3 +56,41 @@ document.addEventListener('DOMContentLoaded', function () {
         formToSubmit.submit();
     });
 });
+
+document.getElementById('filterByPrice').addEventListener('click', function() {
+    fetch('{% url "filter_games" %}?filter=price')
+        .then(response => response.json())
+        .then(games => {
+            const container = document.getElementById('gameCardContainer');
+            container.innerHTML = '';
+            games.forEach(game => {
+                container.innerHTML += `
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-img-container">
+                                <img src="${game.thumbnail}" class="card-img-top" alt="${game.title}">
+                            </div>
+                            <div class="card-body font-main">
+                                <h5 class="card-title font-banner">
+                                    <a href="/game/${game.game_id}" class="text-decoration-none game-title-link">${game.title}</a>
+                                </h5>
+                                <p class="game-price font-cta">${game.price.toFixed(2)} €</p>
+                                <div class="card-text">
+                                    <small class="text-muted">${game.genre}</small>
+                                    <p class="mt-2 mb-0">${game.description.substring(0, 100)}...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+});
+
+document.getElementById('filterByPrice').addEventListener('click', function() {
+    fetch('{% url "filter_games" %}?filter=price')
+        .then(response => response.json())
+        .then(games => {
+            // ... rest of your JavaScript code ...
+        });
+});
