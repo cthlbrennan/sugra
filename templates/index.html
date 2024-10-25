@@ -37,7 +37,8 @@ Sugra Games
         <div class="row">
             <div class="col-12">
                 <div class="d-flex flex-wrap justify-content-center gap-2">
-                    <button type="button" id="filterByRecent" class="btn btn-outline-custom font-cta">Most Recently Added</button>
+                    <button type="button" id="filterByRecent" class="btn btn-outline-custom font-cta">Most Recently
+                        Added</button>
                     <button type="button" id="filterByPrice" class="btn btn-outline-custom font-cta">Filter by
                         Price</button>
                     <button type="button" class="btn btn-outline-custom font-cta">Filter by Customer Ratings</button>
@@ -86,6 +87,44 @@ Sugra Games
             </div>
             {% endfor %}
         </div>
+        {% if games.has_other_pages %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if games.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ games.previous_page_number }}">&laquo; Previous</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo; Previous</span>
+                </li>
+                {% endif %}
+
+                {% for i in games.paginator.page_range %}
+                {% if games.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if games.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ games.next_page_number }}">Next &raquo;</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next &raquo;</span>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
         {% else %}
         <div class="row justify-content-center align-items-center" style="height: 50vh;">
             <div class="col-12 text-center">

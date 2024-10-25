@@ -1,4 +1,5 @@
 import os
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, update_session_auth_hash
@@ -43,7 +44,19 @@ class CustomLoginView(LoginView):
         return super().form_invalid(form)
 
 def index(request):
-    games = Game.objects.filter(is_published=True)
+    games_list = Game.objects.filter(is_published=True).order_by('-created_at')
+    paginator = Paginator(games_list, 6)  # Show 6 games per page
+
+    page = request.GET.get('page')
+    try:
+        games = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        games = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        games = paginator.page(paginator.num_pages)
+
     return render(request, 'index.html', {'games': games})
 
 def about(request):

@@ -187,3 +187,21 @@ h1, h2, h3, h4, h5, h6 {
 .card-title {
     margin-bottom: 0.5rem;
 }
+
+.pagination .page-link {
+    color: var(--main-color);
+    background-color: var(--off-white-color);
+    border-color: var(--main-color);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--main-color);
+    border-color: var(--main-color);
+    color: var(--off-white-color);
+}
+
+.pagination .page-link:hover {
+    color: var(--off-white-color);
+    background-color: var(--main-color);
+    border-color: var(--main-color);
+}
