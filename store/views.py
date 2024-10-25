@@ -4,7 +4,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from allauth.account.views import SignupView, LoginView
 from django.http import JsonResponse
-from django.urls import reverse  
+from django.urls import reverse
+from django.db.models import Q
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm
 from .decorators import gamer_required, developer_required
 from .models import InboxMessage, Game, Message, User
@@ -150,24 +151,6 @@ def publish_game(request):
         form = GameForm()
     return render(request, 'publish_game.html', {'form': form})
 
-def filter_games(request):
-    filter_type = request.GET.get('filter')
-    if filter_type == 'price':
-        games = Game.objects.filter(is_published=True).order_by('price')
-    else:
-        games = Game.objects.filter(is_published=True)
-    
-    games_data = [{
-        'game_id': game.game_id,
-        'title': game.title,
-        'description': game.description,
-        'genre': game.get_genre_display(),
-        'price': float(game.price),
-        'thumbnail': game.get_thumbnail()
-    } for game in games]
-    
-    return JsonResponse(games_data, safe=False)
-
 @login_required
 def contact(request):
     if request.method == 'POST':
@@ -189,3 +172,37 @@ def developer_profile(request, username):
         'games': games,
     }
     return render(request, 'developer_profile.html', context)
+
+def search_games(request):
+    query = request.GET.get('query', '')
+    games = Game.objects.filter(
+        Q(title__icontains=query) | 
+        Q(description__icontains=query) |
+        Q(genre__icontains=query)
+    ).filter(is_published=True)
+    
+    context = {
+        'games': games,
+        'search_query': query
+    }
+    return render(request, 'index.html', context)
+
+def filter_games(request):
+    filter_type = request.GET.get('filter')
+    if filter_type == 'price':
+        games = Game.objects.filter(is_published=True).order_by('price')
+    elif filter_type == 'recent':
+        games = Game.objects.filter(is_published=True).order_by('-created_at')
+    else:
+        games = Game.objects.filter(is_published=True)
+    
+    games_data = [{
+        'game_id': game.game_id,
+        'title': game.title,
+        'description': game.description,
+        'genre': game.get_genre_display(),
+        'price': float(game.price),
+        'thumbnail': game.get_thumbnail()
+    } for game in games]
+    
+    return JsonResponse(games_data, safe=False)

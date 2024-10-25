@@ -20,4 +20,6 @@ urlpatterns = [
     path('filter-games/', views.filter_games, name='filter_games'),
     path('contact/', views.contact, name='contact'),
     path('developer/<str:username>/', views.developer_profile, name='developer_profile'),
+    path('search/', views.search_games, name='search_games'),
+
 ]

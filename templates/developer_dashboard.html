@@ -76,8 +76,7 @@ Developer Dashboard
                     <td>{{ game.genre }}</td>
                     <td>{{ game.price }}</td>
                     <td><a href="{{ game.file_url }}" class="btn btn-sm btn-outline-custom font-cta">Download</a></td>
-                    <td><a href="{{ game.store_page_url }}" class="btn btn-sm btn-outline-custom font-cta">View</a></td>
-                </tr>
+                    <td><a href="{% url 'game_detail' game.game_id %}" class="btn btn-sm btn-outline-custom font-cta">View</a></td>                </tr>
                 {% empty %}
                 <tr>
                     <td colspan="6" class="text-center">No published games.</td>
