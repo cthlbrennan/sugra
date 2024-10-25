@@ -19,8 +19,14 @@ Developer Dashboard
         <div class="col-md-4">
             <div class="card bg-light-accent">
                 <div class="card-body">
-                    <h5 class="card-title font-headers text-dark-accent">Published Games</h5>
-                    <p class="card-text font-main display-4">{{ published_games_count }}</p>
+                    <h5 class="card-title font-player2 text-main-bg">Published Games</h5>
+                    <p class="card-text font-player2 display-4 text-dark-accent">
+                        {% if published_games.count %}
+                        {{ published_games.count }}
+                        {% else %}
+                        None yet
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>
@@ -58,7 +64,7 @@ Developer Dashboard
             <tbody>
                 {% for game in published_games %}
                 <tr>
-                    <td><a class="btn btn-sm btn-outline-custom font-cta" href="{% url 'game_detail' game.game_id %}">{{ game.title }}</a></td>
+                    <td><a class="btn btn-sm btn-outline-custom font-cta" href="{% url 'game_detail' game.game_id %}">{{game.title }}</a></td>
                     <td>{{ game.description }}</td>
                     <td>{{ game.genre }}</td>
                     <td>{{ game.price }}</td>

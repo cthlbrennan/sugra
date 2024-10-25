@@ -78,6 +78,9 @@ class Game(models.Model):
         else:
             return self.generate_default_thumbnail()
 
+    def get_developer_name(self):
+        return self.developer.username
+
     def generate_default_thumbnail(self):
         # Create a square bright yellow image
         img_size = (400, 400)
