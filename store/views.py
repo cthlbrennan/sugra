@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.urls import reverse  
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm
 from .decorators import gamer_required, developer_required
-from .models import InboxMessage, Game, Message
+from .models import InboxMessage, Game, Message, User
 
 
 # Create your views here.
@@ -180,3 +180,12 @@ def contact(request):
             elif request.user.user_type == 'developer':
                 return redirect('developer_dashboard')
     return render(request, 'contact.html')
+
+def developer_profile(request, username):
+    developer = get_object_or_404(User, username=username, user_type='developer')
+    games = Game.objects.filter(developer=developer, is_published=True)
+    context = {
+        'developer': developer,
+        'games': games,
+    }
+    return render(request, 'developer_profile.html', context)

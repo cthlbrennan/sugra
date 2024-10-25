@@ -19,4 +19,5 @@ urlpatterns = [
     path('game/<int:game_id>/', views.game_detail, name='game_detail'),
     path('filter-games/', views.filter_games, name='filter_games'),
     path('contact/', views.contact, name='contact'),
+    path('developer/<str:username>/', views.developer_profile, name='developer_profile'),
 ]
