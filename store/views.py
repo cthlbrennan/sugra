@@ -211,7 +211,20 @@ def contact(request):
 
 def developer_profile(request, username):
     developer = get_object_or_404(User, username=username, user_type='developer')
-    games = Game.objects.filter(developer=developer, is_published=True)
+    games_list = Game.objects.filter(developer=developer, is_published=True)
+    
+    paginator = Paginator(games_list, 6)  # Show 6 games per page
+    page = request.GET.get('page')
+    
+    try:
+        games = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        games = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results.
+        games = paginator.page(paginator.num_pages)
+    
     context = {
         'developer': developer,
         'games': games,
