@@ -10,8 +10,15 @@ class CustomSignupForm(SignupForm):
         ('gamer', 'Gamer'),
         ('developer', 'Developer'),
     ]
-    user_type = forms.ChoiceField(choices=USER_TYPE_CHOICES)
-    username = forms.CharField(max_length=30, label='Username')
+    user_type = forms.ChoiceField(
+        choices=USER_TYPE_CHOICES,
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
+    )
+    username = forms.CharField(
+        max_length=30,
+        label='Username',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -24,18 +31,46 @@ class CustomSignupForm(SignupForm):
         user.user_type = self.cleaned_data['user_type']
         user.save()
         return user
-    
+
 class UserTypeAndPasswordForm(SetPasswordForm):
     USER_TYPE_CHOICES = [
         ('gamer', 'Gamer'),
         ('developer', 'Developer'),
     ]
-    user_type = forms.ChoiceField(choices=USER_TYPE_CHOICES, widget=forms.RadioSelect)
-    username = forms.CharField(max_length=150)
+    user_type = forms.ChoiceField(
+        choices=USER_TYPE_CHOICES,
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
+    )
+    username = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    bio = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 4,
+            'placeholder': 'Tell us about yourself...'
+        })
+    )
+    profile_picture = CloudinaryFileField(
+        options={
+            'crop': 'thumb',
+            'width': 200,
+            'height': 200,
+            'folder': 'profile_pictures'
+        },
+        required=False
+    )
 
     class Meta:
         model = User
-        fields = ['username', 'user_type', 'new_password1', 'new_password2']
+        fields = ['username', 'user_type', 'bio', 'profile_picture', 'new_password1', 'new_password2']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['new_password1'].widget.attrs.update({'class': 'form-control'})
+        self.fields['new_password2'].widget.attrs.update({'class': 'form-control'})
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -47,6 +82,18 @@ class UserTypeAndPasswordForm(SetPasswordForm):
         user = super().save(commit=False)
         user.username = self.cleaned_data['username']
         user.user_type = self.cleaned_data['user_type']
+        user.bio = self.cleaned_data.get('bio', '')
+        
+        # Handle profile picture upload
+        profile_picture = self.cleaned_data.get('profile_picture')
+        if profile_picture:
+            # Ensure we're getting the actual file from Cloudinary
+            if hasattr(profile_picture, 'url'):
+                user.profile_picture = profile_picture
+            # If it's a direct file upload
+            else:
+                user.profile_picture = profile_picture
+        
         if commit:
             user.save()
         return user
@@ -72,7 +119,11 @@ class GameForm(forms.ModelForm):
         model = Game
         fields = ['title', 'description', 'genre', 'price', 'thumbnail']
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'genre': forms.Select(attrs={'class': 'form-control'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'thumbnail': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
     def clean_price(self):
@@ -86,12 +137,16 @@ class UserBioForm(forms.ModelForm):
         model = User
         fields = ['bio']
         widgets = {
-            'bio': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
+            'bio': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Tell us about yourself...'
+            }),
         }
 
 class UserProfilePictureForm(forms.ModelForm):
     profile_picture = CloudinaryFileField(
-        options = {
+        options={
             'crop': 'thumb',
             'width': 200,
             'height': 200,

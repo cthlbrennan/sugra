@@ -73,7 +73,7 @@ def set_user_type(request):
         return redirect('gamer_dashboard' if user.user_type == 'gamer' else 'developer_dashboard')
     
     if request.method == 'POST':
-        form = UserTypeAndPasswordForm(user, request.POST)
+        form = UserTypeAndPasswordForm(user, request.POST, request.FILES)  # Added request.FILES here
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)

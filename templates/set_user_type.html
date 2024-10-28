@@ -1,29 +1,79 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block content %}
-<h2>{% trans "Set Your Account Details" %}</h2>
-<form method="post">
-    {% csrf_token %}
-    <h3>{% trans "Choose Your Username" %}</h3>
-    {{ form.username.label_tag }}
-    {{ form.username }}
-    {{ form.username.errors }}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="font-banner text-center mb-4">{% trans "Set Up Your Account" %}</h1>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card bg-light-accent p-4">
+                <form method="post" enctype="multipart/form-data" class="font-main">
+                    {% csrf_token %}
+                    
+                    <!-- Username Section -->
+                    <div class="mb-5">  <!-- Increased bottom margin -->
+                        <h3 class="font-headers">{% trans "Choose Your Username" %}</h3>
+                        {{ form.username.label_tag }}
+                        {{ form.username }}
+                        {{ form.username.errors }}
+                    </div>
 
-    <h3>{% trans "Choose Your User Type" %}</h3>
-    {{ form.user_type }}
-    {{ form.user_type.errors }}
-    
-    <h3>{% trans "Set Your Password" %}</h3>
-    <p>{% trans "This password will allow you to log in directly, in addition to using your social account." %}</p>
-    {{ form.new_password1.label_tag }}
-    {{ form.new_password1 }}
-    {{ form.new_password1.errors }}
-    
-    {{ form.new_password2.label_tag }}
-    {{ form.new_password2 }}
-    {{ form.new_password2.errors }}
-    
-    <button type="submit">{% trans "Save" %}</button>
-</form>
+                    <!-- User Type Section -->
+                    <div class="mb-5">
+                        <h3 class="font-headers">{% trans "Choose Your User Type" %}</h3>
+                        <div class="radio-inline">
+                            {% for radio in form.user_type %}
+                                <div>
+                                    {{ radio.tag }}
+                                    <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {{ form.user_type.errors }}
+                    </div>
+                    <!-- Profile Picture Section -->
+
+                    <div class="mb-5">  <!-- Increased bottom margin -->
+                        <h3 class="font-headers">{% trans "Add a Profile Picture" %}</h3>
+                        {{ form.profile_picture }}
+                        {{ form.profile_picture.errors }}
+                        <small class="text-muted d-block mt-2">Optional: Upload a profile picture to personalize your account</small>
+                    </div>
+
+                    <!-- Bio Section -->
+                    <div class="mb-5">  <!-- Increased bottom margin -->
+                        <h3 class="font-headers">{% trans "Tell Us About Yourself" %}</h3>
+                        {{ form.bio }}
+                        {{ form.bio.errors }}
+                        <small class="text-muted d-block mt-2">Optional: Share a brief bio (max 500 characters)</small>
+                    </div>
+                    
+                    <!-- Password Section -->
+                    <div class="mb-5">  <!-- Increased bottom margin -->
+                        <h3 class="font-headers">{% trans "Set Your Password" %}</h3>
+                        <p class="text-muted">{% trans "This password will allow you to log in directly, in addition to using your social account." %}</p>
+                        
+                        <div class="mb-4">
+                            {{ form.new_password1.label_tag }}
+                            {{ form.new_password1 }}
+                            {{ form.new_password1.errors }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form.new_password2.label_tag }}
+                            {{ form.new_password2 }}
+                            {{ form.new_password2.errors }}
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-outline-custom font-cta"
+                            style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
+                        {% trans "Complete Setup" %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

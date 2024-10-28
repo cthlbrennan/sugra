@@ -287,6 +287,18 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--off-white-color);
 }
 
+.radio-inline {
+    display: flex;
+    gap: 2rem;
+    margin: 1rem 0;
+}
+
+.radio-inline div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 @media (max-width: 450px) {
     .toast-overlay {
         display: none;
