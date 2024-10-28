@@ -6,7 +6,7 @@
 {% block body %}
 <div class="container mt-4">
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4 text-md-start text-center">
             <img src="{{ developer.profile_picture.url }}" alt="{{ developer.username }}'s profile picture" class="img-fluid rounded-circle mb-3">
             <h1 class="font-banner">{{ developer.username }}</h1>
             <p class="font-main"><strong>Joined:</strong> {{ developer.account_created|date:"d/m/Y" }}</p>
@@ -30,6 +30,44 @@
                 <p class="font-main">No published games yet.</p>
                 {% endfor %}
             </div>
+
+            {% if games.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if games.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ games.previous_page_number }}">&laquo; Previous</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo; Previous</span>
+                    </li>
+                    {% endif %}
+
+                    {% for i in games.paginator.page_range %}
+                    {% if games.number == i %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if games.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ games.next_page_number }}">Next &raquo;</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Next &raquo;</span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
         </div>
     </div>
 </div>

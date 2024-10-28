@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-<div class="container mt-4">
+<div class="container mt-4 mb-3">
     <div class="position-relative text-center">
         <div class="thumbnail-container mx-auto"
             style="max-width: 600px; max-height: 600px; overflow: hidden; border: 2px solid var(--main-bg-color);">
@@ -39,7 +39,7 @@
 
 
     <!-- Game Details -->
-    <h1 class="font-banner mb-4 text-center" style="color: var(--bright-yellow-color);">{{ game.title }}</h1>
+    <h1 class="font-banner mb-4 mt-3 text-center" style="color: var(--bright-yellow-color);">{{ game.title }}</h1>
     <div class="text-center">
         <p class="font-main"><strong>Description:</strong> {{ game.description }}</p>
         <p class="font-main"><strong>Genre:</strong> {{ game.genre }}</p>
@@ -52,43 +52,44 @@
 
     <div class="container text-center">
         <h2 class="mt-4 mb-3 font-headers">Screenshots</h2>
-        {% if game.screenshots.all %}
-            <div class="row">
-                {% for screenshot in game.screenshots.all %}
-                    <div class="col-md-4 mb-3">
-                        <img src="{{ screenshot.image.url }}" alt="Screenshot {{ forloop.counter }}" class="img-fluid rounded">
-                    </div>
-                {% endfor %}
+        {% if game.screenshot_set.all %}
+        <div class="row">
+            {% for screenshot in game.screenshot_set.all %}
+            <div class="col-md-4 mb-3">
+                <img src="{{ screenshot.image.url }}" alt="{{ screenshot.alt_text }}" class="img-fluid rounded">
             </div>
+            {% endfor %}
+        </div>
         {% else %}
-            <p>No screenshots available.</p>
+        <p>No screenshots available.</p>
         {% endif %}
-    
+
         <h2 class="mt-4 mb-3 font-headers">Reviews</h2>
         {% if game.reviews.all %}
-            {% for review in game.reviews.all %}
-                <!-- Existing review display code -->
-            {% endfor %}
+        {% for review in game.reviews.all %}
+        <!-- Existing review display code -->
+        {% endfor %}
         {% else %}
-            <p>No reviews yet.</p>
+        <p>No reviews yet.</p>
         {% endif %}
-    
+
         <a href="#" class="btn btn-outline-custom font-cta mb-4"
-           style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
-           Post a Review
+            style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
+            Post a Review
         </a>
-    
+
         <h2 class="mt-4 mb-3 font-headers">You might also like...</h2>
         {% if related_games %}
-            <div class="row">
-                {% for related_game in related_games %}
-                    <div class="col-md-4 mb-3">
-                        <!-- Existing related game display code -->
-                    </div>
-                {% endfor %}
+        <div class="row">
+            {% for related_game in related_games %}
+            <div class="col-md-4 mb-3">
+                <!-- Existing related game display code -->
             </div>
+            {% endfor %}
+        </div>
         {% else %}
-            <p>No related games found.</p>
+        <p>No related games found.</p>
         {% endif %}
     </div>
+</div>
 {% endblock %}
