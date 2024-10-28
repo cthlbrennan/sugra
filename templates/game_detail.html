@@ -37,7 +37,6 @@
         </div>
     </div>
 
-
     <!-- Game Details -->
     <h1 class="font-banner mb-4 mt-3 text-center" style="color: var(--bright-yellow-color);">{{ game.title }}</h1>
     <div class="text-center">
@@ -49,23 +48,20 @@
         </p>
     </div>
 
-
     <div class="container text-center">
         <h2 class="mt-4 mb-3 font-headers">Screenshots</h2>
         {% if game.screenshot_set.all %}
         <div class="row">
             {% for screenshot in game.screenshot_set.all %}
             <div class="col-md-4 mb-3">
-                <img src="{{ screenshot.image.url }}" 
-                     alt="{{ screenshot.alt_text }}"
-                     class="img-fluid rounded screenshot-thumbnail">
+                <img src="{{ screenshot.image.url }}" alt="{{ screenshot.alt_text }}"
+                    class="img-fluid rounded screenshot-thumbnail">
             </div>
             {% endfor %}
         </div>
         {% else %}
         <p>No screenshots available.</p>
         {% endif %}
-
 
         <h2 class="mt-4 mb-3 font-headers">Reviews</h2>
         {% if game.reviews.all %}
@@ -83,16 +79,39 @@
 
         <h2 class="mt-4 mb-3 font-headers">You might also like...</h2>
         {% if related_games %}
-        <div class="row">
-            {% for related_game in related_games %}
-            <div class="col-md-4 mb-3">
-                <!-- Existing related game display code -->
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for game in related_games %}
+            <div class="col">
+                <div class="card h-100">
+                    <a href="{% url 'game_detail' game.game_id %}" class="text-decoration-none">
+                        <div class="card-img-container">
+                            <img src="{{ game.get_thumbnail }}" class="card-img-top" alt="{{ game.title }}">
+                        </div>
+                    </a>
+                    <div class="card-body font-main">
+                        <h5 class="card-title font-banner">
+                            <a href="{% url 'game_detail' game.game_id %}"
+                                class="text-decoration-none game-title-link">{{ game.title }}</a>
+                        </h5>
+                        <p class="game-price font-cta">{{ game.price|floatformat:2 }} €</p>
+                        <div class="card-text">
+                            <small class="text-muted">{{ game.genre }}</small>
+                            <p class="mt-2 mb-0">{{ game.description|truncatechars:100 }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
         <p>No related games found.</p>
         {% endif %}
+        <div class="text-end mt-3">
+            <a href="{% url 'index' %}" class="btn btn-outline-custom font-cta"
+                style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
+                See more games
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}

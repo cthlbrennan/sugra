@@ -128,7 +128,18 @@ def delete_inbox_message(request, message_id):
 
 def game_detail(request, game_id):
     game = get_object_or_404(Game, game_id=game_id)
-    return render(request, 'game_detail.html', {'game': game})
+    
+    # Get related games based on genre and developer
+    related_games = Game.objects.filter(
+        Q(genre=game.genre) | Q(developer=game.developer),
+        is_published=True
+    ).exclude(game_id=game_id)[:3]  # Limit to 3 games
+    
+    context = {
+        'game': game,
+        'related_games': related_games,
+    }
+    return render(request, 'game_detail.html', context)
 
 class CustomSignupView(SignupView):
     form_class = CustomSignupForm
