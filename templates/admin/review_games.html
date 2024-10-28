@@ -2,19 +2,17 @@
 {% load i18n admin_urls %}
 
 {% block content %}
-{% if messages %}
-
-{% endif %}
 {% if games %}
 <form method="post">
     {% csrf_token %}
-    <table>
+    <table class="admin-review-table">
         <thead>
             <tr>
                 <th>Title</th>
                 <th>Developer</th>
                 <th>Genre</th>
                 <th>Price</th>
+                <th>Details</th>
                 <th>Reasons for Rejection</th>
                 <th>Actions</th>
             </tr>
@@ -27,11 +25,33 @@
                 <td>{{ game.get_genre_display }}</td>
                 <td>${{ game.price }}</td>
                 <td>
+                    {% if game.thumbnail %}
+                    <img src="{{ game.thumbnail.url }}" alt="Game thumbnail" style="max-width: 200px; margin-bottom: 10px;">
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <strong>Description:</strong><br>
+                        {{ game.description }}
+                    </div>
+
+                    {% if game.screenshot_set.all %}
+                    <div class="mb-3">
+                        <strong>Screenshots:</strong><br>
+                        {% for screenshot in game.screenshot_set.all %}
+                        <img src="{{ screenshot.image.url }}" alt="{{ screenshot.alt_text }}" 
+                             style="max-width: 200px; margin: 5px;">
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </td>
+                <td>
                     <textarea name="criticism_{{ game.game_id }}" rows="3" cols="30"></textarea>
                 </td>
                 <td>
-                    <button type="submit" name="action" value="approve_{{ game.game_id }}">Approve</button>
-                    <button type="submit" name="action" value="reject_{{ game.game_id }}">Reject</button>
+                    <button type="submit" name="action" value="approve_{{ game.game_id }}" 
+                            class="button">Approve</button>
+                    <button type="submit" name="action" value="reject_{{ game.game_id }}" 
+                            class="button">Reject</button>
                 </td>
             </tr>
             {% endfor %}

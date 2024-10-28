@@ -56,13 +56,16 @@
         <div class="row">
             {% for screenshot in game.screenshot_set.all %}
             <div class="col-md-4 mb-3">
-                <img src="{{ screenshot.image.url }}" alt="{{ screenshot.alt_text }}" class="img-fluid rounded">
+                <img src="{{ screenshot.image.url }}" 
+                     alt="{{ screenshot.alt_text }}"
+                     class="img-fluid rounded screenshot-thumbnail">
             </div>
             {% endfor %}
         </div>
         {% else %}
         <p>No screenshots available.</p>
         {% endif %}
+
 
         <h2 class="mt-4 mb-3 font-headers">Reviews</h2>
         {% if game.reviews.all %}

@@ -12,7 +12,7 @@ from django.db.models import Q
 from django.core.files.base import ContentFile
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm, UserProfilePictureForm, UserBioForm
 from .decorators import gamer_required, developer_required
-from .models import InboxMessage, Game, Message, User
+from .models import InboxMessage, Game, Message, User, Screenshot
 
 
 # Create your views here.
@@ -165,8 +165,19 @@ def publish_game(request):
         if form.is_valid():
             game = form.save(commit=False)
             game.developer = request.user
-            game.is_published = False  # Set to False by default
+            game.is_published = False
             game.save()
+
+            # Handle screenshots
+            for i in range(1, 4):
+                screenshot = form.cleaned_data.get(f'screenshot{i}')
+                if screenshot:
+                    Screenshot.objects.create(
+                        game=game,
+                        image=screenshot,
+                        alt_text=f"{game.title} Screenshot {i}"
+                    )
+
             messages.success(request, "Your game has been submitted for review.")
             return redirect('developer_dashboard')
     else:

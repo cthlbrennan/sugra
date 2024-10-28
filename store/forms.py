@@ -52,6 +52,22 @@ class UserTypeAndPasswordForm(SetPasswordForm):
         return user
 
 class GameForm(forms.ModelForm):
+    screenshot1 = CloudinaryFileField(
+        options={'folder': 'game_screenshots'},
+        required=False,
+        help_text="Upload screenshot 1 (JPG or PNG only)"
+    )
+    screenshot2 = CloudinaryFileField(
+        options={'folder': 'game_screenshots'},
+        required=False,
+        help_text="Upload screenshot 2 (JPG or PNG only)"
+    )
+    screenshot3 = CloudinaryFileField(
+        options={'folder': 'game_screenshots'},
+        required=False,
+        help_text="Upload screenshot 3 (JPG or PNG only)"
+    )
+
     class Meta:
         model = Game
         fields = ['title', 'description', 'genre', 'price', 'thumbnail']
