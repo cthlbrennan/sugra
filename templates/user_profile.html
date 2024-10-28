@@ -11,9 +11,10 @@
     <div class="row mb-5">
         <div class="col-md-4">
             {% if user.profile_picture %}
-                <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3">
+            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3">
             {% else %}
-                <img src="{% static 'images/default-profile-photo.png' %}" alt="Default Profile Picture" class="img-fluid rounded-circle mb-3">
+            <img src="{% static 'images/default-profile-photo.png' %}" alt="Default Profile Picture"
+                class="img-fluid rounded-circle mb-3">
             {% endif %}
         </div>
         <div class="col-md-8">
@@ -39,5 +40,42 @@
         {{ bio_form.as_p }}
         <button type="submit" name="update_bio" class="btn btn-outline-custom font-cta">Update Bio</button>
     </form>
+
+    <!-- Add this at the end of your container div, before the closing tag -->
+    <!-- Delete Account Section -->
+    <div class="mt-5 pt-4 border-top text-center">
+        <button type="button" class="btn btn-danger font-cta" data-bs-toggle="modal"
+            data-bs-target="#deleteAccountModal">
+            Delete Account
+        </button>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title font-headers" id="deleteAccountModalLabel">Delete Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{% url 'delete_account' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <p class="text-danger font-main">Warning: Account deletion is permanent and cannot be undone.
+                        </p>
+                        <div class="mb-3">
+                            <label for="password" class="form-label font-main">Enter your password to confirm:</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary font-cta" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger font-cta">Delete Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

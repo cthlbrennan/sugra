@@ -22,5 +22,5 @@ urlpatterns = [
     path('developer/<str:username>/', views.developer_profile, name='developer_profile'),
     path('search/', views.search_games, name='search_games'),
     path('profile/', views.user_profile, name='user_profile'),
-
+    path('delete-account/', views.delete_account, name='delete_account'),
 ]

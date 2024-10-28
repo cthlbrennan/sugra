@@ -235,6 +235,70 @@ h1, h2, h3, h4, h5, h6 {
     display: none;
 }
 
+/* Admin review table styles */
+.admin-review-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+}
+
+.admin-review-table th,
+.admin-review-table td {
+    padding: 1rem;
+    border: 1px solid var(--main-bg-color);
+    vertical-align: top;
+}
+
+.admin-review-table th {
+    background-color: var(--main-bg-color);
+    color: var(--off-white-color);
+    font-family: var(--font-headers);
+}
+
+.admin-review-table img {
+    max-width: 200px;
+    margin: 0.5rem 0;
+    border-radius: 4px;
+}
+
+.admin-review-table .description-cell {
+    max-width: 300px;
+    margin: 1rem 0;
+}
+
+.admin-review-table .screenshots-cell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.admin-review-table button {
+    margin: 0.25rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--off-white-color);
+    border: 1px solid var(--main-bg-color);
+    color: var(--main-bg-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-review-table button:hover {
+    background-color: var(--main-bg-color);
+    color: var(--off-white-color);
+}
+
+.radio-inline {
+    display: flex;
+    gap: 2rem;
+    margin: 1rem 0;
+}
+
+.radio-inline div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 @media (max-width: 450px) {
     .toast-overlay {
         display: none;

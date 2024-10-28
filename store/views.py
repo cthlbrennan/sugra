@@ -2,7 +2,7 @@ import os
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login as auth_login, update_session_auth_hash
+from django.contrib.auth import login as auth_login, update_session_auth_hash, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from allauth.account.views import SignupView, LoginView
@@ -275,3 +275,21 @@ def user_profile(request):
         'user': request.user
     }
     return render(request, 'user_profile.html', context)
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        user = authenticate(username=request.user.username, password=password)
+        
+        if user is not None:
+            # Password is correct, proceed with deletion
+            user.delete()
+            logout(request)
+            messages.success(request, 'Account successfully deleted.')
+            return redirect('index')
+        else:
+            messages.error(request, 'Incorrect password. Account deletion failed.')
+            return redirect('user_profile')
+    
+    return redirect('user_profile')
