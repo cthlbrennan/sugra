@@ -75,6 +75,7 @@ def set_user_type(request):
     if request.method == 'POST':
         form = UserTypeAndPasswordForm(user, request.POST, request.FILES)  # Added request.FILES here
         if form.is_valid():
+            print(form.errors)
             form.save()
             update_session_auth_hash(request, form.user)
             messages.success(request, "Profile setup completed successfully!")

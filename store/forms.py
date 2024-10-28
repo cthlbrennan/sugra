@@ -1,3 +1,4 @@
+import re
 from django import forms
 from allauth.account.forms import SignupForm
 from django.contrib.auth.forms import SetPasswordForm
@@ -16,14 +17,35 @@ class CustomSignupForm(SignupForm):
     )
     username = forms.CharField(
         max_length=30,
-        label='Username',
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        min_length=8,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'pattern': r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$',
+            'title': 'Username must be at least 8 characters long and include letters, numbers, and special characters',
+            'oninvalid': 'this.setCustomValidity("Please check username requirements")',
+            'oninput': 'this.setCustomValidity("")'
+        })
     )
 
     def clean_username(self):
         username = self.cleaned_data['username']
+        
+        if len(username) < 8:
+            raise ValidationError(
+                "Username must be at least 8 characters long."
+            )
+            
+        pattern = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$'  # Use raw string        
+        if not re.match(pattern, username):
+            raise ValidationError(
+                "Username must contain at least one letter, one number, and one special character (@$!%*#?&)."
+            )
+            
         if User.objects.filter(username=username).exists():
-            raise forms.ValidationError("This username is already taken.")
+            raise ValidationError(
+                "This username is already taken."
+            )
+            
         return username
 
     def save(self, request):
@@ -42,8 +64,15 @@ class UserTypeAndPasswordForm(SetPasswordForm):
         widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
     )
     username = forms.CharField(
-        max_length=150,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        max_length=30,
+        min_length=8,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'pattern': r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$',
+            'title': 'Username must be at least 8 characters long and include letters, numbers, and special characters',
+            'oninvalid': 'this.setCustomValidity("Please check username requirements")',
+            'oninput': 'this.setCustomValidity("")'
+        })
     )
     bio = forms.CharField(
         required=False,
@@ -74,8 +103,23 @@ class UserTypeAndPasswordForm(SetPasswordForm):
 
     def clean_username(self):
         username = self.cleaned_data['username']
+        if len(username) < 8:
+            raise ValidationError(
+                "Username must be at least 8 characters long."
+            )
+            
+        pattern = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$'  # Use raw string        
+        if not re.match(pattern, username):
+            raise ValidationError(
+                "Username must contain at least one letter, one number, and one special character (@$!%*#?&)."
+            )
+            
+        # Check for uniqueness
         if User.objects.filter(username=username).exclude(pk=self.user.pk).exists():
-            raise ValidationError("This username is already taken.")
+            raise ValidationError(
+                "This username is already taken."
+            )
+            
         return username
 
     def save(self, commit=True):
