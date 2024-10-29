@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Checkout
+{% endblock %}
+
+{% block body %}
+<div class="container mb-4">
+    <div class="row">
+        <div class="col">
+            <hr>
+            <h2 class="font-banner mb-4" style="color: var(--bright-yellow-color);">Checkout</h2>
+            <hr>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-lg-6">
+            <h3 class="font-headers mb-3">Order Summary</h3>
+            {% for item in cart_items %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title font-main">{{ item.game.title }}</h5>
+                    <p class="card-text">€{{ item.game.price }}</p>
+                </div>
+            </div>
+            {% endfor %}
+            <h4 class="font-headers mt-3">Total to Pay: €{{ total }}</h4>
+        </div>
+        
+        <div class="col-12 col-lg-6">
+            <h3 class="font-headers mb-3">Payment Details</h3>
+            <!-- Payment form will go here - to be implemented with Stripe -->
+            <p class="font-main">Payment functionality coming soon...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

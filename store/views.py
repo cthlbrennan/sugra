@@ -20,20 +20,29 @@ from .models import InboxMessage, Game, Message, User, Screenshot
 class CustomLoginView(LoginView):
     def form_valid(self, form):
         auth_login(self.request, form.user)
-        
-        # Now that the user is logged in, we can access user attributes
         user = self.request.user
         
+        # Check if user needs to complete profile setup
+        if not user.user_type or not user.has_usable_password():
+            next_url = self.request.session.get('next')
+            if next_url:
+                # Keep the next URL in session for after profile setup
+                return redirect('set_user_type')
+            return redirect('set_user_type')
+            
+        # User has completed profile setup
+        next_url = self.request.session.get('next')
+        if next_url:
+            del self.request.session['next']
+            return redirect(next_url)
+            
+        # Default redirects
         if user.is_superuser:
             return redirect('admin:index')
-        elif user.user_type:
-            if user.user_type == 'gamer':
-                return redirect('gamer_dashboard')
-            elif user.user_type == 'developer':
-                return redirect('developer_dashboard')
-        else:
-            messages.info(self.request, "Please set your account type.")
-            return redirect('set_user_type')
+        elif user.user_type == 'gamer':
+            return redirect('gamer_dashboard')
+        elif user.user_type == 'developer':
+            return redirect('developer_dashboard')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -69,16 +78,19 @@ def set_user_type(request):
         messages.info(request, "As an admin, you don't need to set a user type.")
         return redirect('admin:index')
     
-    if user.user_type and user.has_usable_password() and not user.username.startswith("user_"):
-        return redirect('gamer_dashboard' if user.user_type == 'gamer' else 'developer_dashboard')
-    
     if request.method == 'POST':
-        form = UserTypeAndPasswordForm(user, request.POST, request.FILES)  # Added request.FILES here
+        form = UserTypeAndPasswordForm(user, request.POST, request.FILES)
         if form.is_valid():
-            print(form.errors)
             form.save()
             update_session_auth_hash(request, form.user)
             messages.success(request, "Profile setup completed successfully!")
+            
+            # Check for stored next URL
+            next_url = request.session.get('next')
+            if next_url:
+                del request.session['next']
+                return redirect(next_url)
+                
             return redirect('gamer_dashboard' if user.user_type == 'gamer' else 'developer_dashboard')
     else:
         initial_data = {'username': user.username if not user.username.startswith("user_") else ''}
@@ -306,3 +318,75 @@ def delete_account(request):
             return redirect('user_profile')
     
     return redirect('user_profile')
+
+def view_cart(request):
+    return render(request, 'cart.html')
+
+def add_to_cart(request, game_id):
+    """Add a game to the shopping cart"""
+    game = get_object_or_404(Game, game_id=game_id)
+    cart = request.session.get('cart', {})
+    
+    # Add game to cart or update quantity
+    if str(game_id) in cart:
+        messages.info(request, f'{game.title} is already in your cart!')
+    else:
+        cart[str(game_id)] = 1
+        messages.success(request, f'Added {game.title} to your cart')
+
+    request.session['cart'] = cart
+    return redirect('game_detail', game_id=game_id)
+
+def remove_from_cart(request, game_id):
+    """Remove a game from the shopping cart"""
+    try:
+        cart = request.session.get('cart', {})
+
+        if str(game_id) in cart:
+            del cart[str(game_id)]
+            request.session['cart'] = cart
+            messages.success(request, "Game removed from cart")
+        else:
+            messages.error(request, "This game was not in your cart")
+
+    except Exception as e:
+        messages.error(request, f"Error removing game from cart: {str(e)}")
+
+    return redirect('view_cart')
+
+def checkout(request):
+    cart = request.session.get('cart', {})
+    
+    if not cart:
+        messages.error(request, "Your cart is empty!")
+        return redirect('view_cart')
+        
+    if not request.user.is_authenticated:
+        # Store both the intended destination and cart state
+        request.session['next'] = reverse('checkout')
+        messages.info(request, "Please log in or sign up to complete your purchase")
+        return redirect('account_login')
+    
+    # Check if user needs to complete profile setup
+    if not request.user.user_type or not request.user.has_usable_password():
+        request.session['next'] = reverse('checkout')
+        messages.info(request, "Please complete your profile setup first")
+        return redirect('set_user_type')
+    
+    cart_items = []
+    total = 0
+    
+    for game_id, quantity in cart.items():
+        game = get_object_or_404(Game, game_id=game_id)
+        total += game.price
+        cart_items.append({
+            'game': game,
+            'quantity': quantity,
+        })
+    
+    context = {
+        'cart_items': cart_items,
+        'total': total,
+    }
+    
+    return render(request, 'checkout.html', context)

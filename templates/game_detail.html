@@ -15,9 +15,14 @@
                 style="background-color: var(--off-white-color); color: var(--main-text-color);">
                 <p class="mb-2 font-main"><strong>Price: </strong>€{{ game.price }}</p>
                 <div class="d-flex justify-content-center">
-                    <button class="btn btn-outline-custom font-cta me-2"
-                        style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">Add to
-                        Cart</button>
+                    <!-- Replace the existing Add to Cart button with this form -->
+                    <form action="{% url 'add_to_cart' game.game_id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-custom font-cta me-2"
+                            style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
+                            Add to Cart
+                        </button>
+                    </form>
                     <button class="btn btn-outline-custom font-cta"
                         style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">Add to
                         Wishlist</button>
