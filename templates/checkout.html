@@ -6,33 +6,50 @@ Checkout
 {% endblock %}
 
 {% block body %}
-<div class="container mb-4">
+<div class="container my-5">
     <div class="row">
         <div class="col">
-            <hr>
             <h2 class="font-banner mb-4" style="color: var(--bright-yellow-color);">Checkout</h2>
-            <hr>
+            <hr class="mb-4">
         </div>
     </div>
 
     <div class="row">
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-6 mb-4">
             <h3 class="font-headers mb-3">Order Summary</h3>
-            {% for item in cart_items %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title font-main">{{ item.game.title }}</h5>
-                    <p class="card-text">€{{ item.game.price }}</p>
+            <div class="card">
+                <div class="card-body p-0">
+                    {% for item in cart_items %}
+                    <div class="d-flex align-items-center p-3 {% if not forloop.last %}border-bottom{% endif %}">
+                        <img src="{{ item.game.thumbnail.url }}" alt="{{ item.game.title }}" 
+                            class="rounded me-3" style="width: 80px; height: 60px; object-fit: cover;">
+                        <div class="flex-grow-1">
+                            <h5 class="font-main mb-1">{{ item.game.title }}</h5>
+                            <p class="text-muted mb-0">By {{ item.game.developer.username }}</p>
+                        </div>
+                        <div class="text-end">
+                            <p class="font-headers mb-0" style="color: var(--main-bg-color);">€{{ item.game.price }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="font-headers mb-0">Total:</h4>
+                        <h4 class="font-headers mb-0" style="color: var(--main-bg-color);">€{{ total }}</h4>
+                    </div>
                 </div>
             </div>
-            {% endfor %}
-            <h4 class="font-headers mt-3">Total to Pay: €{{ total }}</h4>
         </div>
         
         <div class="col-12 col-lg-6">
             <h3 class="font-headers mb-3">Payment Details</h3>
-            <!-- Payment form will go here - to be implemented with Stripe -->
-            <p class="font-main">Payment functionality coming soon...</p>
+            <div class="card">
+                <div class="card-body">
+                    <!-- Payment form will go here - to be implemented with Stripe -->
+                    <p class="font-main mb-0">Payment functionality coming soon...</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
