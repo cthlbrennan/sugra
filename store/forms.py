@@ -11,9 +11,29 @@ class CustomSignupForm(SignupForm):
         ('gamer', 'Gamer'),
         ('developer', 'Developer'),
     ]
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
+    
+    email2 = forms.EmailField(
+        label="Email (again)",
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
+    
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    
     user_type = forms.ChoiceField(
         choices=USER_TYPE_CHOICES,
-        widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
+        widget=forms.RadioSelect(attrs={
+            'class': 'form-check-input',
+            'style': 'margin-right: 10px;'
+        })
     )
     username = forms.CharField(
         max_length=30,

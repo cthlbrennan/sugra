@@ -38,7 +38,8 @@
                   </li>
                   {% if user.is_authenticated %}
                   <li class="nav-item">
-                     <a class="nav-link" href="{% url 'user_profile' %}" style="color: var(--off-white-color);">Profile</a>
+                     <a class="nav-link" href="{% url 'user_profile' %}"
+                        style="color: var(--off-white-color);">Profile</a>
                   </li>
                   <li class="nav-item">
                      {% if user.user_type == 'gamer' %}
@@ -51,7 +52,7 @@
                   </li>
                   <li class="nav-item">
                      <a class="nav-link" href="{% url 'contact' %}" style="color: var(--off-white-color);">Contact</a>
-                 </li>
+                  </li>
                   <li class="nav-item">
                      <a class="nav-link {% if request.path == logout_url %}active{% endif %}" aria-current="page"
                         href="{% url 'account_logout' %}" style="color: var(--off-white-color);">Logout</a>
@@ -68,6 +69,20 @@
                   <li class="nav-item">
                      <a class="nav-link {% if request.path == login_url %}active{% endif %}" aria-current="page"
                         href="{% url 'account_login' %}" style="color: var(--off-white-color);">Sign in</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="" style="color: var(--off-white-color);">
+                        <div class="text-center d-flex align-items-center">
+                           <i class="fas fa-shopping-bag fa-lg me-2"></i>
+                           <span>
+                              {% if grand_total %}
+                              €{{ grand_total|floatformat:2 }}
+                              {% else %}
+                              €0.00
+                              {% endif %}
+                           </span>
+                        </div>
+                     </a>
                   </li>
                   {% endif %}
                </ul>

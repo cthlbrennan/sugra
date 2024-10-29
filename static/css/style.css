@@ -36,6 +36,15 @@ h1, h2, h3, h4, h5, h6 {
 
 .text-justify { text-align: justify; }
 
+.navbar-nav {
+    align-items: center;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
 /* Hero section styles */
 .hero-container {
     height: 400px;
