@@ -308,6 +308,30 @@ h1, h2, h3, h4, h5, h6 {
     gap: 0.5rem;
 }
 
+.StripeElement {
+    box-sizing: border-box;
+    height: 40px;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.StripeElement--focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.StripeElement--invalid {
+    border-color: #dc3545;
+}
+
+#card-errors {
+    color: #dc3545;
+    margin-top: 0.5rem;
+}
+
 @media (max-width: 450px) {
     .toast-overlay {
         display: none;

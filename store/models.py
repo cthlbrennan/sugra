@@ -1,6 +1,9 @@
 import io
 import os
+from decimal import Decimal
 from PIL import Image, ImageDraw, ImageFont
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.utils import timezone
 from django.db import models
@@ -60,7 +63,16 @@ class Game(models.Model):
     title = models.CharField(max_length=100, unique=True)
     description = models.TextField(max_length=3000)
     genre = models.CharField(max_length=100, choices=GAME_GENRE_CHOICES)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(
+        max_digits=6, 
+        decimal_places=2,
+        validators=[
+            MinValueValidator(
+                Decimal('0.50'), 
+                message="Price must be at least €0.50"
+            )
+        ]
+    )    
     developer = models.ForeignKey(User, on_delete=models.CASCADE)
     is_published = models.BooleanField(default=False)
     thumbnail = CloudinaryField('thumbnail', blank=True, null=True, help_text="Recommended image ratio: 7:5")

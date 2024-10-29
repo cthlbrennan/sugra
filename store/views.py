@@ -1,4 +1,7 @@
 import os
+from decimal import Decimal
+import stripe
+from django.core.validators import MinValueValidator
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
@@ -12,7 +15,7 @@ from django.db.models import Q
 from django.core.files.base import ContentFile
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm, UserProfilePictureForm, UserBioForm
 from .decorators import gamer_required, developer_required
-from .models import InboxMessage, Game, Message, User, Screenshot
+from .models import InboxMessage, Game, Message, User, Screenshot, Order, OrderLine
 
 
 # Create your views here.
@@ -322,6 +325,8 @@ def delete_account(request):
 def view_cart(request):
     return render(request, 'cart.html')
 
+from django.http import JsonResponse
+
 def add_to_cart(request, game_id):
     """Add a game to the shopping cart"""
     game = get_object_or_404(Game, game_id=game_id)
@@ -329,12 +334,20 @@ def add_to_cart(request, game_id):
     
     # Add game to cart or update quantity
     if str(game_id) in cart:
-        messages.info(request, f'{game.title} is already in your cart!')
+        message = f'{game.title} is already in your cart!'
+        success = False
     else:
         cart[str(game_id)] = 1
-        messages.success(request, f'Added {game.title} to your cart')
+        message = f'Added {game.title} to your cart'
+        success = True
 
     request.session['cart'] = cart
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': success,
+            'message': message
+        })
     return redirect('game_detail', game_id=game_id)
 
 def remove_from_cart(request, game_id):
@@ -355,38 +368,126 @@ def remove_from_cart(request, game_id):
     return redirect('view_cart')
 
 def checkout(request):
-    cart = request.session.get('cart', {})
-    
-    if not cart:
-        messages.error(request, "Your cart is empty!")
-        return redirect('view_cart')
+    try:
+        stripe_public_key = settings.STRIPE_PUBLIC_KEY
+        stripe_secret_key = settings.STRIPE_SECRET_KEY
         
-    if not request.user.is_authenticated:
-        # Store both the intended destination and cart state
-        request.session['next'] = reverse('checkout')
-        messages.info(request, "Please log in or sign up to complete your purchase")
-        return redirect('account_login')
+        if not stripe_public_key or not stripe_secret_key:
+            messages.error(request, "Stripe keys are not set. Please check your settings.")
+            return redirect('view_cart')
+            
+        cart = request.session.get('cart', {})
+
+        if not cart:
+            messages.error(request, "Your cart is empty!")
+            return redirect('view_cart')
+
+        if request.method == 'POST':
+            cart = request.session.get('cart', {})
+            
+            total = Decimal('0.00')
+            cart_items = []
+            for game_id, quantity in cart.items():
+                game = get_object_or_404(Game, game_id=game_id)
+                total += game.price
+                cart_items.append({
+                    'game': game,
+                    'quantity': quantity,
+                })
+
+            if total < Decimal('0.50'):
+                messages.error(request, "Total amount must be at least €0.50")
+                return redirect('view_cart')
+
+            stripe_total = round(total * 100)
+            stripe.api_key = stripe_secret_key
+
+            try:
+                intent = stripe.PaymentIntent.create(
+                    amount=stripe_total,
+                    currency=settings.STRIPE_CURRENCY,
+                )
+
+                order = Order.objects.create(
+                    customer=request.user,
+                    total_price=total,
+                    stripe_pid=intent.id,
+                )
+
+                for game_id, quantity in cart.items():
+                    game = get_object_or_404(Game, game_id=game_id)
+                    OrderLine.objects.create(
+                        order=order,
+                        game=game,
+                        price=game.price,
+                    )
+
+                request.session['cart'] = {}
+                return redirect('checkout_success', order.order_id)
+
+            except stripe.error.StripeError as e:
+                messages.error(request, f"Payment error: {str(e)}")
+                return redirect('checkout')
+
+        else:
+            total = Decimal('0.00')
+            cart_items = []
+            for game_id, quantity in cart.items():
+                game = get_object_or_404(Game, game_id=game_id)
+                total += game.price
+                cart_items.append({
+                    'game': game,
+                    'quantity': quantity,
+                })
+
+            if total < Decimal('0.50'):
+                messages.error(request, "Total amount must be at least €0.50")
+                return redirect('view_cart')
+
+            stripe_total = round(total * 100)
+            stripe.api_key = stripe_secret_key
+
+            try:
+                intent = stripe.PaymentIntent.create(
+                    amount=stripe_total,
+                    currency=settings.STRIPE_CURRENCY,
+                )
+            except stripe.error.StripeError as e:
+                messages.error(request, f"Error creating payment intent: {str(e)}")
+                return redirect('view_cart')
+
+            context = {
+                'cart_items': cart_items,
+                'total': total,
+                'stripe_public_key': stripe_public_key,
+                'client_secret': intent.client_secret,
+            }
+
+            return render(request, 'checkout.html', context)
+            
+    except Exception as e:
+        messages.error(request, f"An error occurred: {str(e)}")
+        return redirect('view_cart')
+
+@gamer_required
+def checkout_success(request, order_id):
+    """
+    Handle successful checkouts
+    """
+    order = get_object_or_404(Order, order_id=order_id)
     
-    # Check if user needs to complete profile setup
-    if not request.user.user_type or not request.user.has_usable_password():
-        request.session['next'] = reverse('checkout')
-        messages.info(request, "Please complete your profile setup first")
-        return redirect('set_user_type')
-    
-    cart_items = []
-    total = 0
-    
-    for game_id, quantity in cart.items():
-        game = get_object_or_404(Game, game_id=game_id)
-        total += game.price
-        cart_items.append({
-            'game': game,
-            'quantity': quantity,
-        })
-    
+    if request.user != order.customer:
+        messages.error(request, "You do not have permission to view this order.")
+        return redirect('view_cart')
+
+    messages.success(request, f'Order successfully processed! \
+        Your order number is {order.order_id}')
+
+    if 'cart' in request.session:
+        del request.session['cart']
+
     context = {
-        'cart_items': cart_items,
-        'total': total,
+        'order': order,
     }
-    
-    return render(request, 'checkout.html', context)
+
+    return render(request, 'checkout_success.html', context)

@@ -192,8 +192,10 @@ class GameForm(forms.ModelForm):
 
     def clean_price(self):
         price = self.cleaned_data.get('price')
-        if price is not None and price < 0:
-            raise forms.ValidationError("Price must be 0 or greater.")
+        if price is None:
+            raise forms.ValidationError("Price is required.")
+        if price < 0.50:
+            raise forms.ValidationError("Price must be at least €0.50.")
         return price
 
 class UserBioForm(forms.ModelForm):
