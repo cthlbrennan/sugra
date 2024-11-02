@@ -17,15 +17,24 @@ class CustomSignupForm(SignupForm):
     
     email2 = forms.EmailField(
         label="Email (again)",
-        widget=forms.EmailInput(attrs={'class': 'form-control'})
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control w-100',
+            'placeholder': 'Confirm your email'
+        })
     )
     
     password1 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control w-100',
+            'placeholder': 'Password'
+        })
     )
     
     password2 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control w-100',
+            'placeholder': 'Confirm password'
+        })
     )
     
     user_type = forms.ChoiceField(
@@ -71,8 +80,16 @@ class CustomSignupForm(SignupForm):
     def save(self, request):
         user = super(CustomSignupForm, self).save(request)
         user.user_type = self.cleaned_data['user_type']
+        request.session['show_profile_setup'] = True
         user.save()
         return user
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Apply form-control class to all fields
+        for field_name, field in self.fields.items():
+            if isinstance(field.widget, (forms.TextInput, forms.EmailInput, forms.PasswordInput)):
+                field.widget.attrs['class'] = 'form-control w-100'
 
 class UserTypeAndPasswordForm(SetPasswordForm):
     USER_TYPE_CHOICES = [

@@ -2,12 +2,15 @@ import io
 import os
 from decimal import Decimal
 from PIL import Image, ImageDraw, ImageFont
+from django.core.files.storage import default_storage
+from django.core.files import File
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.utils import timezone
 from django.db import models
 from django.conf import settings
+BASE_DIR = settings.BASE_DIR
 from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
 from cloudinary.uploader import upload
@@ -32,7 +35,29 @@ class User(AbstractUser):
         if self.is_superuser and self.user_type != 'admin':
             self.user_type = 'admin'
         super().save(*args, **kwargs)
-
+    
+    def set_default_profile_picture(self):
+        """Set the default profile picture for the user"""
+        default_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'default-profile-photo.png')
+        
+        if not self.profile_picture and os.path.exists(default_path):
+            try:
+                # Upload to cloudinary
+                result = uploader.upload(
+                    default_path,
+                    folder="profile_pictures",
+                    public_id=f"default_{self.username}",
+                    overwrite=True
+                )
+                # Set the URL directly
+                self.profile_picture = result['url']
+                self.save()
+            except Exception as e:
+                print(f"Error setting default profile picture: {e}")
+                # Set a fallback URL if upload fails
+                self.profile_picture = 'https://res.cloudinary.com/dlj0yqxoi/image/upload/v1/profile_pictures/default'
+                self.save()
+    
     def __str__(self):
         return f"User: {self.username}"
 
@@ -146,7 +171,7 @@ class Order(models.Model):
     stripe_pid = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"Order by {self.customer} as part of Order {self.order}"
+        return f"Order by {self.customer} as part of Order {self.order_id}"
 
 class OrderLine(models.Model):
     orderline_id = models.AutoField(primary_key=True)
@@ -155,7 +180,7 @@ class OrderLine(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"Orderline: {self.game} as part of Order {self.order}"
+        return f"Orderline: {self.game} as part of Order {self.order_id}"
 
 class Review(models.Model):
     review_id = models.AutoField(primary_key=True)

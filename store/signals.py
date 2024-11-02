@@ -25,5 +25,15 @@ def set_user_type_on_social_signup(sender, request, sociallogin, **kwargs):
     if not user.user_type:
         user.user_type = None
         user.save()
-        messages.info(request, "Please set your account type.")
         request.session['redirect_to_set_user_type'] = True
+
+@receiver(user_signed_up)
+def handle_user_signup(sender, request, user, **kwargs):
+    # Set default profile picture
+    if not user.profile_picture:
+        user.set_default_profile_picture()
+    
+    if not user.user_type:
+        user.user_type = None
+        user.save()
+        messages.info(request, "Please complete your profile setup.")
