@@ -7,6 +7,7 @@ from cloudinary.forms import CloudinaryFileField
 from .models import User, Game
 
 class CustomSignupForm(SignupForm):
+    USERNAME_PATTERN = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$'
     USER_TYPE_CHOICES = [
         ('gamer', 'Gamer'),
         ('developer', 'Developer'),
@@ -49,7 +50,7 @@ class CustomSignupForm(SignupForm):
         min_length=8,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'pattern': r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$',
+            'pattern': USERNAME_PATTERN,
             'title': 'Username must be at least 8 characters long and include letters, numbers, and special characters',
             'oninvalid': 'this.setCustomValidity("Please check username requirements")',
             'oninput': 'this.setCustomValidity("")'
@@ -64,8 +65,7 @@ class CustomSignupForm(SignupForm):
                 "Username must be at least 8 characters long."
             )
             
-        pattern = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$'  # Use raw string        
-        if not re.match(pattern, username):
+        if not re.match(self.USERNAME_PATTERN, username):
             raise ValidationError(
                 "Username must contain at least one letter, one number, and one special character (@$!%*#?&)."
             )
