@@ -43,20 +43,17 @@ class User(AbstractUser):
         if not self.profile_picture and os.path.exists(default_path):
             try:
                 # Upload to cloudinary
-                result = uploader.upload(
+                upload_result = upload(
                     default_path,
                     folder="profile_pictures",
                     public_id=f"default_{self.username}",
                     overwrite=True
                 )
-                # Set the URL directly
-                self.profile_picture = result['url']
+                # Set the CloudinaryField
+                self.profile_picture = upload_result['public_id']
                 self.save()
             except Exception as e:
                 print(f"Error setting default profile picture: {e}")
-                # Set a fallback URL if upload fails
-                self.profile_picture = 'https://res.cloudinary.com/dlj0yqxoi/image/upload/v1/profile_pictures/default'
-                self.save()
     
     def __str__(self):
         return f"User: {self.username}"
