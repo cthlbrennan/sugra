@@ -81,19 +81,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Messages container */
-#messages-container {
+.messages-container {
     position: fixed;
     top: 60px;
-    z-index: 50;
+    left: 0;
+    right: 0;
+    z-index: 1050;
     width: 100%;
     background-color: var(--bright-yellow-color);
     color: var(--main-text-color);
     text-align: center;
     padding: 10px;
-    transition: opacity 1s ease-out;
+    opacity: 1;
 }
 
-#messages-container p {
+.messages-container p {
     margin: 0;
 }
 
@@ -353,4 +355,28 @@ h1, h2, h3, h4, h5, h6 {
     .mobile-buttons .btn:last-child {
         margin-bottom: 0;
     }
+}
+
+/* Add these styles for form errors */
+.errorlist {
+    color: #dc3545;
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+    text-align: left;
+}
+
+.errorlist li {
+    padding: 0.25rem 0;
+}
+
+/* Style for non-field errors */
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    padding: 0.75rem 1.25rem;
+    margin: 1rem 0;
+    border-radius: 0.25rem;
+    text-align: left;
 }

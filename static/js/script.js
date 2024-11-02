@@ -1,18 +1,29 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var heroCarousel = new bootstrap.Carousel(document.getElementById('heroCarousel'), {
-        interval: 5000,  // Change slide every 5 seconds
-        direction: 'left'  // Animate from right to left
-    });
-
-    const messagesContainer = document.getElementById('messages-container');
-    if (messagesContainer) {
-        setTimeout(function () {
-            messagesContainer.style.opacity = '0';
-            setTimeout(function () {
-                messagesContainer.style.display = 'none';
-            }, 1000);
-        }, 5000);
+    // Safely initialize carousel
+    const heroCarouselElement = document.getElementById('heroCarousel');
+    if (heroCarouselElement) {
+        new bootstrap.Carousel(heroCarouselElement, {
+            interval: 5000,
+            direction: 'left'
+        });
     }
+
+    // Message handling
+    const messages = document.querySelectorAll('.messages-container');
+    messages.forEach(message => {
+        if (message) {
+            // Set initial state
+            message.style.opacity = '1';
+            message.style.transition = 'opacity 1s ease-out';
+            
+            setTimeout(() => {
+                message.style.opacity = '0';
+                setTimeout(() => {
+                    message.remove();
+                }, 1000);
+            }, 5000);
+        }
+    });
 
     var usernameField = document.getElementById('id_username');
     if (usernameField) {
