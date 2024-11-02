@@ -1,15 +1,32 @@
 {% extends "base.html" %}
+
 {% load i18n %}
-{% load allauth %}
-{% block head_title %}
-    {% trans "Login Cancelled" %}
-{% endblock head_title %}
+
+{% block title %}
+Login Cancelled - Sugra Games
+{% endblock %}
+
 {% block body %}
-    {% element h1 %}
-        {% trans "Login Cancelled" %}
-    {% endelement %}
-    {% url 'account_login' as login_url %}
-    {% element p %}
-        {% blocktrans %}You decided to cancel logging in to our site using one of your existing accounts. If this was a mistake, please proceed to <a href="{{login_url}}">sign in</a>.{% endblocktrans %}
-    {% endelement %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="font-banner mb-4" style="color: var(--main-bg-color);">Login Cancelled</h1>
+            
+            <p class="font-main mb-4">
+                You decided to cancel logging in to our site using one of your existing accounts. 
+                If this was a mistake, please proceed to 
+                <a href="{% url 'account_login' %}" 
+                   style="color: var(--main-bg-color); text-decoration: none; font-weight: bold;">
+                    sign in
+                </a>.
+            </p>
+            
+            <a href="{% url 'index' %}" 
+               class="btn btn-outline-custom font-cta"
+               style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
+                Return to Store
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}

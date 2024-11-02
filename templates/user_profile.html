@@ -5,49 +5,68 @@
 
 {% block body %}
 <div class="container mt-4">
-    <h1 class="font-banner mb-4">Your Profile</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-10 text-center">
+            <h1 class="font-banner mb-4">Your Profile</h1>
 
-    <!-- Current Profile Section -->
-    <div class="row mb-5">
-        <div class="col-md-4">
-            {% if user.profile_picture %}
-            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3">
-            {% else %}
-            <img src="{% static 'images/default-profile-photo.png' %}" alt="Default Profile Picture"
-                class="img-fluid rounded-circle mb-3">
-            {% endif %}
+            <!-- Current Profile Section -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="profile-container d-flex flex-column flex-md-row align-items-center justify-content-center gap-5">
+                        <!-- Profile Picture Container -->
+                        <div class="profile-picture-container" style="width: 300px;">
+                            {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3">
+                            {% else %}
+                            <img src="{% static 'images/default-profile-photo.png' %}" alt="Default Profile Picture"
+                                class="img-fluid rounded-circle mb-3">
+                            {% endif %}
+                        </div>
+
+                        <!-- Profile Details Container -->
+                        <div class="profile-details-container text-start">
+                            <h2 class="font-headers">{{ user.username }}</h2>
+                            <p class="font-main"><strong>Email:</strong> {{ user.email }}</p>
+                            <p class="font-main"><strong>User Type:</strong> {{ user.get_user_type_display }}</p>
+                            <p class="font-main"><strong>Joined:</strong> {{ user.account_created|date:"F d, Y" }}</p>
+                            <p class="font-main"><strong>Bio:</strong> {{ user.bio|default:"No bio provided." }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Forms Section -->
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <!-- Edit Profile Picture Section -->
+                    <h2 class="font-headers mb-4">Update Profile Picture</h2>
+                    <form method="post" enctype="multipart/form-data" class="mb-5">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ picture_form.as_p }}
+                        </div>
+                        <button type="submit" name="update_picture" class="btn btn-outline-custom font-cta mt-2">Update Picture</button>
+                    </form>
+
+                    <h2 class="font-headers mb-4">Update Bio</h2>
+                    <form method="post" class="mb-5">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ bio_form.as_p }}
+                        </div>
+                        <button type="submit" name="update_bio" class="btn btn-outline-custom font-cta">Update Bio</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Delete Account Section -->
+            <div class="mt-5 pt-4 border-top">
+                <button type="button" class="btn btn-danger font-cta" data-bs-toggle="modal"
+                    data-bs-target="#deleteAccountModal">
+                    Delete Account
+                </button>
+            </div>
         </div>
-        <div class="col-md-8">
-            <h2 class="font-headers">{{ user.username }}</h2>
-            <p class="font-main"><strong>Email:</strong> {{ user.email }}</p>
-            <p class="font-main"><strong>User Type:</strong> {{ user.get_user_type_display }}</p>
-            <p class="font-main"><strong>Joined:</strong> {{ user.account_created|date:"F d, Y" }}</p>
-            <p class="font-main"><strong>Bio:</strong> {{ user.bio|default:"No bio provided." }}</p>
-        </div>
-    </div>
-
-    <!-- Edit Profile Picture Section -->
-    <h2 class="font-headers mb-4">Update Profile Picture</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ picture_form.as_p }}
-        <button type="submit" name="update_picture" class="btn btn-outline-custom font-cta mt-2">Update Picture</button>
-    </form>
-
-    <h2 class="font-headers mb-4 mt-5">Update Bio</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ bio_form.as_p }}
-        <button type="submit" name="update_bio" class="btn btn-outline-custom font-cta">Update Bio</button>
-    </form>
-
-    <!-- Add this at the end of your container div, before the closing tag -->
-    <!-- Delete Account Section -->
-    <div class="mt-5 pt-4 border-top text-center">
-        <button type="button" class="btn btn-danger font-cta" data-bs-toggle="modal"
-            data-bs-target="#deleteAccountModal">
-            Delete Account
-        </button>
     </div>
 
     <!-- Delete Account Modal -->
