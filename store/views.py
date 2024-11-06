@@ -1,4 +1,5 @@
 import os
+import requests
 from decimal import Decimal
 import stripe
 from django.core.validators import MinValueValidator
@@ -19,6 +20,7 @@ from .decorators import gamer_required, developer_required
 from .models import InboxMessage, Game, Message, User, Screenshot, Order, OrderLine
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from django.http import HttpResponse
 
 
 # Create your views here.
@@ -118,7 +120,38 @@ def login_redirect(request):
 
 @gamer_required
 def gamer_dashboard(request):
-    return render(request, 'gamer_dashboard.html')
+    # Get all games the user has purchased through orders
+    library_games = Game.objects.filter(
+        orderline__order__customer=request.user,
+        is_published=True
+    ).distinct()
+    
+    # Get wishlist games if user has a wishlist
+    try:
+        wishlist_games = request.user.wishlist.games.filter(is_published=True)
+    except:
+        wishlist_games = []
+    
+    # Get recent orders
+    orders = Order.objects.filter(customer=request.user).order_by('-submitted_at')[:5]
+    
+    # Get recommended games based on purchased game genres
+    owned_genres = library_games.values_list('genre', flat=True).distinct()
+    recommended_games = Game.objects.filter(
+        genre__in=owned_genres,
+        is_published=True
+    ).exclude(
+        orderline__order__customer=request.user
+    ).distinct()[:3]
+    
+    context = {
+        'library_games': library_games,
+        'wishlist_games': wishlist_games,
+        'orders': orders,
+        'recommended_games': recommended_games,
+    }
+    
+    return render(request, 'gamer_dashboard.html', context)
 
 @developer_required
 def developer_dashboard(request):
@@ -539,3 +572,43 @@ def test_404(request):
 def test_500(request):
     """Test view for 500 page"""
     return handler500(request)
+
+@gamer_required
+def library(request):
+    games_list = Game.objects.filter(
+        orderline__order__customer=request.user
+    ).distinct().order_by('-orderline__order__submitted_at')
+    
+    paginator = Paginator(games_list, 9)  # Show 9 games per page
+    page = request.GET.get('page')
+    library_games = paginator.get_page(page)
+    
+    context = {
+        'library_games': library_games,
+    }
+    return render(request, 'library.html', context)
+
+@gamer_required
+def download_game_thumbnail(request, game_id):
+    game = get_object_or_404(Game, game_id=game_id)
+    
+    # Check if user has purchased the game
+    if not OrderLine.objects.filter(order__customer=request.user, game=game).exists():
+        messages.error(request, "You don't own this game.")
+        return redirect('library')
+    
+    # Get the image from Cloudinary URL
+    response = requests.get(game.get_thumbnail())
+    
+    if response.status_code == 200:
+        # Prepare the response with appropriate headers
+        content_type = response.headers.get('content-type', 'application/octet-stream')
+        file_extension = content_type.split('/')[-1]
+        
+        # Create the response with the image content
+        response = HttpResponse(response.content, content_type=content_type)
+        response['Content-Disposition'] = f'attachment; filename="{game.title}_thumbnail.{file_extension}"'
+        return response
+    else:
+        messages.error(request, "Could not download the image. Please try again later.")
+        return redirect('library')

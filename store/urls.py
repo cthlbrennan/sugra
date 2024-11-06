@@ -30,4 +30,6 @@ urlpatterns = [
     path('checkout/success/<order_id>', views.checkout_success, name='checkout_success'),
     path('404/', views.test_404, name='handler404'),
     path('500/', views.test_500, name='handler500'),
+    path('library/', views.library, name='library'),
+    path('download-thumbnail/<int:game_id>/', views.download_game_thumbnail, name='download_game_thumbnail'),
 ]
