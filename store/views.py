@@ -17,10 +17,10 @@ from django.db.models import Q
 from django.core.files.base import ContentFile
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm, UserProfilePictureForm, UserBioForm
 from .decorators import gamer_required, developer_required
-from .models import InboxMessage, Game, Message, User, Screenshot, Order, OrderLine
+from .models import InboxMessage, Game, Message, User, Screenshot, Order, OrderLine, Wishlist
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 
 # Create your views here.
@@ -184,15 +184,24 @@ def delete_inbox_message(request, message_id):
 def game_detail(request, game_id):
     game = get_object_or_404(Game, game_id=game_id)
     
+    # Check if user owns the game
+    game_owned = False
+    if request.user.is_authenticated:
+        game_owned = OrderLine.objects.filter(
+            order__customer=request.user, 
+            game=game
+        ).exists()
+    
     # Get related games based on genre and developer
     related_games = Game.objects.filter(
         Q(genre=game.genre) | Q(developer=game.developer),
         is_published=True
-    ).exclude(game_id=game_id)[:3]  # Limit to 3 games
+    ).exclude(game_id=game_id)[:3]
     
     context = {
         'game': game,
         'related_games': related_games,
+        'game_owned': game_owned,
     }
     return render(request, 'game_detail.html', context)
 
@@ -369,6 +378,19 @@ from django.http import JsonResponse
 def add_to_cart(request, game_id):
     """Add a game to the shopping cart"""
     game = get_object_or_404(Game, game_id=game_id)
+    
+    # Check if user already owns the game
+    if OrderLine.objects.filter(order__customer=request.user, game=game).exists():
+        message = f'You already own {game.title}!'
+        success = False
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': success,
+                'message': message
+            })
+        messages.error(request, message)
+        return redirect('game_detail', game_id=game_id)
+    
     cart = request.session.get('cart', {})
     
     # Add game to cart or update quantity
@@ -612,3 +634,81 @@ def download_game_thumbnail(request, game_id):
     else:
         messages.error(request, "Could not download the image. Please try again later.")
         return redirect('library')
+
+@gamer_required
+def order_history(request):
+    orders_list = Order.objects.filter(customer=request.user).order_by('-submitted_at')
+    paginator = Paginator(orders_list, 10)  # Show 10 orders per page
+    
+    page = request.GET.get('page')
+    try:
+        orders = paginator.page(page)
+    except PageNotAnInteger:
+        orders = paginator.page(1)
+    except EmptyPage:
+        orders = paginator.page(paginator.num_pages)
+    
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'order_history.html', context)
+
+@gamer_required
+def wishlist(request):
+    try:
+        wishlist_games = request.user.wishlist.games.filter(is_published=True)
+    except:
+        wishlist_games = []
+    
+    paginator = Paginator(wishlist_games, 9)  # Show 9 games per page
+    page = request.GET.get('page')
+    
+    try:
+        games = paginator.page(page)
+    except PageNotAnInteger:
+        games = paginator.page(1)
+    except EmptyPage:
+        games = paginator.page(paginator.num_pages)
+        
+    context = {
+        'wishlist_games': games
+    }
+    return render(request, 'wishlist.html', context)
+
+@gamer_required
+def add_to_wishlist(request, game_id):
+    game = get_object_or_404(Game, game_id=game_id)
+    
+    # Check if user already owns the game
+    if OrderLine.objects.filter(order__customer=request.user, game=game).exists():
+        messages.error(request, f'You already own {game.title}!')
+        return redirect('game_detail', game_id=game_id)
+    
+    # Get or create wishlist for user
+    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    
+    # Check if game is already in wishlist
+    if game in wishlist.games.all():
+        messages.info(request, f'{game.title} is already in your wishlist!')
+    else:
+        wishlist.games.add(game)
+        messages.success(request, f'Added {game.title} to your wishlist!')
+    
+    return redirect('game_detail', game_id=game_id)
+
+@gamer_required
+def remove_from_wishlist(request, game_id):
+    game = get_object_or_404(Game, game_id=game_id)
+    
+    try:
+        wishlist = request.user.wishlist
+        if game in wishlist.games.all():
+            wishlist.games.remove(game)
+            messages.success(request, f'Removed {game.title} from your wishlist!')
+        else:
+            messages.info(request, f'{game.title} is not in your wishlist!')
+    except Wishlist.DoesNotExist:
+        messages.error(request, 'You do not have a wishlist!')
+    
+    # Redirect back to the referring page
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

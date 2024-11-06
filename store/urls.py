@@ -32,4 +32,8 @@ urlpatterns = [
     path('500/', views.test_500, name='handler500'),
     path('library/', views.library, name='library'),
     path('download-thumbnail/<int:game_id>/', views.download_game_thumbnail, name='download_game_thumbnail'),
+    path('orders/', views.order_history, name='order_history'),
+    path('wishlist/', views.wishlist, name='wishlist'),
+    path('add-to-wishlist/<int:game_id>/', views.add_to_wishlist, name='add_to_wishlist'),
+    path('remove-from-wishlist/<int:game_id>/', views.remove_from_wishlist, name='remove_from_wishlist'),
 ]
