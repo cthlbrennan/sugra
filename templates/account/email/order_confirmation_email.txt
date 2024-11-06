@@ -1,0 +1,21 @@
+{% extends "account/email/base_message.txt" %}
+{% load i18n %}
+
+{% block content %}{% autoescape off %}
+{% blocktrans %}Thank you for your order!{% endblocktrans %}
+
+Order Details:
+Order Number: {{ order.order_id }}
+Date: {{ order.submitted_at }}
+
+Items Purchased:
+{% for item in order.orderline_set.all %}
+- {{ item.game.title }} - €{{ item.price }}
+{% endfor %}
+
+Total Amount: €{{ order.total_price }}
+
+You can view your games in your library at any time by visiting your account.
+
+{% blocktrans %}Thank you for shopping with us!{% endblocktrans %}
+{% endautoescape %}{% endblock content %} 

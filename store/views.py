@@ -16,6 +16,8 @@ from django.core.files.base import ContentFile
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm, UserProfilePictureForm, UserBioForm
 from .decorators import gamer_required, developer_required
 from .models import InboxMessage, Game, Message, User, Screenshot, Order, OrderLine
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 
 # Create your views here.
@@ -480,8 +482,33 @@ def checkout_success(request, order_id):
         messages.error(request, "You do not have permission to view this order.")
         return redirect('view_cart')
 
+    # Send order confirmation email
+    customer_email = order.customer.email
+    subject = f'Sugra - Order Confirmation #{order.order_id}'
+    
+    # Render email text
+    email_context = {
+        'order': order,
+        'current_site': request.site,
+    }
+    
+    email_text = render_to_string(
+        'account/email/order_confirmation_email.txt',
+        email_context
+    )
+    
+    # Send the email
+    send_mail(
+        subject,
+        email_text,
+        settings.DEFAULT_FROM_EMAIL,
+        [customer_email],
+        fail_silently=False,
+    )
+
     messages.success(request, f'Order successfully processed! \
-        Your order number is {order.order_id}')
+        Your order number is {order.order_id}. A confirmation \
+        email has been sent to {customer_email}.')
 
     if 'cart' in request.session:
         del request.session['cart']
