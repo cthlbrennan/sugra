@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, update_session_auth_hash, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.sites.shortcuts import get_current_site
 from allauth.account.views import SignupView, LoginView
 from django.http import JsonResponse
 from django.urls import reverse
@@ -34,7 +35,10 @@ class CustomLoginView(LoginView):
                 # Keep the next URL in session for after profile setup
                 return redirect('set_user_type')
             return redirect('set_user_type')
-            
+        
+        cart = self.request.session.get('cart', {})
+        if cart and not self.request.session.get('next'):
+            return redirect('checkout')
         # User has completed profile setup
         next_url = self.request.session.get('next')
         if next_url:
@@ -369,6 +373,7 @@ def remove_from_cart(request, game_id):
 
     return redirect('view_cart')
 
+@gamer_required
 def checkout(request):
     try:
         stripe_public_key = settings.STRIPE_PUBLIC_KEY
@@ -485,11 +490,11 @@ def checkout_success(request, order_id):
     # Send order confirmation email
     customer_email = order.customer.email
     subject = f'Sugra - Order Confirmation #{order.order_id}'
-    
+    current_site = get_current_site(request)
     # Render email text
     email_context = {
         'order': order,
-        'current_site': request.site,
+        'current_site': current_site,
     }
     
     email_text = render_to_string(
