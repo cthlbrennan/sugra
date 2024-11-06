@@ -16,32 +16,38 @@
                 <p class="mb-2 font-main"><strong>Price: </strong>€{{ game.price }}</p>
                 <div class="d-flex justify-content-center gap-2">
                     {% if game_owned %}
-                        <div class="alert alert-info mb-0 w-100">
-                            You already own this game. Visit your <a href="{% url 'library' %}">library</a> to play.
-                        </div>
-                    {% else %}
-                        <form action="{% url 'add_to_cart' game.game_id %}" method="POST" class="mb-0 flex-grow-1">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-custom font-cta w-100"
-                                    style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
-                                Add to Cart - €{{ game.price|floatformat:2 }}
-                            </button>
-                        </form>
-                    {% endif %}
-                    <form action="{% url 'add_to_wishlist' game.game_id %}" method="POST" class="mb-0 flex-grow-1">
+                    <div class="alert alert-info mb-0 w-100">
+                        You already own this game. Visit your <a href="{% url 'library' %}">library</a> to play.
+                    </div>
+                {% else %}
+                    <form action="{% url 'add_to_cart' game.game_id %}" method="POST" class="mb-0 flex-grow-1">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-custom font-cta w-100"
-                                style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);"
-                                {% if game_owned or game in request.user.wishlist.games.all %}disabled{% endif %}>
-                            {% if game_owned %}
-                                Already Owned
-                            {% elif game in request.user.wishlist.games.all %}
-                                In Wishlist
+                        <button type="submit" 
+                                class="btn btn-outline-custom btn-cart font-cta w-100"
+                                {% if game.game_id|stringformat:"s" in request.session.cart %}disabled{% endif %}>
+                            {% if game.game_id|stringformat:"s" in request.session.cart %}
+                                In Cart
                             {% else %}
-                                Add to Wishlist
+                                Add to Cart - €{{ game.price|floatformat:2 }}
                             {% endif %}
                         </button>
                     </form>
+                {% endif %}
+                
+                <form action="{% url 'add_to_wishlist' game.game_id %}" method="POST" class="mb-0 flex-grow-1">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-custom font-cta w-100"
+                            style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);"
+                            {% if game_owned or game in request.user.wishlist.games.all %}disabled{% endif %}>
+                        {% if game_owned %}
+                            Already Owned
+                        {% elif game in request.user.wishlist.games.all %}
+                            In Wishlist
+                        {% else %}
+                            Add to Wishlist
+                        {% endif %}
+                    </button>
+                </form>
                 </div>
             </div>
         </div>
@@ -55,9 +61,13 @@
                 {% else %}
                     <form action="{% url 'add_to_cart' game.game_id %}" method="POST" class="mb-0 flex-grow-1">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-custom font-cta w-100"
-                                style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
-                            Add to Cart - €{{ game.price|floatformat:2 }}
+                        <button type="submit" class="btn btn-outline-custom btn-cart font-cta w-100"
+                                {% if game.game_id|stringformat:"s" in request.session.cart %}disabled{% endif %}>
+                            {% if game.game_id|stringformat:"s" in request.session.cart %}
+                                In Cart
+                            {% else %}
+                                Add to Cart - €{{ game.price|floatformat:2 }}
+                            {% endif %}
                         </button>
                     </form>
                 {% endif %}

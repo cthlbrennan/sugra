@@ -410,3 +410,22 @@ h1, h2, h3, h4, h5, h6 {
 .hover-underline:hover {
     text-decoration: underline !important;
 }
+
+.btn-cart {
+    background-color: var(--main-bg-color);
+    color: var(--bright-yellow-color);
+}
+
+.btn-cart[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.game-title-header {
+    color: var(--bright-yellow-color);
+}
+
+.cart-button-container {
+    display: flex;
+    gap: 0.5rem;
+}

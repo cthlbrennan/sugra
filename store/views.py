@@ -203,6 +203,7 @@ def delete_inbox_message(request, message_id):
 
 def game_detail(request, game_id):
     game = get_object_or_404(Game, game_id=game_id)
+    str_game_id = str(game_id)
     
     # Check if user owns the game
     game_owned = False
@@ -447,7 +448,9 @@ def add_to_cart(request, game_id):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({
             'success': success,
-            'message': message
+            'message': message,
+            'inCart': str(game_id) in cart,
+            'price': float(game.price)
         })
     return redirect('game_detail', game_id=game_id)
 
