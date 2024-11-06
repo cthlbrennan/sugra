@@ -380,3 +380,25 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 0.25rem;
     text-align: left;
 }
+
+#mc_embed_signup {
+    padding: 10px;
+}
+
+#mc_embed_signup input[type="email"] {
+    background: transparent;
+    border: 1px solid var(--off-white-color);
+    color: var(--off-white-color);
+}
+
+#mc_embed_signup input[type="email"]::placeholder {
+    color: var(--off-white-color);
+    opacity: 0.7;
+}
+
+#mc_embed_signup input[type="email"]:focus {
+    background: transparent;
+    color: var(--off-white-color);
+    box-shadow: none;
+    border-color: var(--bright-yellow-color);
+}
