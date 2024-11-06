@@ -13,11 +13,11 @@ from django.contrib.sites.shortcuts import get_current_site
 from allauth.account.views import SignupView, LoginView
 from django.http import JsonResponse
 from django.urls import reverse
-from django.db.models import Q
+from django.db.models import Q, Avg, Count
 from django.core.files.base import ContentFile
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm, UserProfilePictureForm, UserBioForm
 from .decorators import gamer_required, developer_required
-from .models import InboxMessage, Game, Message, User, Screenshot, Order, OrderLine, Wishlist
+from .models import InboxMessage, Game, Message, User, Screenshot, Order, OrderLine, Wishlist, Review
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
@@ -64,7 +64,27 @@ class CustomLoginView(LoginView):
         return super().form_invalid(form)
 
 def index(request):
-    games_list = Game.objects.filter(is_published=True).order_by('-created_at')
+    filter_type = request.GET.get('filter')
+    
+    # Get all published games
+    games_list = Game.objects.filter(is_published=True)
+    
+    # Apply filters if requested
+    if filter_type == 'highest_rated':
+        games_list = games_list.annotate(
+            avg_rating=Avg('review__rating'),
+            review_count=Count('review')
+        ).order_by(
+            '-avg_rating',  # Sort by rating (descending)
+            '-review_count'  # Then by number of reviews (descending)
+        )
+    # Keep existing filter logic
+    elif filter_type == 'recent':
+        games_list = games_list.order_by('-submitted_at')
+    elif filter_type == 'price':
+        games_list = games_list.order_by('price')
+    # Default ordering remains chronological
+    
     paginator = Paginator(games_list, 6)  # Show 6 games per page
 
     page = request.GET.get('page')
@@ -186,9 +206,14 @@ def game_detail(request, game_id):
     
     # Check if user owns the game
     game_owned = False
+    has_reviewed = False
     if request.user.is_authenticated:
         game_owned = OrderLine.objects.filter(
             order__customer=request.user, 
+            game=game
+        ).exists()
+        has_reviewed = Review.objects.filter(
+            customer=request.user,
             game=game
         ).exists()
     
@@ -202,6 +227,7 @@ def game_detail(request, game_id):
         'game': game,
         'related_games': related_games,
         'game_owned': game_owned,
+        'has_reviewed': has_reviewed,
     }
     return render(request, 'game_detail.html', context)
 
@@ -712,3 +738,61 @@ def remove_from_wishlist(request, game_id):
     
     # Redirect back to the referring page
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+@gamer_required
+def add_review(request, game_id):
+    game = get_object_or_404(Game, game_id=game_id)
+    
+    # Check if user owns the game
+    if not OrderLine.objects.filter(order__customer=request.user, game=game).exists():
+        messages.error(request, 'You must own this game to review it.')
+        return redirect('game_detail', game_id=game_id)
+    
+    # Check if user already reviewed this game
+    if Review.objects.filter(customer=request.user, game=game).exists():
+        messages.error(request, 'You have already reviewed this game.')
+        return redirect('game_detail', game_id=game_id)
+    
+    if request.method == 'POST':
+        rating = int(request.POST.get('rating'))
+        comment = request.POST.get('comment')
+        
+        if 1 <= rating <= 5:  # Validate rating
+            Review.objects.create(
+                game=game,
+                customer=request.user,
+                rating=rating,
+                comment=comment
+            )
+            messages.success(request, 'Your review has been submitted!')
+        else:
+            messages.error(request, 'Invalid rating value.')
+            
+    return redirect('game_detail', game_id=game_id)
+
+@gamer_required
+def edit_review(request, game_id, review_id):
+    review = get_object_or_404(Review, review_id=review_id, customer=request.user)
+    
+    if request.method == 'POST':
+        rating = int(request.POST.get('rating'))
+        comment = request.POST.get('comment')
+        
+        if 1 <= rating <= 5:
+            review.rating = rating
+            review.comment = comment
+            review.save()
+            messages.success(request, 'Your review has been updated!')
+        else:
+            messages.error(request, 'Invalid rating value.')
+            
+    return redirect('game_detail', game_id=game_id)
+
+@gamer_required
+def delete_review(request, game_id, review_id):
+    if request.method == 'POST':
+        review = get_object_or_404(Review, review_id=review_id, customer=request.user)
+        review.delete()
+        messages.success(request, 'Your review has been deleted.')
+    
+    return redirect('game_detail', game_id=game_id)

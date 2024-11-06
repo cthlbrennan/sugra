@@ -152,6 +152,16 @@ class Game(models.Model):
         
         return self.thumbnail
 
+    def get_average_rating(self):
+        reviews = self.review_set.all()
+        if not reviews:
+            return 0
+        total_rating = sum(review.rating for review in reviews)
+        return total_rating / len(reviews)
+    
+    def get_review_count(self):
+        return self.review_set.count()
+
 class Wishlist(models.Model):
     wishlist_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)

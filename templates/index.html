@@ -40,7 +40,7 @@ Sugra Games
                     <button type="button" id="filterByRecent" class="btn btn-outline-custom font-cta">Most Recently
                         Added</button>
                     <button type="button" id="filterByPrice" class="btn btn-outline-custom font-cta">Best Value</button>
-                    <button type="button" class="btn btn-outline-custom font-cta">Highest Rated</button>
+                    <button type="button" id="filterByRating" class="btn btn-outline-custom font-cta">Highest Rated</button>
                     <button type="button" class="btn btn-outline-custom font-cta">Most Popular</button>
                 </div>
             </div>
@@ -76,6 +76,15 @@ Sugra Games
                             <a href="{% url 'game_detail' game.game_id %}"
                                 class="text-decoration-none game-title-link">{{ game.title }}</a>
                         </h5>
+                        <div class="text-warning mb-2">
+                            {% with avg_rating=game.get_average_rating %}
+                                {% if avg_rating > 0 %}
+                                    <span>★ {{ avg_rating|floatformat:1 }} ({{ game.get_review_count }} reviews)</span>
+                                {% else %}
+                                    <span class="text-muted">No ratings yet</span>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
                         <p class="game-price font-cta">{{ game.price|floatformat:2 }} €</p>
                         <div class="card-text">
                             <small class="text-muted">{{ game.genre }}</small>

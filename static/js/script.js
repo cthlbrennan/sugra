@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const filterByPriceButton = document.getElementById('filterByPrice');
     const filterByRecentButton = document.getElementById('filterByRecent');
+    const filterByRatingButton = document.getElementById('filterByRating');
 
     if (filterByPriceButton) {
         filterByPriceButton.addEventListener('click', function() {
@@ -55,6 +56,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if (filterByRecentButton) {
         filterByRecentButton.addEventListener('click', function() {
             fetchAndUpdateGames('recent');
+        });
+    }
+
+    if (filterByRatingButton) {
+        filterByRatingButton.addEventListener('click', function() {
+            fetchAndUpdateGames('highest_rated');
         });
     }
 

@@ -36,4 +36,7 @@ urlpatterns = [
     path('wishlist/', views.wishlist, name='wishlist'),
     path('add-to-wishlist/<int:game_id>/', views.add_to_wishlist, name='add_to_wishlist'),
     path('remove-from-wishlist/<int:game_id>/', views.remove_from_wishlist, name='remove_from_wishlist'),
+    path('game/<int:game_id>/review/', views.add_review, name='add_review'),
+    path('game/<int:game_id>/review/<int:review_id>/edit/', views.edit_review, name='edit_review'),
+    path('game/<int:game_id>/review/<int:review_id>/delete/', views.delete_review, name='delete_review'),
 ]
