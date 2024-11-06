@@ -1,7 +1,8 @@
+/* jshint esversion: 11*/
 document.addEventListener('DOMContentLoaded', function () {
     // Safely initialize carousel
     const heroCarouselElement = document.getElementById('heroCarousel');
-    if (heroCarouselElement) {
+    if (heroCarouselElement && typeof bootstrap !== 'undefined') {
         new bootstrap.Carousel(heroCarouselElement, {
             interval: 5000,
             direction: 'left'
@@ -94,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const toastElement = document.getElementById('deleteToast');
-    if (toastElement) {
+    if (toastElement && typeof bootstrap !== 'undefined' && bootstrap.Toast) {
         const toast = new bootstrap.Toast(toastElement);
         let formToSubmit;
 
@@ -105,8 +106,10 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        document.getElementById('confirmDelete').addEventListener('click', function () {
-            formToSubmit.submit();
+        document.getElementById('confirmDelete')?.addEventListener('click', function () {
+            if (formToSubmit) {
+                formToSubmit.submit();
+            }
         });
     }
 });

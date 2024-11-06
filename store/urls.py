@@ -28,4 +28,6 @@ urlpatterns = [
     path('remove_from_cart/<int:game_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('checkout/', views.checkout, name='checkout'),
     path('checkout/success/<order_id>', views.checkout_success, name='checkout_success'),
+    path('404/', views.test_404, name='handler404'),
+    path('500/', views.test_500, name='handler500'),
 ]

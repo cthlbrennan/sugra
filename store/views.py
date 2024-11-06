@@ -491,3 +491,19 @@ def checkout_success(request, order_id):
     }
 
     return render(request, 'checkout_success.html', context)
+
+def handler404(request, exception):
+    """Custom 404 page"""
+    return render(request, '404.html', status=404)
+
+def handler500(request):
+    """Custom 500 page"""
+    return render(request, '500.html', status=500)
+
+def test_404(request):
+    """Test view for 404 page"""
+    return handler404(request, Exception())
+
+def test_500(request):
+    """Test view for 500 page"""
+    return handler500(request)
