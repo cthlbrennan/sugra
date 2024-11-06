@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const filterByPriceButton = document.getElementById('filterByPrice');
     const filterByRecentButton = document.getElementById('filterByRecent');
     const filterByRatingButton = document.getElementById('filterByRating');
+    const filterByPopularButton = document.getElementById('filterByPopular');
 
     if (filterByPriceButton) {
         filterByPriceButton.addEventListener('click', function() {
@@ -65,6 +66,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    if (filterByPopularButton) {
+        filterByPopularButton.addEventListener('click', function() {
+            fetchAndUpdateGames('popular');
+        });
+    }
+
     function fetchAndUpdateGames(filterType) {
         fetch(`/filter-games/?filter=${filterType}`)
             .then(response => response.json())
@@ -77,9 +84,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const container = document.getElementById('gameCardContainer');
         container.innerHTML = '';
         games.forEach(game => {
+            const ratingHtml = game.avg_rating > 0 
+                ? `<span>★ ${game.avg_rating.toFixed(1)} (${game.review_count} reviews)</span>`
+                : `<span class="text-muted">No ratings yet</span>`;
+
             container.innerHTML += `
-                <div class="col">
-                    <div class="card h-100">
+                <div class="col mb-4">
+                    <div class="card">
                         <a href="/game/${game.game_id}" class="text-decoration-none">
                             <div class="card-img-container">
                                 <img src="${game.thumbnail}" class="card-img-top" alt="${game.title}">
@@ -89,10 +100,13 @@ document.addEventListener('DOMContentLoaded', function () {
                             <h5 class="card-title font-banner">
                                 <a href="/game/${game.game_id}" class="text-decoration-none game-title-link">${game.title}</a>
                             </h5>
-                            <p class="game-price font-cta">${game.price.toFixed(2)} €</p>
+                            <div class="text-warning mb-2">
+                                ${ratingHtml}
+                            </div>
+                            <p class="game-price font-cta mb-2">${game.price.toFixed(2)} €</p>
                             <div class="card-text">
-                                <small class="text-muted">${game.genre}</small>
-                                <p class="mt-2 mb-0">${game.description.substring(0, 100)}...</p>
+                                <small class="text-muted d-block mb-2">${game.genre}</small>
+                                <p class="mb-0">${game.description.substring(0, 100)}...</p>
                             </div>
                         </div>
                     </div>

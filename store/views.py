@@ -13,7 +13,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from allauth.account.views import SignupView, LoginView
 from django.http import JsonResponse
 from django.urls import reverse
-from django.db.models import Q, Avg, Count
+from django.db.models import Q, Avg, Count, F
 from django.core.files.base import ContentFile
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm, UserProfilePictureForm, UserBioForm
 from .decorators import gamer_required, developer_required
@@ -75,8 +75,8 @@ def index(request):
             avg_rating=Avg('review__rating'),
             review_count=Count('review')
         ).order_by(
-            '-avg_rating',  # Sort by rating (descending)
-            '-review_count'  # Then by number of reviews (descending)
+            F('avg_rating').desc(nulls_last=True),  # Put null ratings last
+            '-review_count'
         )
     # Keep existing filter logic
     elif filter_type == 'recent':
@@ -336,12 +336,24 @@ def search_games(request):
 
 def filter_games(request):
     filter_type = request.GET.get('filter')
+    games = Game.objects.filter(is_published=True)
+    
     if filter_type == 'price':
-        games = Game.objects.filter(is_published=True).order_by('price')
+        games = games.order_by('price')
     elif filter_type == 'recent':
-        games = Game.objects.filter(is_published=True).order_by('-created_at')
-    else:
-        games = Game.objects.filter(is_published=True)
+        games = games.order_by('-created_at')
+    elif filter_type == 'highest_rated':
+        games = games.annotate(
+            avg_rating=Avg('review__rating'),
+            review_count=Count('review')
+        ).order_by(
+            F('avg_rating').desc(nulls_last=True),  # Put null ratings last
+            '-review_count'
+        )
+    elif filter_type == 'popular':
+        games = games.annotate(
+            purchase_count=Count('orderline')
+        ).order_by('-purchase_count')
     
     games_data = [{
         'game_id': game.game_id,
@@ -349,7 +361,9 @@ def filter_games(request):
         'description': game.description,
         'genre': game.get_genre_display(),
         'price': float(game.price),
-        'thumbnail': game.get_thumbnail()
+        'thumbnail': game.get_thumbnail(),
+        'avg_rating': game.get_average_rating(),
+        'review_count': game.get_review_count()
     } for game in games]
     
     return JsonResponse(games_data, safe=False)
