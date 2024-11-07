@@ -426,6 +426,7 @@ def search_games(request):
 
 def filter_games(request):
     filter_type = request.GET.get('filter')
+    page = request.GET.get('page', 1)
     games = Game.objects.filter(is_published=True)
     
     if filter_type == 'price':
@@ -437,26 +438,44 @@ def filter_games(request):
             avg_rating=Avg('review__rating'),
             review_count=Count('review')
         ).order_by(
-            F('avg_rating').desc(nulls_last=True),  # Put null ratings last
+            F('avg_rating').desc(nulls_last=True),
             '-review_count'
         )
     elif filter_type == 'popular':
         games = games.annotate(
             purchase_count=Count('orderline')
         ).order_by('-purchase_count')
+
+    paginator = Paginator(games, 6)  # Show 6 games per page
     
-    games_data = [{
-        'game_id': game.game_id,
-        'title': game.title,
-        'description': game.description,
-        'genre': game.get_genre_display(),
-        'price': float(game.price),
-        'thumbnail': game.get_thumbnail(),
-        'avg_rating': game.get_average_rating(),
-        'review_count': game.get_review_count()
-    } for game in games]
+    try:
+        games_page = paginator.page(page)
+    except PageNotAnInteger:
+        games_page = paginator.page(1)
+    except EmptyPage:
+        games_page = paginator.page(paginator.num_pages)
+
+    response_data = {
+        'games': [{
+            'game_id': game.game_id,
+            'title': game.title,
+            'description': game.description,
+            'genre': game.get_genre_display(),
+            'price': float(game.price),
+            'thumbnail': game.get_thumbnail(),
+            'avg_rating': game.get_average_rating(),
+            'review_count': game.get_review_count()
+        } for game in games_page],
+        'pagination': {
+            'has_next': games_page.has_next(),
+            'has_prev': games_page.has_previous(),
+            'current_page': games_page.number,
+            'total_pages': paginator.num_pages,
+            'page_range': list(paginator.page_range)
+        }
+    }
     
-    return JsonResponse(games_data, safe=False)
+    return JsonResponse(response_data)
 
 @login_required
 def user_profile(request):
