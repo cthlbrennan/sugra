@@ -41,5 +41,5 @@ urlpatterns = [
     path('game/<int:game_id>/review/<int:review_id>/delete/', views.delete_review, name='delete_review'),
     path('faq/', views.faq_view, name='faq'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
-    path('download-data/', views.download_user_data, name='download_user_data'),
+    path('download-data/', views.download_personal_data, name='download_user_data'),
 ]

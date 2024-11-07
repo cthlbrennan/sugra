@@ -1,7 +1,12 @@
 import os
-import requests
 from decimal import Decimal
+from io import BytesIO
 import stripe
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+import requests
 from django.core.validators import MinValueValidator
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
@@ -10,20 +15,17 @@ from django.contrib.auth import login as auth_login, update_session_auth_hash, a
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
-from allauth.account.views import SignupView, LoginView
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from django.db.models import Q, Avg, Count, F
+from django.db.models import Q, Avg, Count, F, Sum
 from django.core.files.base import ContentFile
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils import timezone
+from allauth.account.views import SignupView, LoginView
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm, UserProfilePictureForm, UserBioForm
 from .decorators import gamer_required, developer_required
 from .models import InboxMessage, Game, Message, User, Screenshot, Order, OrderLine, Wishlist, Review
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views.generic import TemplateView
-from django.db.models import Sum
-
 
 # Create your views here.
 
@@ -828,90 +830,120 @@ def privacy_policy(request):
 
 @login_required
 def download_personal_data(request):
-    """Allow users to download their personal data"""
-    user_data = {
-        'username': request.user.username,
-        'email': request.user.email,
-        'date_joined': request.user.date_joined,
-        'user_type': request.user.user_type,
-    }
-
-    # Add gamer-specific data
-    if request.user.user_type == 'gamer':
-        user_data.update({
-            'orders': list(Order.objects.filter(customer=request.user).values(
-                'order_id', 
-                'submitted_at',
-                'total_price'
-            )),
-            'reviews': list(Review.objects.filter(customer=request.user).values(
-                'game__title',
-                'rating',
-                'comment',
-                'submitted_at'
-            )),
-            'wishlist': list(request.user.wishlist.games.values('title', 'price')) if hasattr(request.user, 'wishlist') else []
-        })
+    """Generate and download PDF of user's personal data"""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
     
-    # Add developer-specific data
-    elif request.user.user_type == 'developer':
-        user_data.update({
-            'published_games': list(Game.objects.filter(developer=request.user).values(
-                'title',
-                'price',
-                'description',
-                'genre',
-                'created_at',
-                'is_published'
-            )),
-            'total_sales': Order.objects.filter(
-                orderline__game__developer=request.user
-            ).count(),
-            'total_revenue': float(OrderLine.objects.filter(
-                game__developer=request.user
-            ).aggregate(total=Sum('price'))['total'] or 0),
-            'average_rating': float(Review.objects.filter(
-                game__developer=request.user
-            ).aggregate(avg=Avg('rating'))['avg'] or 0)
-        })
+    # Container for PDF elements
+    elements = []
+    styles = getSampleStyleSheet()
+    
+    # Custom styles matching website
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=24,
+        spaceAfter=30,
+        textColor=colors.HexColor('#F7B32B'),  # bright-yellow-color
+        alignment=1  # Center alignment
+    )
+    
+    heading_style = ParagraphStyle(
+        'CustomHeading',
+        parent=styles['Heading2'],
+        fontSize=18,
+        spaceBefore=20,
+        spaceAfter=12,
+        textColor=colors.HexColor('#2D3142')  # main-text color
+    )
+    
+    # Title
+    elements.append(Paragraph("Sugra Games - Your Data", title_style))
+    elements.append(Spacer(1, 12))
+    
+    # Personal Info Section
+    elements.append(Paragraph("Personal Information", heading_style))
+    elements.append(Spacer(1, 12))
+    
+    # Table styles matching website colors
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#2D3142')),  # main-bg-color
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#F7F7F2')),   # off-white-color
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTSIZE', (0, 0), (-1, -1), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ('TOPPADDING', (0, 0), (-1, -1), 12),
+        ('BACKGROUND', (1, 0), (-1, -1), colors.HexColor('#F7F7F2')),  # off-white-color
+        ('TEXTCOLOR', (1, 0), (-1, -1), colors.HexColor('#2D3142')),   # main-text color
+        ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#2D3142'))
+    ])
+    
+    personal_data = [
+        ["Username", request.user.username],
+        ["Email", request.user.email],
+        ["Account Type", request.user.user_type],
+        ["Date Joined", request.user.date_joined.strftime("%d %B %Y")],
+    ]
+    t = Table(personal_data, colWidths=[200, 300])
+    t.setStyle(table_style)
+    elements.append(t)
+    elements.append(Spacer(1, 20))
 
-    return JsonResponse(user_data)
-
-@login_required
-def download_user_data(request):
-    """Allow users to download their personal data"""
     if request.user.user_type == 'gamer':
-        user_data = {
-            'personal_info': {
-                'username': request.user.username,
-                'email': request.user.email,
-                'date_joined': request.user.date_joined.isoformat(),
-                'user_type': 'gamer'
-            },
-            'orders': list(Order.objects.filter(customer=request.user).values(
-                'order_id', 'submitted_at', 'total_price'
-            )),
-            'reviews': list(Review.objects.filter(customer=request.user).values(
-                'game__title', 'rating', 'comment', 'submitted_at'
-            )),
-            'wishlist': list(request.user.wishlist.games.values('title')) if hasattr(request.user, 'wishlist') else []
-        }
+        # Add Gamer specific data
+        elements.append(Paragraph("Your Game Library", heading_style))
+        elements.append(Spacer(1, 12))
+        
+        library_games = Game.objects.filter(
+            orderline__order__customer=request.user,
+            is_published=True
+        ).distinct()
+        
+        if library_games:
+            game_data = [["Game Title", "Developer", "Purchase Date"]]
+            for game in library_games:
+                purchase_date = game.orderline_set.filter(
+                    order__customer=request.user
+                ).first().order.submitted_at.strftime("%d %B %Y")
+                game_data.append([
+                    game.title,
+                    game.developer.username,
+                    purchase_date
+                ])
+            
+            t = Table(game_data, colWidths=[200, 150, 150])
+            t.setStyle(table_style)
+            elements.append(t)
+        else:
+            elements.append(Paragraph("No games in library", styles['Normal']))
+            
     else:  # developer
-        user_data = {
-            'personal_info': {
-                'username': request.user.username,
-                'email': request.user.email,
-                'date_joined': request.user.date_joined.isoformat(),
-                'user_type': 'developer'
-            },
-            'published_games': list(Game.objects.filter(developer=request.user).values(
-                'title', 'price', 'description', 'genre', 'created_at', 'is_published'
-            )),
-            'messages': list(InboxMessage.objects.filter(developer=request.user).values(
-                'subject', 'message', 'created_at', 'is_read'
-            ))
-        }
+        elements.append(Paragraph("Your Published Games", heading_style))
+        elements.append(Spacer(1, 12))
+        
+        published_games = Game.objects.filter(developer=request.user)
+        if published_games:
+            game_data = [["Game Title", "Price", "Publication Status"]]
+            for game in published_games:
+                game_data.append([
+                    game.title,
+                    f"€{game.price}",
+                    "Published" if game.is_published else "Under Review"
+                ])
+            
+            t = Table(game_data, colWidths=[200, 100, 200])
+            t.setStyle(table_style)
+            elements.append(t)
+        else:
+            elements.append(Paragraph("No published games", styles['Normal']))
 
-    response = JsonResponse(user_data, json_dumps_params={'indent': 2})
-    response['Content-Disposition'] = 'attachment; filename="my_data.json"'
+    # Build PDF
+    doc.build(elements)
+    
+    # FileResponse sets the Content-Disposition header so that browsers
+    # present the option to save the file.
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename=sugra_data_{timezone.now().strftime("%Y%m%d")}.pdf'
+    
     return response

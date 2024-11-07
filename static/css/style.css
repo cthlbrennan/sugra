@@ -10,7 +10,7 @@
     --font-headers: 'Roboto', sans-serif;
     --font-main: 'Noto Sans', sans-serif;
     --font-cta: 'Press Start 2P', cursive;
-    --main-bg-color: #41B49D;
+    --main-bg-color: #12443b;
     --main-text-color: #393939;
     --light-accent-color: #F0D8CC;
     --dark-accent-color: #993333;
@@ -413,7 +413,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-cart {
     background-color: var(--main-bg-color);
-    color: var(--bright-yellow-color);
+    color: var(--off-white-color);
 }
 
 .btn-cart[disabled] {
@@ -422,7 +422,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .game-title-header {
-    color: var(--bright-yellow-color);
+    color: var(--off-white-color);
 }
 
 .cart-button-container {
