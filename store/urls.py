@@ -42,4 +42,5 @@ urlpatterns = [
     path('faq/', views.faq_view, name='faq'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
     path('download-data/', views.download_personal_data, name='download_user_data'),
+    path('game/<int:game_id>/review/<int:review_id>/vote/<str:vote_type>/', views.vote_review, name='vote_review'),
 ]

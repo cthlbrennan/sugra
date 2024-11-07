@@ -31,6 +31,5 @@ class ProfileSetupMiddleware:
         exempt_urls = [
             reverse('set_user_type'),
             reverse('account_logout'),
-            reverse('about')
         ]
         return path in exempt_urls

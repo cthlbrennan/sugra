@@ -25,14 +25,23 @@ from django.utils import timezone
 from allauth.account.views import SignupView, LoginView
 from .forms import CustomSignupForm, UserTypeAndPasswordForm, GameForm, UserProfilePictureForm, UserBioForm
 from .decorators import gamer_required, developer_required
-from .models import InboxMessage, Game, Message, User, Screenshot, Order, OrderLine, Wishlist, Review
+from .models import InboxMessage, Game, Message, User, Screenshot, Order, OrderLine, Wishlist, Review, ReviewVote
 
 # Create your views here.
 
+
+
 class CustomLoginView(LoginView):
     def form_valid(self, form):
+        # Store cart before login
+        old_cart = self.request.session.get('cart', {})
+        
         auth_login(self.request, form.user)
         user = self.request.user
+
+        # Restore cart after login
+        if old_cart:
+            self.request.session['cart'] = old_cart
         
         # Clear cart if user is a developer
         if user.user_type == 'developer' and 'cart' in self.request.session:
@@ -50,6 +59,7 @@ class CustomLoginView(LoginView):
         cart = self.request.session.get('cart', {})
         if cart and not self.request.session.get('next'):
             return redirect('checkout')
+
         # User has completed profile setup
         next_url = self.request.session.get('next')
         if next_url:
@@ -289,14 +299,27 @@ def game_detail(request, game_id):
         Q(genre=game.genre) | Q(developer=game.developer),
         is_published=True
     ).exclude(game_id=game_id)[:3]
+
+    # Add user votes to context
+    if request.user.is_authenticated:
+        user_votes = {
+            vote.review_id: vote.vote_type 
+            for vote in ReviewVote.objects.filter(
+                user=request.user, 
+                review__game_id=game_id
+            )
+        }
+    else:
+        user_votes = {}
     
     context = {
         'game': game,
         'related_games': related_games,
         'game_owned': game_owned,
         'has_reviewed': has_reviewed,
+        'user_votes': user_votes,
     }
-    return render(request, 'game_detail.html', context)
+    return render(request, 'game_detail.html', context)    
 
 class CustomSignupView(SignupView):
     form_class = CustomSignupForm
@@ -806,26 +829,53 @@ def wishlist(request):
     }
     return render(request, 'wishlist.html', context)
 
+@login_required
 @gamer_required
 def add_to_wishlist(request, game_id):
-    game = get_object_or_404(Game, game_id=game_id)
-    
-    # Check if user already owns the game
-    if OrderLine.objects.filter(order__customer=request.user, game=game).exists():
-        messages.error(request, f'You already own {game.title}!')
+    if not request.user.is_authenticated:
+        messages.warning(request, 'Please sign in as a gamer to add games to your wishlist.')
+        return redirect('login')
+
+    if request.user.user_type != 'gamer':
+        messages.warning(request, 'Only gamer accounts can add games to their wishlist.')
         return redirect('game_detail', game_id=game_id)
-    
-    # Get or create wishlist for user
-    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
-    
-    # Check if game is already in wishlist
-    if game in wishlist.games.all():
-        messages.info(request, f'{game.title} is already in your wishlist!')
-    else:
+        
+    game = get_object_or_404(Game, game_id=game_id)
+
+    try:
+        wishlist = request.user.wishlist
+        if game in wishlist.games.all():
+            messages.info(request, f'{game.title} is already in your wishlist!')
+        else:
+            wishlist.games.add(game)
+            messages.success(request, f'Added {game.title} to your wishlist!')
+    except Wishlist.DoesNotExist:
+        wishlist = Wishlist.objects.create(user=request.user)
         wishlist.games.add(game)
         messages.success(request, f'Added {game.title} to your wishlist!')
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+# @gamer_required
+# def add_to_wishlist(request, game_id):
+#     game = get_object_or_404(Game, game_id=game_id)
     
-    return redirect('game_detail', game_id=game_id)
+#     # Check if user already owns the game
+#     if OrderLine.objects.filter(order__customer=request.user, game=game).exists():
+#         messages.error(request, f'You already own {game.title}!')
+#         return redirect('game_detail', game_id=game_id)
+    
+#     # Get or create wishlist for user
+#     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    
+#     # Check if game is already in wishlist
+#     if game in wishlist.games.all():
+#         messages.info(request, f'{game.title} is already in your wishlist!')
+#     else:
+#         wishlist.games.add(game)
+#         messages.success(request, f'Added {game.title} to your wishlist!')
+    
+#     return redirect('game_detail', game_id=game_id)
 
 @gamer_required
 def remove_from_wishlist(request, game_id):
@@ -1030,3 +1080,34 @@ def download_personal_data(request):
     response['Content-Disposition'] = f'attachment; filename=sugra_data_{timezone.now().strftime("%Y%m%d")}.pdf'
     
     return response
+
+@gamer_required
+def vote_review(request, game_id, review_id, vote_type):
+    if request.method == 'POST':
+        review = get_object_or_404(Review, review_id=review_id)
+        
+        # Check if user already voted
+        existing_vote = ReviewVote.objects.filter(review=review, user=request.user).first()
+        
+        if existing_vote:
+            if existing_vote.vote_type == vote_type:
+                # Remove vote if clicking same button
+                existing_vote.delete()
+                review.like_count += -1 if vote_type == 'up' else 1
+            else:
+                # Change vote if clicking different button
+                existing_vote.vote_type = vote_type
+                existing_vote.save()
+                review.like_count += 2 if vote_type == 'up' else -2
+        else:
+            # Create new vote
+            ReviewVote.objects.create(
+                review=review,
+                user=request.user,
+                vote_type=vote_type
+            )
+            review.like_count += 1 if vote_type == 'up' else -1
+        
+        review.save()
+        
+    return redirect('game_detail', game_id=game_id)

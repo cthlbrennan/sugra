@@ -198,6 +198,15 @@ class Review(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
     like_count = models.IntegerField(default=0)
 
+    def update_like_count(self):
+        """Updates the like_count based on ReviewVotes"""
+        upvotes = self.votes.filter(vote_type='up').count()
+        downvotes = self.votes.filter(vote_type='down').count()
+        self.like_count = upvotes - downvotes
+        self.save()
+    def __str__(self):
+        return f"Review by {self.customer} for {self.game}"
+
     def __str__(self):
         return f"Review by {self.customer} for {self.game}"
 
@@ -231,3 +240,27 @@ class InboxMessage(models.Model):
 
     def __str__(self):
         return f"Message for {self.developer} about {self.game_title}"
+
+class ReviewVote(models.Model):
+    VOTE_CHOICES = [
+        ('up', 'Upvote'),
+        ('down', 'Downvote')
+    ]
+    
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='votes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    vote_type = models.CharField(max_length=4, choices=VOTE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('review', 'user')
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.review.update_like_count()
+    def delete(self, *args, **kwargs):
+        review = self.review
+        super().delete(*args, **kwargs)
+        review.update_like_count()
+    def __str__(self):
+        return f"{self.user}'s {self.vote_type} vote on {self.review}"

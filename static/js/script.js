@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Set initial state
             message.style.opacity = '1';
             message.style.transition = 'opacity 1s ease-out';
-            
+
             setTimeout(() => {
                 message.style.opacity = '0';
                 setTimeout(() => {
@@ -49,25 +49,25 @@ document.addEventListener('DOMContentLoaded', function () {
     const filterByPopularButton = document.getElementById('filterByPopular');
 
     if (filterByPriceButton) {
-        filterByPriceButton.addEventListener('click', function() {
+        filterByPriceButton.addEventListener('click', function () {
             fetchAndUpdateGames('price');
         });
     }
 
     if (filterByRecentButton) {
-        filterByRecentButton.addEventListener('click', function() {
+        filterByRecentButton.addEventListener('click', function () {
             fetchAndUpdateGames('recent');
         });
     }
 
     if (filterByRatingButton) {
-        filterByRatingButton.addEventListener('click', function() {
+        filterByRatingButton.addEventListener('click', function () {
             fetchAndUpdateGames('highest_rated');
         });
     }
 
     if (filterByPopularButton) {
-        filterByPopularButton.addEventListener('click', function() {
+        filterByPopularButton.addEventListener('click', function () {
             fetchAndUpdateGames('popular');
         });
     }
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const container = document.getElementById('gameCardContainer');
         container.innerHTML = '';
         games.forEach(game => {
-            const ratingHtml = game.avg_rating > 0 
+            const ratingHtml = game.avg_rating > 0
                 ? `<span>★ ${game.avg_rating.toFixed(1)} (${game.review_count} reviews)</span>`
                 : `<span class="text-muted">No ratings yet</span>`;
 
@@ -133,4 +133,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+    // Wishlist button handling
+    document.querySelectorAll('.wishlist-button').forEach(button => {
+        button.addEventListener('click', function (e) {
+            const isAuthenticated = this.dataset.auth === 'true';
+            if (!isAuthenticated) {
+                e.preventDefault();
+                window.location.href = this.dataset.loginUrl;
+            }
+        });
+    });
 });
