@@ -34,6 +34,11 @@ class CustomLoginView(LoginView):
         auth_login(self.request, form.user)
         user = self.request.user
         
+        # Clear cart if user is a developer
+        if user.user_type == 'developer' and 'cart' in self.request.session:
+            del self.request.session['cart']
+            messages.info(self.request, "Developer accounts cannot purchase games. Your cart has been cleared.")
+        
         # Check if user needs to complete profile setup
         if not user.user_type or not user.has_usable_password():
             next_url = self.request.session.get('next')
@@ -478,22 +483,33 @@ def view_cart(request):
 from django.http import JsonResponse
 
 
-@gamer_required
 def add_to_cart(request, game_id):
     """Add a game to the shopping cart"""
     game = get_object_or_404(Game, game_id=game_id)
     
-    # Check if user already owns the game
-    if OrderLine.objects.filter(order__customer=request.user, game=game).exists():
-        message = f'You already own {game.title}!'
-        success = False
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({
-                'success': success,
-                'message': message
-            })
-        messages.error(request, message)
-        return redirect('game_detail', game_id=game_id)
+    # If user is logged in, check if they already own the game
+    if request.user.is_authenticated:
+        if request.user.user_type == 'developer':
+            message = "Developer accounts cannot purchase games."
+            success = False
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': success,
+                    'message': message
+                })
+            messages.error(request, message)
+            return redirect('game_detail', game_id=game_id)
+            
+        if OrderLine.objects.filter(order__customer=request.user, game=game).exists():
+            message = f'You already own {game.title}!'
+            success = False
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': success,
+                    'message': message
+                })
+            messages.error(request, message)
+            return redirect('game_detail', game_id=game_id)
     
     cart = request.session.get('cart', {})
     
@@ -549,6 +565,15 @@ def checkout(request):
         if not cart:
             messages.error(request, "Your cart is empty!")
             return redirect('view_cart')
+
+        # Check if user already owns any games in cart
+        for game_id in cart:
+            game = get_object_or_404(Game, game_id=game_id)
+            if OrderLine.objects.filter(order__customer=request.user, game=game).exists():
+                messages.error(request, f"You already own {game.title}! It has been removed from your cart.")
+                del cart[game_id]
+                request.session['cart'] = cart
+                return redirect('view_cart')
 
         if request.method == 'POST':
             cart = request.session.get('cart', {})
