@@ -1,15 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-Checkout
-{% endblock %}
+{% block title %}Checkout{% endblock %}
 
 {% block body %}
 <div class="container my-5">
     <div class="row">
         <div class="col">
-            <h2 class="font-banner mb-4" style="color: var(--bright-yellow-color);">Checkout</h2>
+            <h2 class="font-banner mb-4 text-yellow">Checkout</h2>
             <hr class="mb-4">
         </div>
     </div>
@@ -18,17 +16,17 @@ Checkout
         <div class="col-12 col-lg-6 mb-4">
             <h3 class="font-headers mb-3">Order Summary</h3>
             <div class="card">
-                <div class="card-body p-0" style="max-height: 600px; overflow-y: auto;">
+                <div class="card-body p-0 overflow-auto max-h-600">
                     {% for item in cart_items %}
                     <div class="d-flex align-items-center p-3 {% if not forloop.last %}border-bottom{% endif %}">
-                        <img src="{{ item.game.thumbnail.url }}" alt="{{ item.game.title }}" class="rounded me-3"
-                            style="width: 80px; height: 60px; object-fit: cover;">
+                        <img src="{{ item.game.thumbnail.url }}" alt="{{ item.game.title }}" 
+                             class="rounded me-3 card-img">
                         <div class="flex-grow-1">
                             <h5 class="font-main mb-1">{{ item.game.title }}</h5>
                             <p class="text-muted mb-0">By {{ item.game.developer.username }}</p>
                         </div>
                         <div class="text-end">
-                            <p class="font-headers mb-0" style="color: var(--main-bg-color);">€{{ item.game.price }}</p>
+                            <p class="font-headers mb-0 text-main">€{{ item.game.price }}</p>
                         </div>
                     </div>
                     {% endfor %}
@@ -36,7 +34,7 @@ Checkout
                 <div class="card-footer bg-light sticky-bottom">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="font-headers mb-0">Total:</h4>
-                        <h4 class="font-headers mb-0" style="color: var(--main-bg-color);">€{{ total }}</h4>
+                        <h4 class="font-headers mb-0 text-main">€{{ total }}</h4>
                     </div>
                 </div>
             </div>
@@ -50,25 +48,15 @@ Checkout
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="card-element" class="form-label">Credit or debit card</label>
-                            <div id="card-element" class="form-control">
-                            </div>
+                            <div id="card-element" class="form-control"></div>
                             <div id="card-errors" class="invalid-feedback d-block" role="alert"></div>
                         </div>
                         <input type="hidden" id="client-secret" value="{{ client_secret }}">
-                        <button id="submit-button" class="btn btn-outline-custom w-100">
-                            Complete Order
-                        </button>
+                        <button id="submit-button" class="btn btn-outline-custom w-100">Complete Order</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
-{% block postloadjs %}
-{{ block.super }}
-{{ stripe_public_key|json_script:"id_stripe_public_key" }}
-{{ client_secret|json_script:"id_client_secret" }}
-<script src="https://js.stripe.com/v3/"></script>
-<script src="{% static 'js/stripe.js' %}"></script>
 {% endblock %}

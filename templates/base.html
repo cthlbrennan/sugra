@@ -16,12 +16,11 @@
    <title>{% block title %}{% endblock %}</title>
 </head>
 
-<body class="font-main d-flex flex-column min-vh-100"
-   style="background-color: var(--off-white-color); color: var(--main-text-color);">
+<body class="font-main d-flex flex-column min-vh-100 bg-offwhite text-main">
    <div class="content-wrapper flex-grow-1">
-      <nav class="navbar navbar-expand-lg navbar-light" style="background-color: var(--main-bg-color);">
+      <nav class="navbar navbar-expand-lg navbar-light bg-main">
          <div class="container-fluid">
-            <a class="navbar-brand font-banner" href="{% url 'index' %}" style="color: var(--bright-yellow-color);">
+            <a class="navbar-brand font-banner text-yellow " href="{% url 'index' %}">
                <img src="{% static 'images/sugra_logo.png' %}" alt="Sugra Games Logo" height="30"
                   class="d-inline-block align-top me-2">
                Sugra Games
@@ -33,49 +32,46 @@
             <div class="collapse navbar-collapse" id="navbarText">
                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 font-headers">
                   <li class="nav-item">
-                     <a class="nav-link {% if request.path == index_url %}active{% endif %}" aria-current="page"
-                        href="{% url 'index' %}" style="color: var(--off-white-color);">Store</a>
+                     <a class="nav-link nav-link-custom {% if request.path == index_url %}active{% endif %}" aria-current="page"
+                        href="{% url 'index' %}">Store</a>
                   </li>
                   <li class="nav-item">
-                     <a class="nav-link" href="{% url 'faq' %}" style="color: var(--off-white-color);">FAQ</a>
+                     <a class="nav-link nav-link-custom {% if request.path == about_url %}active{% endif %}" aria-current="page"
+                        href="{% url 'about' %}">About</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link nav-link-custom" href="{% url 'faq' %}">FAQ</a>
                   </li>
                   {% if user.is_authenticated %}
                   <li class="nav-item">
-                     <a class="nav-link" href="{% url 'user_profile' %}"
-                        style="color: var(--off-white-color);">Profile</a>
+                     <a class="nav-link nav-link-custom" href="{% url 'user_profile' %}">Profile</a>
                   </li>
                   <li class="nav-item">
                      {% if user.user_type == 'gamer' %}
-                     <a class="nav-link" href="{% url 'gamer_dashboard' %}"
-                        style="color: var(--off-white-color);">Dashboard</a>
+                     <a class="nav-link nav-link-custom" href="{% url 'gamer_dashboard' %}">Dashboard</a>
                      {% elif user.user_type == 'developer' %}
-                     <a class="nav-link" href="{% url 'developer_dashboard' %}"
-                        style="color: var(--off-white-color);">Dashboard</a>
+                     <a class="nav-link nav-link-custom" href="{% url 'developer_dashboard' %}">Dashboard</a>
                      {% endif %}
                   </li>
                   <li class="nav-item">
-                     <a class="nav-link" href="{% url 'contact' %}" style="color: var(--off-white-color);">Contact</a>
+                     <a class="nav-link nav-link-custom" href="{% url 'contact' %}">Contact</a>
                   </li>
                   <li class="nav-item">
-                     <a class="nav-link {% if request.path == logout_url %}active{% endif %}" aria-current="page"
-                        href="{% url 'account_logout' %}" style="color: var(--off-white-color);">Logout</a>
+                     <a class="nav-link nav-link-custom {% if request.path == logout_url %}active{% endif %}" aria-current="page"
+                        href="{% url 'account_logout' %}">Logout</a>
                   </li>
                   {% else %}
                   <li class="nav-item">
-                     <a class="nav-link {% if request.path == about_url %}active{% endif %}" aria-current="page"
-                        href="{% url 'about' %}" style="color: var(--off-white-color);">About</a>
+                     <a class="nav-link nav-link-custom {% if request.path == signup_url %}active{% endif %}" aria-current="page"
+                        href="{% url 'account_signup' %}">Register</a>
                   </li>
                   <li class="nav-item">
-                     <a class="nav-link {% if request.path == signup_url %}active{% endif %}" aria-current="page"
-                        href="{% url 'account_signup' %}" style="color: var(--off-white-color);">Register</a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link {% if request.path == login_url %}active{% endif %}" aria-current="page"
-                        href="{% url 'account_login' %}" style="color: var(--off-white-color);">Sign in</a>
+                     <a class="nav-link nav-link-custom {% if request.path == login_url %}active{% endif %}" aria-current="page"
+                        href="{% url 'account_login' %}">Sign in</a>
                   </li>
                   {% endif %}
                   <li class="nav-item">
-                     <a class="nav-link" href="{% url 'view_cart' %}" style="color: var(--off-white-color);">
+                     <a class="nav-link nav-link-custom" href="{% url 'view_cart' %}">
                         <div class="text-center d-flex align-items-center">
                            <i class="fas fa-shopping-bag fa-lg me-2"></i>
                            <span>
@@ -101,56 +97,47 @@
          {% endfor %}
       </div>
       {% endif %}
-      <main class="flex-shrink-0 main-bg" style="background-color: var(--off-white-color);">
+      <main class="flex-shrink-0 main-bg bg-offwhite">
          {% block body %}
          {% endblock %}
       </main>
    </div>
-   <footer class="py-3 font-main mt-4" style="background-color: var(--main-bg-color); color: var(--off-white-color);">
+   <footer class="footer-main py-3 font-main mt-4">
       <div class="container">
-         <hr class="footer-divider" style="border-color: var(--light-accent-color);">
+         <hr class="footer-divider">
          <div class="row">
             <div class="col-md-4 text-center">
-               <h5 class="text-dark-accent font-banner" style="color: var(--bright-yellow-color);">Sugra Games</h5>
-               <p style="color: var(--off-white-color);">Your gateway to amazing indie games.</p>
+               <h5 class="footer-heading font-banner">Sugra Games</h5>
+               <p class="footer-text">Your gateway to amazing indie games.</p>
             </div>
             <div class="col-md-4 text-center">
-               <h5 class="text-dark-accent font-headers" style="color: var(--bright-yellow-color);">Quick Links</h5>
+               <h5 class="footer-heading font-headers">Quick Links</h5>
                <ul class="list-unstyled">
-                  <li><a href="{% url 'index' %}" class="footer-link" style="color: var(--off-white-color);">Store</a>
-                  </li>
-                  <li><a href="{% url 'about' %}" class="footer-link" style="color: var(--off-white-color);">About</a>
-                  </li>
-                  <li><a href="{% url 'faq' %}" class="footer-link" style="color: var(--off-white-color);">FAQ</a></li>
-                  <li><a href="{% url 'privacy_policy' %}" class="footer-link" style="color: var(--off-white-color);">Privacy Policy</a></li>
+                  <li><a href="{% url 'index' %}" class="footer-link">Store</a></li>
+                  <li><a href="{% url 'about' %}" class="footer-link">About</a></li>
+                  <li><a href="{% url 'faq' %}" class="footer-link">FAQ</a></li>
+                  <li><a href="{% url 'privacy_policy' %}" class="footer-link">Privacy Policy</a></li>
                   {% if user.is_authenticated %}
-                  <li><a href="{% url 'account_logout' %}" class="footer-link"
-                        style="color: var(--off-white-color);">Logout</a></li>
+                  <li><a href="{% url 'account_logout' %}" class="footer-link">Logout</a></li>
                   {% else %}
-                  <li><a href="{% url 'account_login' %}" class="footer-link"
-                        style="color: var(--off-white-color);">Sign
-                        in</a></li>
-                  <li><a href="{% url 'account_signup' %}" class="footer-link"
-                        style="color: var(--off-white-color);">Register</a></li>
+                  <li><a href="{% url 'account_login' %}" class="footer-link">Sign in</a></li>
+                  <li><a href="{% url 'account_signup' %}" class="footer-link">Register</a></li>
                   {% endif %}
                </ul>
 
-               <!-- Newsletter Section -->
                <div class="mt-4">
-                    <h5 class="text-dark-accent font-headers" style="color: var(--bright-yellow-color);">Sign up to our Newsletter</h5>
+                    <h5 class="footer-heading font-headers">Sign up to our Newsletter</h5>
                     <div id="mc_embed_signup">
                         <form action="https://gmail.us16.list-manage.com/subscribe/post?u=de7010d364ac593ae9f361c1e&amp;id=20037466a8&amp;f_id=00d6c2e1f0" 
                               method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank">
                             <div class="mc-field-group mb-2">
-                                <input type="email" name="EMAIL" class="form-control" id="mce-EMAIL" 
-                                       placeholder="Enter your email" required 
-                                       style="background: transparent; border: 1px solid var(--off-white-color); color: var(--off-white-color);">
+                                <input type="email" name="EMAIL" class="form-control newsletter-input" id="mce-EMAIL" 
+                                       placeholder="Enter your email" required>
                             </div>
-                            <div style="position: absolute; left: -5000px;" aria-hidden="true">
+                            <div class="position-absolute invisible">
                                 <input type="text" name="b_de7010d364ac593ae9f361c1e_20037466a8" tabindex="-1" value="">
                             </div>
-                            <button type="submit" name="subscribe" class="btn btn-outline-custom w-100"
-                                    style="color: var(--bright-yellow-color); border-color: var(--bright-yellow-color);">
+                            <button type="submit" name="subscribe" class="btn btn-outline-custom w-100 newsletter-button">
                                 Subscribe
                             </button>
                         </form>
@@ -158,36 +145,35 @@
                </div>
             </div>
             <div class="col-md-4 text-center">
-               <h5 class="text-dark-accent font-headers" style="color: var(--bright-yellow-color);">Connect With Us</h5>
+               <h5 class="footer-heading font-headers">Connect With Us</h5>
                <ul class="list-inline">
                   <li class="list-inline-item footer-icon">
                      <a href="https://www.facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
-                        <i class="fab fa-facebook" style="color: var(--off-white-color);"></i>
+                        <i class="fab fa-facebook"></i>
                      </a>
                   </li>
                   <li class="list-inline-item footer-icon">
                      <a href="https://www.twitter.com" target="_blank" rel="noopener" aria-label="Twitter">
-                        <i class="fab fa-twitter" style="color: var(--off-white-color);"></i>
+                        <i class="fab fa-twitter"></i>
                      </a>
                   </li>
                   <li class="list-inline-item footer-icon">
-                     <a href="https://www.instagram.com/cthlbrennan" target="_blank" rel="noopener"
-                        aria-label="Instagram">
-                        <i class="fab fa-instagram" style="color: var(--off-white-color);"></i>
+                     <a href="https://www.instagram.com/cthlbrennan" target="_blank" rel="noopener" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
                      </a>
                   </li>
                   <li class="list-inline-item footer-icon">
                      <a href="https://github.com/cthlbrennan" target="_blank" rel="noopener" aria-label="Github">
-                        <i class="fa-brands fa-github" style="color: var(--off-white-color);"></i>
+                        <i class="fa-brands fa-github"></i>
                      </a>
                   </li>
                </ul>
             </div>
          </div>
-         <hr class="footer-divider" style="border-color: var(--light-accent-color);">
+         <hr class="footer-divider">
          <div class="row">
             <div class="col-12 text-center font-banner">
-               <p style="color: var(--off-white-color);">&copy; {% now "Y" %} Sugra Games. All rights reserved.</p>
+               <p class="footer-text">&copy; {% now "Y" %} Sugra Games. All rights reserved.</p>
             </div>
          </div>
       </div>

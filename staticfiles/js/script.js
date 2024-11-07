@@ -1,18 +1,30 @@
+/* jshint esversion: 11*/
 document.addEventListener('DOMContentLoaded', function () {
-    var heroCarousel = new bootstrap.Carousel(document.getElementById('heroCarousel'), {
-        interval: 5000,  // Change slide every 5 seconds
-        direction: 'left'  // Animate from right to left
-    });
-
-    const messagesContainer = document.getElementById('messages-container');
-    if (messagesContainer) {
-        setTimeout(function () {
-            messagesContainer.style.opacity = '0';
-            setTimeout(function () {
-                messagesContainer.style.display = 'none';
-            }, 1000);
-        }, 5000);
+    // Safely initialize carousel
+    const heroCarouselElement = document.getElementById('heroCarousel');
+    if (heroCarouselElement && typeof bootstrap !== 'undefined') {
+        new bootstrap.Carousel(heroCarouselElement, {
+            interval: 5000,
+            direction: 'left'
+        });
     }
+
+    // Message handling
+    const messages = document.querySelectorAll('.messages-container');
+    messages.forEach(message => {
+        if (message) {
+            // Set initial state
+            message.style.opacity = '1';
+            message.style.transition = 'opacity 1s ease-out';
+            
+            setTimeout(() => {
+                message.style.opacity = '0';
+                setTimeout(() => {
+                    message.remove();
+                }, 1000);
+            }, 5000);
+        }
+    });
 
     var usernameField = document.getElementById('id_username');
     if (usernameField) {
@@ -33,6 +45,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const filterByPriceButton = document.getElementById('filterByPrice');
     const filterByRecentButton = document.getElementById('filterByRecent');
+    const filterByRatingButton = document.getElementById('filterByRating');
+    const filterByPopularButton = document.getElementById('filterByPopular');
 
     if (filterByPriceButton) {
         filterByPriceButton.addEventListener('click', function() {
@@ -43,6 +57,18 @@ document.addEventListener('DOMContentLoaded', function () {
     if (filterByRecentButton) {
         filterByRecentButton.addEventListener('click', function() {
             fetchAndUpdateGames('recent');
+        });
+    }
+
+    if (filterByRatingButton) {
+        filterByRatingButton.addEventListener('click', function() {
+            fetchAndUpdateGames('highest_rated');
+        });
+    }
+
+    if (filterByPopularButton) {
+        filterByPopularButton.addEventListener('click', function() {
+            fetchAndUpdateGames('popular');
         });
     }
 
@@ -58,9 +84,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const container = document.getElementById('gameCardContainer');
         container.innerHTML = '';
         games.forEach(game => {
+            const ratingHtml = game.avg_rating > 0 
+                ? `<span>★ ${game.avg_rating.toFixed(1)} (${game.review_count} reviews)</span>`
+                : `<span class="text-muted">No ratings yet</span>`;
+
             container.innerHTML += `
-                <div class="col">
-                    <div class="card h-100">
+                <div class="col mb-4">
+                    <div class="card">
                         <a href="/game/${game.game_id}" class="text-decoration-none">
                             <div class="card-img-container">
                                 <img src="${game.thumbnail}" class="card-img-top" alt="${game.title}">
@@ -70,10 +100,13 @@ document.addEventListener('DOMContentLoaded', function () {
                             <h5 class="card-title font-banner">
                                 <a href="/game/${game.game_id}" class="text-decoration-none game-title-link">${game.title}</a>
                             </h5>
-                            <p class="game-price font-cta">${game.price.toFixed(2)} €</p>
+                            <div class="text-warning mb-2">
+                                ${ratingHtml}
+                            </div>
+                            <p class="game-price font-cta mb-2">${game.price.toFixed(2)} €</p>
                             <div class="card-text">
-                                <small class="text-muted">${game.genre}</small>
-                                <p class="mt-2 mb-0">${game.description.substring(0, 100)}...</p>
+                                <small class="text-muted d-block mb-2">${game.genre}</small>
+                                <p class="mb-0">${game.description.substring(0, 100)}...</p>
                             </div>
                         </div>
                     </div>
@@ -83,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const toastElement = document.getElementById('deleteToast');
-    if (toastElement) {
+    if (toastElement && typeof bootstrap !== 'undefined' && bootstrap.Toast) {
         const toast = new bootstrap.Toast(toastElement);
         let formToSubmit;
 
@@ -94,8 +127,10 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        document.getElementById('confirmDelete').addEventListener('click', function () {
-            formToSubmit.submit();
+        document.getElementById('confirmDelete')?.addEventListener('click', function () {
+            if (formToSubmit) {
+                formToSubmit.submit();
+            }
         });
     }
 });

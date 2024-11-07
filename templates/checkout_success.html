@@ -1,15 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-Order Success
-{% endblock %}
+{% block title %}Order Success{% endblock %}
 
 {% block body %}
 <div class="container my-5">
     <div class="row">
         <div class="col text-center">
-            <h2 class="font-banner mb-4" style="color: var(--bright-yellow-color);">Thank You!</h2>
+            <h2 class="font-banner mb-4 text-yellow">Thank You!</h2>
             <hr class="mb-4">
             <h3 class="font-headers">Your order has been successfully processed</h3>
             <p class="font-main">Your order number is: {{ order.order_id }}</p>
@@ -23,8 +21,8 @@ Order Success
                     <h4 class="font-headers mb-3">Order Details</h4>
                     {% for item in order.orderline_set.all %}
                     <div class="d-flex align-items-center mb-3">
-                        <img src="{{ item.game.thumbnail.url }}" alt="{{ item.game.title }}" class="rounded me-3"
-                            style="width: 80px; height: 60px; object-fit: cover;">
+                        <img src="{{ item.game.thumbnail.url }}" alt="{{ item.game.title }}" 
+                             class="rounded me-3 thumbnail-preview">
                         <div>
                             <h5 class="font-main mb-1">{{ item.game.title }}</h5>
                             <p class="text-muted mb-0">€{{ item.price }}</p>
@@ -42,9 +40,7 @@ Order Success
 
     <div class="row mt-4">
         <div class="col text-center">
-            <a href="{% url 'index' %}" class="btn btn-outline-custom">
-                Return to Store
-            </a>
+            <a href="{% url 'index' %}" class="btn btn-outline-custom">Return to Store</a>
         </div>
     </div>
 </div>

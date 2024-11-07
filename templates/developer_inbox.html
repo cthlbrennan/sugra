@@ -40,8 +40,7 @@ Developer Inbox
                 {% endif %}
                 <br>
                 <small class="text-muted">Received: {{ message.created_at|date:"F d, Y" }}</small>
-                <form method="post" action="{% url 'delete_inbox_message' message.message_id %}"
-                    style="display:inline;">
+                <form method="post" action="{% url 'delete_inbox_message' message.message_id %}" class="d-inline">
                     {% csrf_token %}
                     <button type="button" class="btn btn-danger btn-sm delete-button">Delete</button>
                 </form>

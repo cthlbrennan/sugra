@@ -7,49 +7,58 @@ Developer Dashboard
 
 {% block body %}
 <div class="container mt-4 text-center">
-    <h1 class="font-banner mb-4" style="color: var(--bright-yellow-color);">Welcome back, {{ user.username }}!</h1>
-
+    <h1 class="font-banner mb-4 text-yellow">Welcome back, {{ user.username }}!</h1>
 
     <div class="mb-4">
-        <a href="{% url 'developer_inbox' %}" class="btn btn-outline-custom font-cta me-2"
-            style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
+        <a href="{% url 'developer_inbox' %}" class="btn btn-outline-custom font-cta bg-main text-yellow me-2">
             View Inbox{% if unread_messages_count > 0 %} ({{ unread_messages_count }}){% endif %}
         </a>
-        <a href="{% url 'developer_profile' username=user.username %}" class="btn btn-outline-custom font-cta"
-            style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
+        <a href="{% url 'developer_profile' username=user.username %}" class="btn btn-outline-custom font-cta bg-main text-yellow">
             View Public Profile
+        </a>
+        <a href="{% url 'publish_game' %}" class="btn btn-outline-custom font-cta bg-main text-yellow">
+            Publish A New Game
         </a>
     </div>
 
     <div class="row mb-4">
         <div class="col-md-4">
-            <div class="card bg-light-accent">
-                <div class="card-body">
-                    <h5 class="card-title font-player2 text-main-bg">Published Games</h5>
-                    <p class="card-text font-player2 display-4 text-dark-accent">
-                        {% if published_games.count %}
-                        {{ published_games.count }}
-                        {% else %}
-                        None yet
-                        {% endif %}
-                    </p>
-                </div>
+            <div class="bg-light-accent p-2 rounded">
+                <h5 class="font-player2 text-main-bg mb-1">Published Games</h5>
+                <p class="font-player2 display-4 text-dark-accent mb-0">
+                    {% if published_games.count %}
+                    {{ published_games.count }}
+                    {% else %}
+                    0
+                    {% endif %}
+                </p>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card bg-main">
-                <div class="card-body">
-                    <h5 class="card-title font-headers text-off-white">Total Sales</h5>
-                    <p class="card-text font-main display-4 text-off-white">{{ total_sales }}</p>
-                </div>
+            <div class="bg-light-accent p-2 rounded">
+                <h5 class="font-headers text-main-bg mb-1">Total Sales</h5>
+                <p class="font-main display-4 text-dark-accent mb-0">
+                    {% if total_sales %}
+                    {{ total_sales }}
+                    {% else %}
+                    0
+                    {% endif %}
+                </p>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card bg-bright-yellow">
-                <div class="card-body">
-                    <h5 class="card-title font-headers text-main-text">Aggregate Customer Rating</h5>
-                    <p class="card-text font-main display-4 text-main-text">{{ aggregate_rating }}</p>
-                </div>
+            <div class="bg-light-accent p-2 rounded">
+                <h5 class="font-headers text-main-bg mb-1">Aggregate Customer Rating</h5>
+                <p class="font-main display-4 text-dark-accent mb-0">
+                    {% if aggregate_rating %}
+                        {{ aggregate_rating }}
+                    {% else %}
+                        No reviews yet
+                    {% endif %}
+                </p>
+                {% if total_reviews > 0 %}
+                    <small class="font-main text-dark-accent">({{ total_reviews }} review{{ total_reviews|pluralize }})</small>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -75,49 +84,99 @@ Developer Dashboard
                     <td>{{ game.description }}</td>
                     <td>{{ game.genre }}</td>
                     <td>{{ game.price }}</td>
-                    <td><a href="{{ game.file_url }}" class="btn btn-sm btn-outline-custom font-cta">Download</a></td>
-                    <td><a href="{% url 'game_detail' game.game_id %}" class="btn btn-sm btn-outline-custom font-cta">View</a></td>                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center">No published games.</td>
+                    <td>{{ game.file_url }}</td>
+                    <td><a href="{% url 'game_detail' game.game_id %}" class="btn btn-sm btn-outline-custom">View</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 
-    <a href="{% url 'publish_game' %}" class="btn btn-outline-custom font-cta mb-4"
-        style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">Publish A New Game</a>
-
     <h3 class="font-headers mb-3 text-dark-accent">Reviews</h3>
-    <div class="row mb-4">
-        {% for review in recent_reviews %}
-        <div class="col-md-4 mb-3">
-            <div class="card bg-light-accent">
-                <div class="card-body">
-                    <h5 class="card-title font-headers text-main-text">Review left by {{ review.user }}</h5>
-                    <p class="card-text font-main">{{ review.content|truncatewords:20 }}</p>
-                    <a href="{{ review.full_review_url }}" class="btn btn-sm btn-custom font-cta">Read full review</a>
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            {% for review in recent_reviews %}
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <div class="card bg-light-accent h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title font-headers text-main-text">{{ review.game.title }}</h5>
+                        <div class="text-warning mb-2">
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p class="card-text font-main flex-grow-1">{{ review.comment|truncatewords:20 }}</p>
+                        <div>
+                            <small class="text-muted d-block mb-2">By {{ review.customer.username }}</small>
+                            <a href="{% url 'game_detail' review.game.game_id %}" class="btn btn-sm btn-custom font-cta">View Game</a>
+                        </div>
+                    </div>
                 </div>
             </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="font-main">No reviews yet.</p>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
+
+    {% if recent_reviews.has_other_pages %}
+    <nav aria-label="Review pagination" class="mb-4">
+        <ul class="pagination justify-content-center">
+            {% if recent_reviews.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?review_page={{ recent_reviews.previous_page_number }}">&laquo; Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo; Previous</span>
+            </li>
+            {% endif %}
+
+            {% for i in recent_reviews.paginator.page_range %}
+                <li class="page-item {% if recent_reviews.number == i %}active{% endif %}">
+                    <a class="page-link" href="?review_page={{ i }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+
+            {% if recent_reviews.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?review_page={{ recent_reviews.next_page_number }}">Next &raquo;</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next &raquo;</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 
     <h3 class="font-headers mb-3 text-dark-accent">Recent Sales</h3>
     <div class="table-responsive mb-4">
         <table class="table table-striped">
             <thead class="bg-bright-yellow text-main-text">
                 <tr>
-                    <th>Title</th>
-                    <th>Date Bought</th>
+                    <th>Game Title</th>
+                    <th>Price</th>
+                    <th>Sale Date</th>
                 </tr>
             </thead>
             <tbody>
                 {% for sale in recent_sales %}
                 <tr>
-                    <td>{{ sale.title }}</td>
-                    <td>{{ sale.date_bought }}</td>
+                    <td>{{ sale.game.title }}</td>
+                    <td>€{{ sale.game.price }}</td>
+                    <td>{{ sale.order.submitted_at|date:"F j, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">No sales recorded yet.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -153,9 +212,39 @@ Developer Dashboard
     </div>
 
     <h3 class="font-headers mb-3 text-dark-accent">Earnings</h3>
-    <div class="card mb-4 bg-main text-off-white">
-        <div class="card-body">
-            <p class="font-main">{{ earnings_breakdown|linebreaks }}</p>
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <div class="bg-light-accent p-3 rounded">
+                <h4 class="font-headers text-main-bg mb-3">Total Revenue</h4>
+                <p class="display-4 text-dark-accent mb-0">€{{ total_earnings|floatformat:2 }}</p>
+            </div>
+        </div>
+        
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead class="bg-main text-off-white">
+                        <tr>
+                            <th>Game Title</th>
+                            <th>Units Sold</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game in earnings_by_game %}
+                        <tr>
+                            <td>{{ game.game__title }}</td>
+                            <td>{{ game.total_sales }}</td>
+                            <td>€{{ game.revenue|floatformat:2 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">No earnings recorded yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

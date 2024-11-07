@@ -182,11 +182,68 @@ def developer_dashboard(request):
     published_games = Game.objects.filter(developer=request.user, is_published=True)
     unread_messages_count = InboxMessage.objects.filter(developer=request.user, is_read=False).count()
     games_awaiting_review = Game.objects.filter(developer=request.user, is_published=False)
+    
+    # Get recent sales (last 10) for all published games
+    recent_sales = OrderLine.objects.filter(
+        game__in=published_games
+    ).select_related(
+        'game', 'order'
+    ).order_by(
+        '-order__submitted_at'
+    )[:10]
+    
+    # Calculate earnings breakdown by game
+    earnings_by_game = OrderLine.objects.filter(
+        game__in=published_games
+    ).values(
+        'game__title'
+    ).annotate(
+        total_sales=Count('orderline_id'),
+        revenue=Sum('game__price')
+    ).order_by('-revenue')
+    
+    # Calculate total earnings
+    total_earnings = OrderLine.objects.filter(
+        game__in=published_games
+    ).aggregate(
+        total=Sum('game__price')
+    )['total'] or 0
+    
+    # Get all reviews for the developer's published games
+    reviews = Review.objects.filter(
+        game__in=published_games
+    ).select_related('game', 'customer').order_by('-submitted_at')
+    
+    # Calculate total reviews and aggregate rating
+    total_reviews = reviews.count()
+    aggregate_rating = reviews.aggregate(Avg('rating'))['rating__avg']
+    if aggregate_rating:
+        aggregate_rating = round(aggregate_rating, 1)
+    
+    # Paginate reviews
+    paginator = Paginator(reviews, 3)
+    page = request.GET.get('review_page', 1)
+    
+    try:
+        recent_reviews = paginator.page(page)
+    except PageNotAnInteger:
+        recent_reviews = paginator.page(1)
+    except EmptyPage:
+        recent_reviews = paginator.page(paginator.num_pages)
+    
     context = {
         'published_games': published_games,
         'unread_messages_count': unread_messages_count,
         'games_awaiting_review': games_awaiting_review,
+        'total_sales': OrderLine.objects.filter(game__in=published_games).count(),
+        'aggregate_rating': aggregate_rating,
+        'total_reviews': total_reviews,
+        'recent_reviews': recent_reviews,
+        'recent_sales': recent_sales,
+        'total_earnings': total_earnings,
+        'earnings_by_game': earnings_by_game,
     }
+    
     return render(request, 'developer_dashboard.html', context)
 
 @developer_required
@@ -825,8 +882,7 @@ def faq_view(request):
     return render(request, 'faq.html')
 
 def privacy_policy(request):
-    """Render the privacy policy page"""
-    return render(request, 'privacy/privacy_policy.html')
+    return render(request, 'privacy_policy.html')
 
 @login_required
 def download_personal_data(request):

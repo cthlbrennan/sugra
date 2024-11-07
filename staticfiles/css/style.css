@@ -10,7 +10,7 @@
     --font-headers: 'Roboto', sans-serif;
     --font-main: 'Noto Sans', sans-serif;
     --font-cta: 'Press Start 2P', cursive;
-    --main-bg-color: #41B49D;
+    --main-bg-color: #12443b;
     --main-text-color: #393939;
     --light-accent-color: #F0D8CC;
     --dark-accent-color: #993333;
@@ -81,19 +81,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Messages container */
-#messages-container {
+.messages-container {
     position: fixed;
     top: 60px;
-    z-index: 50;
+    left: 0;
+    right: 0;
+    z-index: 1050;
     width: 100%;
     background-color: var(--bright-yellow-color);
     color: var(--main-text-color);
     text-align: center;
     padding: 10px;
-    transition: opacity 1s ease-out;
+    opacity: 1;
 }
 
-#messages-container p {
+.messages-container p {
     margin: 0;
 }
 
@@ -130,7 +132,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Card styles */
 .card {
-    height: 100%;
+    min-height: 450px;
     display: flex;
     flex-direction: column;
 }
@@ -150,21 +152,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card-body {
-    height: 200px;
+    flex: 1;
     display: flex;
     flex-direction: column;
+    padding: 1.25rem;
 }
 
 .card-title {
-    height: 2.4em;
-    overflow: hidden;
-    line-height: 1.2em;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
 }
 
 .card-text {
     flex-grow: 1;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-price {
+    margin: 0.5rem 0;
 }
 
 .card-text small {
@@ -353,4 +359,73 @@ h1, h2, h3, h4, h5, h6 {
     .mobile-buttons .btn:last-child {
         margin-bottom: 0;
     }
+}
+
+/* Add these styles for form errors */
+.errorlist {
+    color: #dc3545;
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+    text-align: left;
+}
+
+.errorlist li {
+    padding: 0.25rem 0;
+}
+
+/* Style for non-field errors */
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    padding: 0.75rem 1.25rem;
+    margin: 1rem 0;
+    border-radius: 0.25rem;
+    text-align: left;
+}
+
+#mc_embed_signup {
+    padding: 10px;
+}
+
+#mc_embed_signup input[type="email"] {
+    background: transparent;
+    border: 1px solid var(--off-white-color);
+    color: var(--off-white-color);
+}
+
+#mc_embed_signup input[type="email"]::placeholder {
+    color: var(--off-white-color);
+    opacity: 0.7;
+}
+
+#mc_embed_signup input[type="email"]:focus {
+    background: transparent;
+    color: var(--off-white-color);
+    box-shadow: none;
+    border-color: var(--bright-yellow-color);
+}
+
+.hover-underline:hover {
+    text-decoration: underline !important;
+}
+
+.btn-cart {
+    background-color: var(--main-bg-color);
+    color: var(--off-white-color);
+}
+
+.btn-cart[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.game-title-header {
+    color: var(--off-white-color);
+}
+
+.cart-button-container {
+    display: flex;
+    gap: 0.5rem;
 }
