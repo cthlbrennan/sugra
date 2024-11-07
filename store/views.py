@@ -477,6 +477,8 @@ def view_cart(request):
 
 from django.http import JsonResponse
 
+
+@gamer_required
 def add_to_cart(request, game_id):
     """Add a game to the shopping cart"""
     game = get_object_or_404(Game, game_id=game_id)
