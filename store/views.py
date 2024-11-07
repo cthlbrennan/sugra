@@ -813,3 +813,9 @@ def delete_review(request, game_id, review_id):
         messages.success(request, 'Your review has been deleted.')
     
     return redirect('game_detail', game_id=game_id)
+
+def faq_view(request):
+    """
+    Render the FAQ page
+    """
+    return render(request, 'faq.html')

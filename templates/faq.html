@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}FAQ - Sugra Games{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="font-banner text-center mb-4" style="color: var(--bright-yellow-color);">Frequently Asked Questions</h1>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- General Questions -->
+            <h2 class="font-headers mb-3">General Questions</h2>
+            
+            <div class="accordion mb-4" id="generalAccordion">
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button font-main" type="button" data-bs-toggle="collapse" data-bs-target="#q1">
+                            What is Sugra Games?
+                        </button>
+                    </h3>
+                    <div id="q1" class="accordion-collapse collapse show" data-bs-parent="#generalAccordion">
+                        <div class="accordion-body">
+                            Sugra Games is an indie game marketplace that connects developers with players. Our name comes from the Irish word "súgradh", relating to play. We provide a platform where indie developers can showcase and sell their games directly to players.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button collapsed font-main" type="button" data-bs-toggle="collapse" data-bs-target="#q2">
+                            How do I create an account?
+                        </button>
+                    </h3>
+                    <div id="q2" class="accordion-collapse collapse" data-bs-parent="#generalAccordion">
+                        <div class="accordion-body">
+                            You can create an account by clicking the "Sign Up" button in the navigation bar. You'll need to choose between a Gamer account (for purchasing games) or a Developer account (for publishing games).
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- For Developers -->
+            <h2 class="font-headers mb-3">For Developers</h2>
+            
+            <div class="accordion mb-4" id="devAccordion">
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button collapsed font-main" type="button" data-bs-toggle="collapse" data-bs-target="#d1">
+                            How do I publish a game?
+                        </button>
+                    </h3>
+                    <div id="d1" class="accordion-collapse collapse" data-bs-parent="#devAccordion">
+                        <div class="accordion-body">
+                            After creating a Developer account, you can submit your game through the Developer Dashboard. Your game will go through a review process before being published. Make sure to include high-quality screenshots, a detailed description, and set an appropriate price.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button collapsed font-main" type="button" data-bs-toggle="collapse" data-bs-target="#d2">
+                            What happens after I submit my game?
+                        </button>
+                    </h3>
+                    <div id="d2" class="accordion-collapse collapse" data-bs-parent="#devAccordion">
+                        <div class="accordion-body">
+                            After submission, your game will be reviewed by our team. You'll receive a message in your Developer Inbox when the review is complete, either approving your game for publication or providing feedback if changes are needed.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- For Gamers -->
+            <h2 class="font-headers mb-3">For Gamers</h2>
+            
+            <div class="accordion mb-4" id="gamerAccordion">
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button collapsed font-main" type="button" data-bs-toggle="collapse" data-bs-target="#g1">
+                            How do I download my purchased games?
+                        </button>
+                    </h3>
+                    <div id="g1" class="accordion-collapse collapse" data-bs-parent="#gamerAccordion">
+                        <div class="accordion-body">
+                            After purchase, games are available in your Library. You can access your Library through the Gamer Dashboard or directly from the navigation menu when logged in. Each game will have a download button to get the game files.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button collapsed font-main" type="button" data-bs-toggle="collapse" data-bs-target="#g2">
+                            Can I wishlist games?
+                        </button>
+                    </h3>
+                    <div id="g2" class="accordion-collapse collapse" data-bs-parent="#gamerAccordion">
+                        <div class="accordion-body">
+                            Yes! When browsing games, you can add them to your wishlist. Your wishlist is accessible from your Gamer Dashboard, making it easy to keep track of games you're interested in purchasing later.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
