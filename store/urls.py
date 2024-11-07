@@ -40,4 +40,6 @@ urlpatterns = [
     path('game/<int:game_id>/review/<int:review_id>/edit/', views.edit_review, name='edit_review'),
     path('game/<int:game_id>/review/<int:review_id>/delete/', views.delete_review, name='delete_review'),
     path('faq/', views.faq_view, name='faq'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('download-data/', views.download_user_data, name='download_user_data'),
 ]

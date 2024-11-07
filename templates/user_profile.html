@@ -56,15 +56,17 @@
                         </div>
                         <button type="submit" name="update_bio" class="btn btn-outline-custom font-cta">Update Bio</button>
                     </form>
-                </div>
-            </div>
 
-            <!-- Delete Account Section -->
-            <div class="mt-5 pt-4 border-top">
-                <button type="button" class="btn btn-danger font-cta" data-bs-toggle="modal"
-                    data-bs-target="#deleteAccountModal">
-                    Delete Account
-                </button>
+                    <h2 class="font-headers mb-4 text-center">Privacy Options</h2>
+                    <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3 mb-5">
+                        <a href="{% url 'download_user_data' %}" class="btn btn-outline-custom font-cta">
+                            Download My Data
+                        </a>
+                        <button type="button" class="btn btn-danger font-cta" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                            Delete Account
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

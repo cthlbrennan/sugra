@@ -21,6 +21,8 @@ from .models import InboxMessage, Game, Message, User, Screenshot, Order, OrderL
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
+from django.views.generic import TemplateView
+from django.db.models import Sum
 
 
 # Create your views here.
@@ -819,3 +821,97 @@ def faq_view(request):
     Render the FAQ page
     """
     return render(request, 'faq.html')
+
+def privacy_policy(request):
+    """Render the privacy policy page"""
+    return render(request, 'privacy/privacy_policy.html')
+
+@login_required
+def download_personal_data(request):
+    """Allow users to download their personal data"""
+    user_data = {
+        'username': request.user.username,
+        'email': request.user.email,
+        'date_joined': request.user.date_joined,
+        'user_type': request.user.user_type,
+    }
+
+    # Add gamer-specific data
+    if request.user.user_type == 'gamer':
+        user_data.update({
+            'orders': list(Order.objects.filter(customer=request.user).values(
+                'order_id', 
+                'submitted_at',
+                'total_price'
+            )),
+            'reviews': list(Review.objects.filter(customer=request.user).values(
+                'game__title',
+                'rating',
+                'comment',
+                'submitted_at'
+            )),
+            'wishlist': list(request.user.wishlist.games.values('title', 'price')) if hasattr(request.user, 'wishlist') else []
+        })
+    
+    # Add developer-specific data
+    elif request.user.user_type == 'developer':
+        user_data.update({
+            'published_games': list(Game.objects.filter(developer=request.user).values(
+                'title',
+                'price',
+                'description',
+                'genre',
+                'created_at',
+                'is_published'
+            )),
+            'total_sales': Order.objects.filter(
+                orderline__game__developer=request.user
+            ).count(),
+            'total_revenue': float(OrderLine.objects.filter(
+                game__developer=request.user
+            ).aggregate(total=Sum('price'))['total'] or 0),
+            'average_rating': float(Review.objects.filter(
+                game__developer=request.user
+            ).aggregate(avg=Avg('rating'))['avg'] or 0)
+        })
+
+    return JsonResponse(user_data)
+
+@login_required
+def download_user_data(request):
+    """Allow users to download their personal data"""
+    if request.user.user_type == 'gamer':
+        user_data = {
+            'personal_info': {
+                'username': request.user.username,
+                'email': request.user.email,
+                'date_joined': request.user.date_joined.isoformat(),
+                'user_type': 'gamer'
+            },
+            'orders': list(Order.objects.filter(customer=request.user).values(
+                'order_id', 'submitted_at', 'total_price'
+            )),
+            'reviews': list(Review.objects.filter(customer=request.user).values(
+                'game__title', 'rating', 'comment', 'submitted_at'
+            )),
+            'wishlist': list(request.user.wishlist.games.values('title')) if hasattr(request.user, 'wishlist') else []
+        }
+    else:  # developer
+        user_data = {
+            'personal_info': {
+                'username': request.user.username,
+                'email': request.user.email,
+                'date_joined': request.user.date_joined.isoformat(),
+                'user_type': 'developer'
+            },
+            'published_games': list(Game.objects.filter(developer=request.user).values(
+                'title', 'price', 'description', 'genre', 'created_at', 'is_published'
+            )),
+            'messages': list(InboxMessage.objects.filter(developer=request.user).values(
+                'subject', 'message', 'created_at', 'is_read'
+            ))
+        }
+
+    response = JsonResponse(user_data, json_dumps_params={'indent': 2})
+    response['Content-Disposition'] = 'attachment; filename="my_data.json"'
+    return response
