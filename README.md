@@ -229,112 +229,94 @@ Upon entering the page, the logo is apparent in the top left corner. This tells 
 
 #### Navigation Bar
 
-![Navigation Bar](documentation/features/active-page-navbar.png)
+![Navigation Bar](documentation/features/navbar.png)
 
 Upon entering the page, it is immediately apparent to the user that there is a menu that provides them links to the pages of the website. This makes the page easily navigable for the user. 
 
-The page that the user is actively on will be a darker shade in the navbar. This helps the user to orient themselves within the website, following best principles of good UX design. 
-
-The options available on the navbar also change depending on whether the user is logged in or not. When logged out, the navbar appears as shown below.
-
-![Navigation Bar](documentation/features/logged-out-navbar.png)
-
 #### Dropdown Menu
 
-![Dropdown Menu](documentation/features/dropdown-navbar.png)
+![Dropdown Menu](documentation/features/dropdown-menu.png)
 
 At mobile and tablet screen width, the menu options are accessed through a dropdown menu via a hamburger icon.
 
 #### Hero Image Carousel on Index Page
 
-![Hero Image, index.html](documentation/features/hero-image-index.png)
+![Hero Image, index.html](documentation/features/hero-image-carousel.png)
 
-For users who are not signed in, the home page is characterised by the large hero image featuring a herd of cows. The overlaid text welcomes the user to the website and provides a quick and catchy slogan that summarises the website's utility. 
+The index page features a carousel of hero images. This is a good way to establish the theme of the website and provide a good user experience. 
 
 #### About Section
 
-![About Section](documentation/features/about-hero-image-and-content.png)
+![About Section](documentation/features/about.png)
 
-The About page provides more information to users on the utility of the website, as well as as another hero image. The website respects the user's time by cutting right to the core of the business. 
+The About page provides more information to users on the services and value of the website. It features a large image of the logo. 
 
-#### Call-to-Action Buttons
+#### Store
 
-![Call-to-Action Buttons](documentation/features/about-call-to-action-buttons.png)
+![Store](documentation/features/store.png)
 
-At the bottom of the About page, there are two large buttons which invite the user to register now, or log in if they have an account, underneath emboldened large text. These call-to-action buttons encourage interaction from the user. 
+The Store page features a grid of game cards. This is a good way to display the games to the user. It also features a search bar, as well as filter buttons that rank the games by popularity, rating, value and most recently added. 
 
-#### Favicon
+#### Footer 
 
-![Favicon](documentation/features/favicon-and-title.png)
+![Footer](documentation/features/footer.png)
 
-The pages of the website have a favicon of the logo. Furthermore, the title on the tab changes depending on the page that the user is on. 
+The footer is present on every page. It contains social media links, as well as links to other pages on the website; these links change depending on whether the user is logged in or not, just like the navbar. The copyright line at the bottom of the footer utilises Django Template Language functionality that allows for the year to be updated automatically without any maintenance from the product owner or site administrator. The social media links are from [Font Awesome](https://www.fontawesome.com), while the newsletter widget uses [Mailchimp](https://mailchimp.com) functionality to allow users to sign up to the newsletter in line with best practices for email marketing as set out above. 
 
-#### Footer
+#### FAQ
 
-![Footer](documentation/features/footer-with-links.png)
+![FAQ](documentation/features/faq.png)
 
-The footer is present on every page. It contains social media links, as well as links to other pages on the website; these links change depending on whether the user is logged in or not, just like the navbar. This is shown below. 
+The FAQ page provides answers to common questions that users may have about the website. It is a good way to provide information to the user without cluttering the main pages of the website, and is good for SEO 
 
-![Footer](documentation/features/footer-with-links-changes-when-logged-out.png)
+#### Authentication
 
-The copyright line at the bottom of the footer utilises Django Template Language functionality that allows for the year to be updated automatically without any maintenance from the product owner or site administrator. 
+![Authentication](documentation/features/authentication.png)
 
-#### Social Media Links
+The authentication system allows users to log in and out, as well as register for an account. It also allows for social authentication via Gmail. Users can also reset their passwords if required. 
 
-![Social Media Links](documentation/features/social-media-links.png)
+#### Developer Dashboard
 
-The footer contains icons from [Font Awesome](https://www.fontawesome.com) which provide links to their respective social media websites. 
-
-#### Messages to User
-
-![User Message](documentation/features/messages-on-user-action.png)
-
-If the user does anything substantive, like sign in, register, sign out, add an animal to the database, edit details, delete an animal, etc, a small message appears at the top of the screen informing the user that their action has been registered. This interaction with the user provides them with confidence in their use of the website, improving their user experience. 
-
-#### Authentication System
-- **Dual User Types**: Users choose between Gamer or Developer profiles during registration
-- **Social Authentication**: Gmail integration for quick signup
-- **Custom Profile Pages**: Different dashboards and features based on user type
-- **Password Reset**: Secure password recovery system via email
-- **Profile Management**: Users can update their details and profile pictures
-
-#### Developer Features
 ![Developer Dashboard](documentation/features/developer-dashboard.png)
-- **Game Submission System**:
-  - Multi-step game upload process
-  - Support for multiple screenshots and promotional images
-  - Rich text description editor
-  - Price setting and genre categorization
-  - Game file upload system
-- **Developer Dashboard**:
-  - Sales tracking with detailed statistics
-  - Review monitoring system
-  - Game management interface
-  - Revenue analytics
-- **Game Management**:
-  - Update game details and assets
-  - Respond to user reviews
-  - Track download statistics
-  - Monitor wishlist additions
 
-#### Gamer Features
+The developer dashboard allows developers to add games to the website, as well as edit and delete them. Developers can also view sales statistics and reviews for their games. 
+
+#### Gamer Dashboard
+
 ![Gamer Dashboard](documentation/features/gamer-dashboard.png)
-- **Game Library**:
-  - Instant access to purchased games
-  - Download management
-  - Game launch tracking
-  - Purchase history
-- **Wishlist System**:
-  - Add/remove games
-  - Price tracking
-  - Automatic cleanup after purchase
-  - Share wishlist functionality
-- **Review System**:
-  - Star ratings (1-5)
-  - Written reviews
-  - Review voting (helpful/not helpful)
-  - Edit/delete own reviews
-  - Review history tracking
+
+The gamer dashboard allows customers to view their wishlist, purchase history, and library. 
+
+#### Game Submission
+
+![Game Submission](documentation/features/game-submission.png)
+
+The game submission page allows developers to add games to the website. Games are assessed by the site administrator before being published, as will be discussed further below.
+
+#### Profile Page
+
+![Profile Page](documentation/features/profile.png)
+
+The profile page allows users to update their details and profile picture.  Users can also download a PDF of their personal data. 
+
+#### Game Page
+
+![Game Page](documentation/features/game-page.png)
+
+The game page provides more information about a game to the user. It features a large image of the game, as well as a description, price, and a button to purchase the game. There is also an Add to Wishlist button, screenshots, and the ability to leave a review, which other users can upvote or downvote. 
+
+#### Developer Profile
+
+![Developer Profile](documentation/features/developer-profile.png)
+
+The developer profile page features a grid of the developer's games, as well as a profile picture and bio. 
+
+#### Admin Game Review
+
+![Admin Game Review](documentation/features/admin-game-review.png)
+
+The admin game review page allows the site administrator to review new game submissions. Approved games are published on the storefront; others are rejected, with developers receiving feedback in their inboxes 
+
 
 #### Shopping Features
 ![Shopping Cart](documentation/features/shopping-cart.png)
@@ -355,19 +337,6 @@ If the user does anything substantive, like sign in, register, sign out, add an 
   - "You might also like" recommendations
   - New releases section
 
-#### Admin Features
-![Admin Interface](documentation/features/admin-interface.png)
-- **Game Moderation**:
-  - Review new game submissions
-  - Quality control checks
-  - Developer verification
-  - Content moderation
-- **User Management**:
-  - User type management
-  - Account status control
-  - Purchase history access
-  - Support ticket system
-
 #### Responsive Design
 - **Mobile-First Approach**:
   - Responsive navigation
@@ -382,25 +351,20 @@ If the user does anything substantive, like sign in, register, sign out, add an 
 
 #### 404.html
 
-![404](documentation/features/fourohfour.png)
+![404](documentation/features/404.png)
 
 The website has a custom 404.html page which appears if the user tries to access a URL which doesn't exist. 
 
 #### 500.html
 
-![500](documentation/features/fivehundred.png)
+![500](documentation/features/500.png)
 
 There is also a custom 500.html page which appears if a user encounters a server-side error. 
 
-#### Delete Modal
-
-![Delete Modal](documentation/features/delete-modal.png)
-
-If a user tries to delete a record on any page, a modal appears which looks for additional confirmation that the user wants to permanently delete the record in question. This extra stage of interaction prevents the user from making a mistake either through absent-mindedness or clicking on a delete button by accident. 
 
 #### Contact Form
 
-![Contact Form](documentation/features/contact-page.png)
+![Contact Form](documentation/features/contact.png)
 
 Accessible for signed in users, this page allows users to send messages to the site administrator in case of technical difficulty, feedback, etc. 
 
@@ -572,30 +536,25 @@ With the broad overview of the project broken down, I then used [GitHub Issues](
 
 [GitHub Projects](https://github.com/cthlbrennan/sugra/projects) also served as an Agile tool; While it isn't a specialized tool, I was able to easily adapt it to be used as the basis for weekly iteration boards, as well as a tool for documenting the Product Backlog. Through Github Projects, user stories, issues, and milestone tasks were planned, then tracked on a weekly basis.
 
-![Iteration Board One](documentation/agile/iteration-one.png)
-[Iteration Board One](https://github.com/users/cthlbrennan/projects/4/views/1)
+![Iteration Board One](documentation/agile/iteration-board-one.png)
 
-![Iteration Board Two](documentation/agile/iteration-two.png)
-[Iteration Board Two](https://github.com/users/cthlbrennan/projects/5/views/1)
+![Iteration Board Two](documentation/agile/iteration-board-two.png)
 
-![Iteration Board Three](documentation/agile/iteration-three.png)
-[Iteration Board Three](https://github.com/users/cthlbrennan/projects/10/views/1)
+![Iteration Board Three](documentation/agile/iteration-board-three.png)
 
-![Iteration Board Four](documentation/agile/iteration-four.png)
-[Iteration Board Four](https://github.com/users/cthlbrennan/projects/7/views/1)
+![Iteration Board Four](documentation/agile/iteration-board-four.png)
 
-![Product Backlog](documentation/agile/product-backlog-end-of-project.png)
-[Product Backlog](https://github.com/cthlbrennan/sugra/milestone/1)
+![Iteration Board Five](documentation/agile/iteration-board-five.png)
+
+![Product Backlog](documentation/agile/product-backlog.png)
 
 At the conclusion of the project, each User Story has been closed. 
 
 [Open Issues](https://github.com/cthlbrennan/sugra/milestone/1) [![GitHub issues](https://img.shields.io/github/issues/cthlbrennan/sugra)](https://github.com/cthlbrennan/sugra/issues)
 
-![screenshot](documentation/agile/open-issues.png)
 
 [Closed Issues](https://github.com/cthlbrennan/sugra/milestone/1?closed=1) [![GitHub closed issues](https://img.shields.io/github/issues-closed/cthlbrennan/sugra)](https://github.com/cthlbrennan/sugra/issues?q=is%3Aissue+is%3Aclosed)
 
-![screenshot](documentation/agile/closed-issues.png)
 
 ### MoSCoW Prioritization
 
@@ -790,7 +749,6 @@ To my knowledge, there are no differences between the local and deployed version
 | [StackOverflow](https://tinyurl.com/4jx3njdv) | 404 and 500 pages | custom 404/500.html pages in Django| 
 | [StackOverflow](https://stackoverflow.com/questions/6259775/how-to-display-the-current-year-in-a-django-template) | entire site | display current year in DTL | 
 | [StackOverflow](https://tinyurl.com/43rejs9f) | entire site | use of empty DTL tag| 
-| [Testim.io](https://www.testim.io/blog/jest-testing-a-helpful-introductory-tutorial/) | script.test.js | Jest testing |
 | [WhiteNoise](http://whitenoise.evans.io) | entire site | hosting static files on Heroku temporarily |
 | [W3Schools](https://www.w3schools.com/css/css3_variables.asp) | entire site | how to use CSS :root variables |
 

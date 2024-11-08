@@ -9,27 +9,33 @@
 
 ### HTML
 
-I have used the recommended [HTML W3C Validator](https://validator.w3.org) to validate all of my HTML files.
-
 | Directory | File | Screenshot | Notes |
 | --- | --- | --- | --- |
 | templates | 404.html | ![screenshot](documentation/validation/html/404.png) | |
 | templates | 500.html | ![screenshot](documentation/validation/html/500.png) | |
 | templates | about.html | ![screenshot](documentation/validation/html/about.png) | |
-| templates | add_breeding_event.html | ![screenshot](documentation/validation/html/add_breeding_event.png) | |
-| templates | add_bull.html | ![screenshot](documentation/validation/html/add_bull.png) | |
-| templates | add_calf.html | ![screenshot](documentation/validation/html/add_calf.png) | |
-| templates | add_cow.html | ![screenshot](documentation/validation/html/add_cow.png) | |
-| templates | edit_breeding.html | ![screenshot](documentation/validation/html/edit_breeding.png) | |
-| templates | edit_bull.html | ![screenshot](documentation/validation/html/edit_bull.png) | |
-| templates | edit_calf.html | ![screenshot](documentation/validation/html/edit_calf.png) | |
-| templates | edit_cow.html | ![screenshot](documentation/validation/html/edit_cow.png) | |
+| templates | base.html | ![screenshot](documentation/validation/html/base.png) | |
+| templates | cart.html | ![screenshot](documentation/validation/html/cart.png) | |
+| templates | checkout_success.html | ![screenshot](documentation/validation/html/checkout_success.png) | |
+| templates | checkout.html | ![screenshot](documentation/validation/html/checkout.png) | |
+| templates | contact.html | ![screenshot](documentation/validation/html/contact.png) | |
+| templates | developer_dashboard.html | ![screenshot](documentation/validation/html/developer_dashboard.png) | |
+| templates | developer_inbox.html | ![screenshot](documentation/validation/html/developer_inbox.png) | |
+| templates | developer_profile.html | ![screenshot](documentation/validation/html/developer_profile.png) | |
+| templates | faq.html | ![screenshot](documentation/validation/html/faq.png) | |
+| templates | game_detail.html | ![screenshot](documentation/validation/html/game_detail.png) | |
+| templates | gamer_dashboard.html | ![screenshot](documentation/validation/html/gamer_dashboard.png) | |
 | templates | index.html | ![screenshot](documentation/validation/html/index.png) | |
-| templates | send_message.html | ![screenshot](documentation/validation/html/send_message.png) | |
-| templates | view_breeding.html | ![screenshot](documentation/validation/html/view_breeding.png) | |
-| templates | view_bull.html | ![screenshot](documentation/validation/html/view_bull.png) | |
-| templates | view_calf.html | ![screenshot](documentation/validation/html/view_calf.png) | |
-| templates | view_cow.html | ![screenshot](documentation/validation/html/view_cow.png) | |
+| templates | library.html | ![screenshot](documentation/validation/html/library.png) | |
+| templates | order_history.html | ![screenshot](documentation/validation/html/order_history.png) | |
+| templates | privacy_policy.html | ![screenshot](documentation/validation/html/privacy_policy.png) | |
+| templates | publish_game.html | ![screenshot](documentation/validation/html/publish_game.png) | |
+| templates | set_user_type.html | ![screenshot](documentation/validation/html/set_user_type.png) | |
+| templates | user_profile.html | ![screenshot](documentation/validation/html/user_profile.png) | |
+| templates | wishlist.html | ![screenshot](documentation/validation/html/wishlist.png) | |
+
+
+
 
 
 ### CSS
