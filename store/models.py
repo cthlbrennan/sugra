@@ -19,9 +19,9 @@ from cloudinary.uploader import upload
 
 class User(AbstractUser):
     USER_TYPE_CHOICES = [
-        ('gamer', 'Gamer'),
-        ('developer', 'Developer'),
-        ('admin', 'Admin'),
+        ('Gamer', 'Gamer'),
+        ('Developer', 'Developer'),
+        ('Admin', 'Admin'),
     ]
     user_id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=25, unique=True)   
@@ -61,25 +61,25 @@ class User(AbstractUser):
 
 class Game(models.Model):
     GAME_GENRE_CHOICES = [
-    ('action_adventure', 'Action Adventure Game'),
-    ('action_rpg', 'Action RPG'),
-    ('adventure', 'Adventure'),
-    ('casual', 'Casual'),
-    ('fighting', 'Fighting'),
-    ('first_person_shooter', 'First Person Shooter'),
-    ('mmo', 'Massively Multiplayer Online'),
-    ('platform', 'Platformer'),
-    ('puzzle', 'Puzzle'),
-    ('party', 'Party'),
-    ('racing', 'Racing'),
-    ('rpg', 'RPG'),
-    ('sandbox', 'Sandbox'),
-    ('shooter', 'Shooter'),
-    ('simulation', 'Simulation'),
-    ('stealth', 'Stealth'),
-    ('strategy', 'Strategy'),
-    ('survival_horror', 'Survival Horror'),
-    ('sports', 'Sports'),
+    ('Action Adventure', 'Action Adventure Game'),
+    ('Action RPG', 'Action RPG'),
+    ('Adventure', 'Adventure'),
+    ('Casual', 'Casual'),
+    ('Fighting', 'Fighting'),
+    ('First Person Shooter', 'First Person Shooter'),
+    ('Massively Multiplayer Online', 'Massively Multiplayer Online'),
+    ('Platformer', 'Platformer'),
+    ('Puzzle', 'Puzzle'),
+    ('Party', 'Party'),
+    ('Racing', 'Racing'),
+    ('RPG', 'RPG'),
+    ('Sandbox', 'Sandbox'),
+    ('Shooter', 'Shooter'),
+    ('Simulation', 'Simulation'),
+    ('Stealth', 'Stealth'),
+    ('Strategy', 'Strategy'),
+    ('Survival Horror', 'Survival Horror'),
+    ('Sports', 'Sports'),
     ]
     game_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100, unique=True)
@@ -249,18 +249,37 @@ class ReviewVote(models.Model):
     
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='votes')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    vote_type = models.CharField(max_length=4, choices=VOTE_CHOICES)
+    vote_type = models.CharField(max_length=8, choices=VOTE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('review', 'user')
 
     def save(self, *args, **kwargs):
+        is_new = self.pk is None  # Check if this is a new vote
+        old_vote_type = None
+        
+        if not is_new:
+            # Get the old vote type before saving
+            old_vote = ReviewVote.objects.get(pk=self.pk)
+            old_vote_type = old_vote.vote_type
+            
         super().save(*args, **kwargs)
-        self.review.update_like_count()
+        
+        # Update the review's like count
+        if is_new:
+            # New vote
+            self.review.like_count += 1 if self.vote_type == 'up' else -1
+        elif old_vote_type != self.vote_type:
+            # Changed vote (from up to down or vice versa)
+            self.review.like_count += 2 if self.vote_type == 'up' else -2
+            
+        self.review.save()
+
     def delete(self, *args, **kwargs):
-        review = self.review
+        # Adjust the count before deleting
+        self.review.like_count += -1 if self.vote_type == 'up' else 1
+        self.review.save()
         super().delete(*args, **kwargs)
-        review.update_like_count()
     def __str__(self):
         return f"{self.user}'s {self.vote_type} vote on {self.review}"

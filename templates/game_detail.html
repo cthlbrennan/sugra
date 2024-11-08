@@ -6,113 +6,67 @@
 
 {% block body %}
 <div class="container mt-4 mb-3">
-    <div class="position-relative text-center">
-        <div class="thumbnail-container mx-auto"
-            style="max-width: 600px; max-height: 600px; overflow: hidden; border: 2px solid var(--main-bg-color);">
+    <!-- Thumbnail Container -->
+    <div class="game-thumbnail-container">
+        <div class="thumbnail-wrapper mx-auto">
             <img src="{{ game.get_thumbnail }}" alt="{{ game.title }} Thumbnail"
                 class="img-fluid w-100 h-100 object-fit-cover">
-            <div class="toast-overlay bg-light p-3 rounded shadow d-none d-sm-block"
-                style="background-color: var(--off-white-color); color: var(--main-text-color);">
-                <p class="mb-2 font-main"><strong>Price: </strong>€{{ game.price }}</p>
-                <div class="d-flex justify-content-center gap-2">
-                    {% if user.is_developer %}
-                    <div class="alert alert-info mb-0 w-100">
-                        Developer accounts cannot purchase games.
-                    </div>
-                    {% else %}
-                    {% if game_owned %}
-                    <div class="alert alert-info mb-0 w-100">
-                        You already own this game. Visit your <a href="{% url 'library' %}">library</a> to play.
-                    </div>
-                    {% else %}
-                    <form action="{% url 'add_to_cart' game.game_id %}" method="POST" class="mb-0 flex-grow-1">
+        </div>
+    </div>
+
+    <!-- Game Title -->
+    <h1 class="game-title text-center mt-4 mb-3">{{ game.title }}</h1>
+
+    <!-- Game Actions Container -->
+    <div class="game-actions-container">
+        <p class="price-tag"><strong>Price: </strong>€{{ game.price }}</p>
+        
+        {% if user.is_developer %}
+            <div class="alert alert-info">Developer accounts cannot purchase games.</div>
+        {% else %}
+            {% if game_owned %}
+                <div class="alert alert-info">
+                    You already own this game. Visit your <a href="{% url 'library' %}">library</a> to play.
+                </div>
+            {% else %}
+                <div class="action-buttons">
+                    <form action="{% url 'add_to_cart' game.game_id %}" method="POST">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-custom btn-cart font-cta w-100" {% if
-                            game.game_id|stringformat:"s" in request.session.cart %}disabled{% endif %}>
+                        <button type="submit" class="btn btn-outline-custom btn-cart" 
+                            {% if game.game_id|stringformat:"s" in request.session.cart %}disabled{% endif %}>
                             {% if game.game_id|stringformat:"s" in request.session.cart %}
-                            In Cart
+                                In Cart
                             {% else %}
-                            Add to Cart - €{{ game.price|floatformat:2 }}
+                                Add to Cart - €{{ game.price|floatformat:2 }}
                             {% endif %}
                         </button>
                     </form>
-                    {% endif %}
 
-                    <form action="{% url 'add_to_wishlist' game.game_id %}" method="POST" class="mb-0 flex-grow-1">
+                    <form action="{% url 'add_to_wishlist' game.game_id %}" method="POST">
                         {% csrf_token %}
-                        <button type="submit" 
-                                class="btn btn-outline-custom font-cta w-100 wishlist-button"
+                        <button type="submit" class="btn btn-outline-custom wishlist-button"
                                 data-auth="{{ user.is_authenticated|lower }}" 
                                 data-login-url="{% url 'account_login' %}" 
                                 {% if user.user_type != 'gamer' or game_owned or game in request.user.wishlist.games.all %}disabled{% endif %}>
                             {% if not user.is_authenticated %}
-                            Sign in to add to Wishlist
+                                Sign in to add to Wishlist
                             {% elif user.user_type != 'gamer' %}
-                            Only gamers can add to Wishlist
+                                Only gamers can add to Wishlist
                             {% elif game_owned %}
-                            Already Owned
+                                Already Owned
                             {% elif game in request.user.wishlist.games.all %}
-                            In Wishlist
+                                In Wishlist
                             {% else %}
-                            Add to Wishlist
+                                Add to Wishlist
                             {% endif %}
                         </button>
                     </form>
                 </div>
-            </div>
-        </div>
-        <div class="mobile-details mt-3 mb-4 d-block d-sm-none">
-            <p class="mb-2 font-main"><strong>Price: </strong>€{{ game.price }}</p>
-            <div class="d-flex justify-content-center gap-2">
-                {% if user.is_developer %}
-                <div class="alert alert-info mb-0 w-100">
-                    Developer accounts cannot purchase games.
-                </div>
-                {% else %}
-                {% if game_owned %}
-                <div class="alert alert-info mb-0 w-100">
-                    You already own this game. Visit your <a href="{% url 'library' %}">library</a> to play.
-                </div>
-                {% else %}
-                <form action="{% url 'add_to_cart' game.game_id %}" method="POST" class="mb-0 flex-grow-1">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-custom btn-cart font-cta w-100" {% if
-                        game.game_id|stringformat:"s" in request.session.cart %}disabled{% endif %}>
-                        {% if game.game_id|stringformat:"s" in request.session.cart %}
-                        In Cart
-                        {% else %}
-                        Add to Cart - €{{ game.price|floatformat:2 }}
-                        {% endif %}
-                    </button>
-                </form>
-                {% endif %}
-
-                <form action="{% url 'add_to_wishlist' game.game_id %}" method="POST" class="mb-0 flex-grow-1">
-                    {% csrf_token %}
-                    <button type="submit" 
-                            class="btn btn-outline-custom font-cta w-100 wishlist-button"
-                            data-auth="{{ user.is_authenticated|lower }}" 
-                            data-login-url="{% url 'account_login' %}" 
-                            {% if user.user_type != 'gamer' or game_owned or game in request.user.wishlist.games.all %}disabled{% endif %}>
-                        {% if not user.is_authenticated %}
-                        Sign in to add to Wishlist
-                        {% elif user.user_type != 'gamer' %}
-                        Only gamers can add to Wishlist
-                        {% elif game_owned %}
-                        Already Owned
-                        {% elif game in request.user.wishlist.games.all %}
-                        In Wishlist
-                        {% else %}
-                        Add to Wishlist
-                        {% endif %}
-                    </button>
-                </form>
-            </div>
-        </div>
+            {% endif %}
+        {% endif %}
     </div>
 
     <!-- Game Details -->
-    <h1 class="font-banner mb-4 mt-3 text-center" style="color: var(--bright-yellow-color);">{{ game.title }}</h1>
     <div class="text-center">
         <p class="font-main"><strong>Description:</strong> {{ game.description }}</p>
         <p class="font-main"><strong>Genre:</strong> {{ game.genre }}</p>
@@ -122,10 +76,10 @@
         </p>
     </div>
 
-    <div class="container text-center">
-        <h2 class="mt-4 mb-3 font-headers">Screenshots</h2>
+    <div class="screenshots-container">
+        <h2 class="mt-4 mb-3 font-headers text-center">Screenshots</h2>
         {% if game.screenshot_set.all %}
-        <div class="row">
+        <div class="row justify-content-center">
             {% for screenshot in game.screenshot_set.all %}
             <div class="col-md-4 mb-3">
                 <img src="{{ screenshot.image.url }}" alt="{{ screenshot.alt_text }}"
@@ -134,153 +88,161 @@
             {% endfor %}
         </div>
         {% else %}
-        <p>No screenshots available.</p>
+        <p class="text-center">No screenshots available.</p>
         {% endif %}
+    </div>
 
-        <h2 class="mt-4 mb-3 font-headers">Reviews</h2>
-        {% if game_owned and request.user.user_type == 'gamer' %}
-        <div class="mb-4">
-            <div class="row justify-content-center">
-                <div class="col-12 col-md-8 col-lg-6">
-                    <form method="POST" action="{% url 'add_review' game.game_id %}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Rating (1-5)</label>
-                            <select class="form-select" name="rating" id="rating" required>
-                                <option value="1">1 - Poor</option>
-                                <option value="2">2 - Fair</option>
-                                <option value="3">3 - Good</option>
-                                <option value="4">4 - Very Good</option>
-                                <option value="5">5 - Excellent</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="comment" class="form-label">Your Review</label>
-                            <textarea class="form-control" name="comment" id="comment" rows="3" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-outline-custom font-cta"
-                            style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
-                            Submit Review
-                        </button>
-                    </form>
+    <h2 class="mt-4 mb-3 font-headers text-center">Reviews</h2>
+    {% if game_owned and request.user.user_type == 'gamer' %}
+        {% if user_has_reviewed %}
+            <div class="alert alert-info text-center">
+                You have already reviewed this game. You can edit your review below.
+            </div>
+        {% else %}
+            <div class="mb-4">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 col-lg-6">
+                        <form method="POST" action="{% url 'add_review' game.game_id %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="rating" class="form-label">Rating (1-5)</label>
+                                <select class="form-select" name="rating" id="rating" required>
+                                    <option value="1">1 - Poor</option>
+                                    <option value="2">2 - Fair</option>
+                                    <option value="3">3 - Good</option>
+                                    <option value="4">4 - Very Good</option>
+                                    <option value="5">5 - Excellent</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Your Review</label>
+                                <textarea class="form-control" name="comment" id="comment" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-outline-custom font-cta"
+                                style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
+                                Submit Review
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
         {% endif %}
+    {% endif %}
 
-        <div class="reviews-section">
-            <div class="row justify-content-center">
-                <div class="col-12 col-lg-8">
-                    {% for review in game.review_set.all %}
-                    <div class="review-box">
-                        <div class="review-header">
-                            <div class="reviewer-info">
-                                <h6>{{ review.customer.username }}</h6>
-                                <div class="star-rating">
-                                    {% for i in "12345"|make_list %}
-                                    {% if forloop.counter <= review.rating %}
-                                    <i class="fas fa-star"></i>
-                                    {% else %}
-                                    <i class="far fa-star"></i>
-                                    {% endif %}
-                                    {% endfor %}
-                                </div>
+    <div class="reviews-section">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                {% for review in game.review_set.all %}
+                <div class="review-box">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <h6>{{ review.customer.username }}</h6>
+                            <div class="star-rating">
+                                {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= review.rating %}
+                                <i class="fas fa-star"></i>
+                                {% else %}
+                                <i class="far fa-star"></i>
+                                {% endif %}
+                                {% endfor %}
                             </div>
-                            {% if review.customer == request.user %}
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        {% if review.customer == request.user %}
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editReviewModal{{ review.review_id }}">
+                                        Edit
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteReviewModal{{ review.review_id }}">
+                                        Delete
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="review-content">
+                        {{ review.comment }}
+                    </div>
+
+                    <div class="review-footer">
+                        <div class="vote-buttons">
+                            <form action="{% url 'vote_review' game.game_id review.review_id 'up' %}" 
+                                  method="POST" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-success me-1 {% if user_vote == 'up' %}active{% endif %}"
+                                        {% if not user.is_authenticated or user.user_type != 'gamer' or review.customer == user %}disabled{% endif %}>
+                                    <i class="fas fa-thumbs-up"></i>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editReviewModal{{ review.review_id }}">
-                                            Edit
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteReviewModal{{ review.review_id }}">
-                                            Delete
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
+                            </form>
+                            <span class="vote-count mx-2">{{ review.like_count }}</span>
+                            <form action="{% url 'vote_review' game.game_id review.review_id 'down' %}" 
+                                  method="POST" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger {% if user_vote == 'down' %}active{% endif %}"
+                                        {% if not user.is_authenticated or user.user_type != 'gamer' or review.customer == user %}disabled{% endif %}>
+                                    <i class="fas fa-thumbs-down"></i>
+                                </button>
+                            </form>
+                            {% if not user.is_authenticated %}
+                                <small class="vote-message">Sign in as a gamer to vote on reviews</small>
+                            {% elif user.user_type != 'gamer' %}
+                                <small class="vote-message">Only gamer user profiles can vote on reviews</small>
+                            {% elif review.customer == user %}
+                                <small class="vote-message">You cannot vote on your own review</small>
                             {% endif %}
                         </div>
-                        
-                        <div class="review-content">
-                            {{ review.comment }}
-                        </div>
-
-                        <div class="review-footer">
-                            <div class="vote-buttons">
-                                <form action="{% url 'vote_review' game.game_id review.review_id 'up' %}" 
-                                      method="POST" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-success me-1 {% if user_vote == 'up' %}active{% endif %}"
-                                            {% if not user.is_authenticated or user.user_type != 'gamer' %}disabled{% endif %}>
-                                        <i class="fas fa-thumbs-up"></i>
-                                    </button>
-                                </form>
-                                <span class="vote-count mx-2">{{ review.like_count }}</span>
-                                <form action="{% url 'vote_review' game.game_id review.review_id 'down' %}" 
-                                      method="POST" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger {% if user_vote == 'down' %}active{% endif %}"
-                                            {% if not user.is_authenticated or user.user_type != 'gamer' %}disabled{% endif %}>
-                                        <i class="fas fa-thumbs-down"></i>
-                                    </button>
-                                </form>
-                                {% if not user.is_authenticated %}
-                                    <small class="vote-message">Sign in as a gamer to vote on reviews</small>
-                                {% elif user.user_type != 'gamer' %}
-                                    <small class="vote-message">Only gamer user profiles can vote on reviews</small>
-                                {% endif %}
-                            </div>
-                            <small class="review-date">{{ review.created_at|date:"d M Y" }}</small>
-                        </div>
+                        <small class="review-date">{{ review.created_at|date:"d M Y" }}</small>
                     </div>
-                    {% empty %}
-                    <p class="text-center">No reviews yet.</p>
-                    {% endfor %}
                 </div>
+                {% empty %}
+                <p class="text-center">No reviews yet.</p>
+                {% endfor %}
             </div>
         </div>
+    </div>
 
-        <h2 class="mt-4 mb-3 font-headers">You might also like...</h2>
-        {% if related_games %}
-        <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
-            {% for game in related_games|slice:":3" %}
-            <div class="col">
-                <div class="card h-100">
-                    <a href="{% url 'game_detail' game.game_id %}" class="text-decoration-none">
-                        <div class="card-img-container">
-                            <img src="{{ game.get_thumbnail }}" class="card-img-top" alt="{{ game.title }}">
-                        </div>
-                    </a>
-                    <div class="card-body font-main">
-                        <h5 class="card-title font-banner">
-                            <a href="{% url 'game_detail' game.game_id %}"
-                                class="text-decoration-none game-title-link">{{ game.title }}</a>
-                        </h5>
-                        <p class="game-price font-cta">{{ game.price|floatformat:2 }} €</p>
-                        <div class="card-text">
-                            <small class="text-muted">{{ game.genre }}</small>
-                            <p class="mt-2 mb-0">{{ game.description|truncatechars:100 }}</p>
-                        </div>
+    <h2 class="mt-4 mb-3 font-headers">You might also like...</h2>
+    {% if related_games %}
+    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+        {% for game in related_games|slice:":3" %}
+        <div class="col">
+            <div class="card h-100">
+                <a href="{% url 'game_detail' game.game_id %}" class="text-decoration-none">
+                    <div class="card-img-container">
+                        <img src="{{ game.get_thumbnail }}" class="card-img-top" alt="{{ game.title }}">
+                    </div>
+                </a>
+                <div class="card-body font-main">
+                    <h5 class="card-title font-banner">
+                        <a href="{% url 'game_detail' game.game_id %}"
+                            class="text-decoration-none game-title-link">{{ game.title }}</a>
+                    </h5>
+                    <p class="game-price font-cta">{{ game.price|floatformat:2 }} €</p>
+                    <div class="card-text">
+                        <small class="text-muted">{{ game.genre }}</small>
+                        <p class="mt-2 mb-0">{{ game.description|truncatechars:100 }}</p>
                     </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
-        {% else %}
-        <p>No related games found.</p>
-        {% endif %}
-        <div class="text-end mt-3">
-            <a href="{% url 'index' %}" class="btn btn-outline-custom font-cta"
-                style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
-                See more games
-            </a>
-        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No related games found.</p>
+    {% endif %}
+    <div class="text-end mt-3">
+        <a href="{% url 'index' %}" class="btn btn-outline-custom font-cta"
+            style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
+            See more games
+        </a>
     </div>
 </div>
 {% endblock %}

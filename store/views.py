@@ -704,6 +704,16 @@ def checkout(request):
         messages.error(request, f"An error occurred: {str(e)}")
         return redirect('view_cart')
 
+def remove_purchased_games_from_wishlist(user, games):
+    """Helper function to remove purchased games from wishlist"""
+    try:
+        wishlist = user.wishlist
+        for game in games:
+            if game in wishlist.games.all():
+                wishlist.games.remove(game)
+    except Wishlist.DoesNotExist:
+        pass
+
 @gamer_required
 def checkout_success(request, order_id):
     """
@@ -714,6 +724,10 @@ def checkout_success(request, order_id):
     if request.user != order.customer:
         messages.error(request, "You do not have permission to view this order.")
         return redirect('view_cart')
+
+    # Get all games from this order and remove from wishlist
+    purchased_games = [order_line.game for order_line in order.orderline_set.all()]
+    remove_purchased_games_from_wishlist(request.user, purchased_games)
 
     # Send order confirmation email
     customer_email = order.customer.email
@@ -1105,6 +1119,11 @@ def vote_review(request, game_id, review_id, vote_type):
     if request.method == 'POST':
         review = get_object_or_404(Review, review_id=review_id)
         
+        # Prevent voting on own review
+        if review.customer == request.user:
+            messages.error(request, 'You cannot vote on your own review.')
+            return redirect('game_detail', game_id=game_id)
+        
         # Check if user already voted
         existing_vote = ReviewVote.objects.filter(review=review, user=request.user).first()
         
@@ -1112,12 +1131,10 @@ def vote_review(request, game_id, review_id, vote_type):
             if existing_vote.vote_type == vote_type:
                 # Remove vote if clicking same button
                 existing_vote.delete()
-                review.like_count += -1 if vote_type == 'up' else 1
             else:
                 # Change vote if clicking different button
                 existing_vote.vote_type = vote_type
                 existing_vote.save()
-                review.like_count += 2 if vote_type == 'up' else -2
         else:
             # Create new vote
             ReviewVote.objects.create(
@@ -1125,8 +1142,5 @@ def vote_review(request, game_id, review_id, vote_type):
                 user=request.user,
                 vote_type=vote_type
             )
-            review.like_count += 1 if vote_type == 'up' else -1
-        
-        review.save()
         
     return redirect('game_detail', game_id=game_id)

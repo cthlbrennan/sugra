@@ -690,3 +690,99 @@ body {
 .max-h-600 {
     max-height: 600px;
 }
+/* Review styles */
+.review-box {
+    background-color: var(--off-white-color);
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+}
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+.reviewer-info h6 {
+    margin: 0;
+    color: var(--dark-accent-color);
+}
+.star-rating {
+    color: #ffc107;
+    font-size: 0.9rem;
+}
+.review-content {
+    color: var(--main-text-color);
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+.review-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+.vote-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.vote-message {
+    color: var(--dark-accent-color);
+    margin-left: 0.5rem;
+}
+.review-date {
+    color: var(--dark-accent-color);
+}
+.contact-form-container {
+    background-color: rgba(240, 216, 204, 0.3);
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--light-accent-color);
+}
+
+.contact-form {
+    max-width: 100%;
+}
+
+.contact-form textarea {
+    background-color: var(--off-white-color);
+    border: 1px solid var(--main-bg-color);
+    border-radius: 4px;
+    padding: 1rem;
+    width: 100%;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-form textarea:focus {
+    outline: none;
+    border-color: var(--bright-yellow-color);
+    box-shadow: 0 0 0 2px rgba(255, 194, 70, 0.2);
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.contact-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.profile-img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    margin: 0 auto;
+    border: 3px solid var(--main-bg-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.img-cover {
+    object-fit: cover;
+}
