@@ -1,3 +1,16 @@
+"""
+View functions and classes for the store app.
+Handles all HTTP requests and returns appropriate responses.
+
+Main functionality areas:
+- User Authentication & Profile Management
+- Game Publishing & Management
+- Shopping Cart & Checkout
+- Reviews & Ratings
+- Developer Dashboard & Inbox
+- User Library & Wishlist
+"""
+
 import os
 from decimal import Decimal
 from io import BytesIO
@@ -32,7 +45,26 @@ from .models import InboxMessage, Game, Message, User, Screenshot, Order, OrderL
 
 
 class CustomLoginView(LoginView):
+    """
+    Custom login view extending allauth's LoginView.
+    
+    Features:
+    - Cart preservation during login
+    - User type validation
+    - Conditional redirects based on user type
+    - Profile setup checks
+    """
+
     def form_valid(self, form):
+        """
+        Handle successful login form submission.
+        
+        Args:
+            form: The validated login form
+            
+        Returns:
+            HttpResponse: Redirect to appropriate page based on user type and state
+        """
         # Store cart before login
         old_cart = self.request.session.get('cart', {})
         
@@ -52,21 +84,21 @@ class CustomLoginView(LoginView):
         if not user.user_type or not user.has_usable_password():
             next_url = self.request.session.get('next')
             if next_url:
-                # Keep the next URL in session for after profile setup
                 return redirect('set_user_type')
             return redirect('set_user_type')
         
+        # Handle cart-based redirects
         cart = self.request.session.get('cart', {})
         if cart and not self.request.session.get('next'):
             return redirect('checkout')
 
-        # User has completed profile setup
+        # Handle next URL redirects
         next_url = self.request.session.get('next')
         if next_url:
             del self.request.session['next']
             return redirect(next_url)
             
-        # Default redirects
+        # Default redirects based on user type
         if user.is_superuser:
             return redirect('admin:index')
         elif user.user_type == 'gamer':
@@ -75,54 +107,81 @@ class CustomLoginView(LoginView):
             return redirect('developer_dashboard')
 
     def get_form_kwargs(self):
+        """Get keyword arguments for form instantiation."""
         kwargs = super().get_form_kwargs()
         return kwargs
 
     def form_invalid(self, form):
+        """Handle invalid form submission with error message."""
         messages.error(self.request, "Login failed. Please check your credentials and try again.")
         return super().form_invalid(form)
 
 def index(request):
+    """
+    Display the main landing page with game listings.
+    
+    Features:
+    - Game filtering by rating, date, and price
+    - Pagination
+    - Published games only
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered index template with filtered games
+    """
     filter_type = request.GET.get('filter')
     
     # Get all published games
     games_list = Game.objects.filter(is_published=True)
     
-    # Apply filters if requested
+    # Apply filters based on request
     if filter_type == 'highest_rated':
         games_list = games_list.annotate(
             avg_rating=Avg('review__rating'),
             review_count=Count('review')
         ).order_by(
-            F('avg_rating').desc(nulls_last=True),  # Put null ratings last
+            F('avg_rating').desc(nulls_last=True),
             '-review_count'
         )
-    # Keep existing filter logic
     elif filter_type == 'recent':
         games_list = games_list.order_by('-submitted_at')
     elif filter_type == 'price':
         games_list = games_list.order_by('price')
-    # Default ordering remains chronological
     
-    paginator = Paginator(games_list, 6)  # Show 6 games per page
-
+    # Implement pagination
+    paginator = Paginator(games_list, 6)
     page = request.GET.get('page')
     try:
         games = paginator.page(page)
     except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
         games = paginator.page(1)
     except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
         games = paginator.page(paginator.num_pages)
 
     return render(request, 'index.html', {'games': games})
 
 def about(request):
+    """Render the about page."""
     return render(request, 'about.html')
 
 @login_required
 def set_user_type(request):
+    """
+    Handle user type and profile setup.
+    
+    Features:
+    - User type selection (gamer/developer)
+    - Password setup for social auth users
+    - Profile completion checks
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered form or redirect to appropriate dashboard
+    """
     user = request.user
     if user.is_superuser:
         messages.info(request, "As an admin, you don't need to set a user type.")
@@ -135,7 +194,7 @@ def set_user_type(request):
             update_session_auth_hash(request, form.user)
             messages.success(request, "Profile setup completed successfully!")
             
-            # Check for stored next URL
+            # Handle redirect after setup
             next_url = request.session.get('next')
             if next_url:
                 del request.session['next']
@@ -149,6 +208,14 @@ def set_user_type(request):
     return render(request, 'set_user_type.html', {'form': form})
 
 def login_redirect(request):
+    """
+    Handle login redirects based on user state.
+    
+    Logic:
+    1. Check authentication
+    2. Check profile completion
+    3. Redirect to appropriate dashboard
+    """
     if request.user.is_authenticated:
         if request.user.is_superuser:
             return redirect('admin:index')
@@ -159,13 +226,28 @@ def login_redirect(request):
 
 @gamer_required
 def gamer_dashboard(request):
-    # Get all games the user has purchased through orders
+    """
+    Display the gamer's personalized dashboard.
+    
+    Features:
+    - Game library
+    - Wishlist
+    - Recent orders
+    - Game recommendations
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered dashboard with user's gaming activity
+    """
+    # Get user's purchased games
     library_games = Game.objects.filter(
         orderline__order__customer=request.user,
         is_published=True
     ).distinct()
     
-    # Get wishlist games if user has a wishlist
+    # Get wishlist games
     try:
         wishlist_games = request.user.wishlist.games.filter(is_published=True)
     except:
@@ -174,7 +256,7 @@ def gamer_dashboard(request):
     # Get recent orders
     orders = Order.objects.filter(customer=request.user).order_by('-submitted_at')[:5]
     
-    # Get recommended games based on purchased game genres
+    # Generate game recommendations
     owned_genres = library_games.values_list('genre', flat=True).distinct()
     recommended_games = Game.objects.filter(
         genre__in=owned_genres,
@@ -194,11 +276,32 @@ def gamer_dashboard(request):
 
 @developer_required
 def developer_dashboard(request):
+    """
+    Display the developer's personalized dashboard with analytics and management tools.
+    
+    Features:
+    - Published games overview
+    - Sales analytics and revenue tracking
+    - Unread message notifications
+    - Games awaiting review status
+    - Recent reviews monitoring
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered dashboard with developer's game statistics and management tools
+    """
+    # Get developer's published games
     published_games = Game.objects.filter(developer=request.user, is_published=True)
+    
+    # Get count of unread messages in developer's inbox
     unread_messages_count = InboxMessage.objects.filter(developer=request.user, is_read=False).count()
+    
+    # Get games pending review/approval
     games_awaiting_review = Game.objects.filter(developer=request.user, is_published=False)
     
-    # Get recent sales (last 10) for all published games
+    # Get recent sales data with optimized query using select_related
     recent_sales = OrderLine.objects.filter(
         game__in=published_games
     ).select_related(
@@ -207,7 +310,7 @@ def developer_dashboard(request):
         '-order__submitted_at'
     )[:10]
     
-    # Calculate earnings breakdown by game
+    # Calculate earnings breakdown by game using aggregation
     earnings_by_game = OrderLine.objects.filter(
         game__in=published_games
     ).values(
@@ -217,26 +320,26 @@ def developer_dashboard(request):
         revenue=Sum('game__price')
     ).order_by('-revenue')
     
-    # Calculate total earnings
+    # Calculate total earnings across all games
     total_earnings = OrderLine.objects.filter(
         game__in=published_games
     ).aggregate(
         total=Sum('game__price')
     )['total'] or 0
     
-    # Get all reviews for the developer's published games
+    # Get and analyze reviews for all published games
     reviews = Review.objects.filter(
         game__in=published_games
     ).select_related('game', 'customer').order_by('-submitted_at')
     
-    # Calculate total reviews and aggregate rating
+    # Calculate review statistics
     total_reviews = reviews.count()
     aggregate_rating = reviews.aggregate(Avg('rating'))['rating__avg']
     if aggregate_rating:
         aggregate_rating = round(aggregate_rating, 1)
     
-    # Paginate reviews
-    paginator = Paginator(reviews, 3)
+    # Paginate reviews for display
+    paginator = Paginator(reviews, 3)  # Show 3 reviews per page
     page = request.GET.get('review_page', 1)
     
     try:
@@ -246,6 +349,7 @@ def developer_dashboard(request):
     except EmptyPage:
         recent_reviews = paginator.page(paginator.num_pages)
     
+    # Prepare context with all dashboard data
     context = {
         'published_games': published_games,
         'unread_messages_count': unread_messages_count,
@@ -263,6 +367,16 @@ def developer_dashboard(request):
 
 @developer_required
 def developer_inbox(request):
+    """
+    Display the developer's message inbox.
+    Shows system notifications and user messages ordered by date.
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered inbox page with messages
+    """
     inbox_messages = InboxMessage.objects.filter(developer=request.user).order_by('-created_at')
     context = {
         'inbox_messages': inbox_messages,
@@ -271,6 +385,20 @@ def developer_inbox(request):
 
 @developer_required
 def delete_inbox_message(request, message_id):
+    """
+    Delete a specific message from developer's inbox.
+    
+    Args:
+        request: HTTP request object
+        message_id: ID of the message to delete
+        
+    Returns:
+        Redirect to inbox after deletion
+        
+    Security:
+    - Requires developer authentication
+    - Validates message ownership
+    """
     message = get_object_or_404(InboxMessage, message_id=message_id, developer=request.user)
     if request.method == 'POST':
         message.delete()
@@ -278,10 +406,27 @@ def delete_inbox_message(request, message_id):
     return redirect('developer_inbox')
 
 def game_detail(request, game_id):
+    """
+    Display detailed information about a specific game.
+    
+    Features:
+    - Game information and media
+    - Purchase status checking
+    - Related games suggestions
+    - Review system with voting
+    
+    Args:
+        request: HTTP request object
+        game_id: ID of the game to display
+        
+    Returns:
+        Rendered game detail page with game info and related content
+    """
+    # Get game or return 404 if not found
     game = get_object_or_404(Game, game_id=game_id)
     str_game_id = str(game_id)
     
-    # Check if user owns the game
+    # Check if user owns the game and has reviewed it
     game_owned = False
     has_reviewed = False
     if request.user.is_authenticated:
@@ -300,7 +445,7 @@ def game_detail(request, game_id):
         is_published=True
     ).exclude(game_id=game_id)[:3]
 
-    # Add user votes to context
+    # Add user votes to context for review interaction
     if request.user.is_authenticated:
         user_votes = {
             vote.review_id: vote.vote_type 
@@ -322,25 +467,52 @@ def game_detail(request, game_id):
     return render(request, 'game_detail.html', context)    
 
 class CustomSignupView(SignupView):
+    """
+    Custom registration view extending allauth's SignupView.
+    
+    Features:
+    - Enhanced form validation
+    - Default profile picture assignment
+    - Success message handling
+    - Custom redirect logic
+    """
     form_class = CustomSignupForm
 
     def form_invalid(self, form):
+        """Handle invalid form submission with error message."""
         response = super(CustomSignupView, self).form_invalid(form)
         messages.error(self.request, "Signup failed. Please check the form and try again.")
         return response
 
     def form_valid(self, form):
+        """
+        Process valid form submission and set up new user profile.
+        
+        Features:
+        - User creation
+        - Default profile picture assignment
+        - Success message display
+        """
         response = super(CustomSignupView, self).form_valid(form)
         user = self.user
+        
+        # Set default profile picture if none provided
         if not user.profile_picture:
             default_image_path = os.path.join(settings.STATIC_ROOT, 'images', 'default-profile-photo.png')
             with open(default_image_path, 'rb') as f:
                 django_file = ContentFile(f.read())
                 user.profile_picture.save('default-profile-photo.png', django_file, save=True)
+        
         messages.success(self.request, "Signup successful! Welcome to our site.")
         return response
 
     def get_success_url(self):
+        """
+        Determine redirect URL after successful signup.
+        
+        Returns:
+            str: URL to redirect to based on user type
+        """
         user = self.user
         if user.user_type == 'gamer':
             return reverse('gamer_dashboard')
@@ -351,15 +523,30 @@ class CustomSignupView(SignupView):
 
 @developer_required
 def publish_game(request):
+    """
+    Handle game publication process for developers.
+    
+    Features:
+    - Game information submission
+    - Screenshot upload handling
+    - Automatic review queue placement
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered form or redirect to dashboard after submission
+    """
     if request.method == 'POST':
         form = GameForm(request.POST, request.FILES)
         if form.is_valid():
+            # Create new game instance
             game = form.save(commit=False)
             game.developer = request.user
-            game.is_published = False
+            game.is_published = False  # Requires admin review
             game.save()
 
-            # Handle screenshots
+            # Process and save screenshots
             for i in range(1, 4):
                 screenshot = form.cleaned_data.get(f'screenshot{i}')
                 if screenshot:
@@ -377,6 +564,19 @@ def publish_game(request):
 
 @login_required
 def contact(request):
+    """
+    Handle user contact form submissions.
+    
+    Features:
+    - Message creation
+    - User type-based redirect
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered contact form or redirect after submission
+    """
     if request.method == 'POST':
         content = request.POST.get('content')
         if content:
@@ -389,19 +589,36 @@ def contact(request):
     return render(request, 'contact.html')
 
 def developer_profile(request, username):
+    """
+    Display public profile page for a developer.
+    
+    Features:
+    - Developer information
+    - Published games list
+    - Paginated game display
+    
+    Args:
+        request: HTTP request object
+        username: Developer's username
+        
+    Returns:
+        Rendered developer profile page
+    """
+    # Get developer or 404 if not found
     developer = get_object_or_404(User, username=username, user_type='developer')
     games_list = Game.objects.filter(developer=developer, is_published=True)
     
+    # Setup pagination
     paginator = Paginator(games_list, 6)  # Show 6 games per page
     page = request.GET.get('page')
     
     try:
         games = paginator.page(page)
     except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
+        # If page is not an integer, deliver first page
         games = paginator.page(1)
     except EmptyPage:
-        # If page is out of range, deliver last page of results.
+        # If page is out of range, deliver last page
         games = paginator.page(paginator.num_pages)
     
     context = {
@@ -411,6 +628,20 @@ def developer_profile(request, username):
     return render(request, 'developer_profile.html', context)
 
 def search_games(request):
+    """
+    Search games based on user query.
+    
+    Features:
+    - Search by title, description, or genre
+    - Published games only
+    - Case-insensitive search
+    
+    Args:
+        request: HTTP request object with 'query' parameter
+        
+    Returns:
+        Rendered search results page
+    """
     query = request.GET.get('query', '')
     games = Game.objects.filter(
         Q(title__icontains=query) | 
@@ -425,10 +656,25 @@ def search_games(request):
     return render(request, 'index.html', context)
 
 def filter_games(request):
+    """
+    Filter and sort games based on various criteria.
+    
+    Features:
+    - Multiple filter types (price, recent, rating, popularity)
+    - Pagination support
+    - AJAX response format
+    
+    Args:
+        request: HTTP request object with 'filter' and 'page' parameters
+        
+    Returns:
+        JsonResponse with filtered games and pagination data
+    """
     filter_type = request.GET.get('filter')
     page = request.GET.get('page', 1)
     games = Game.objects.filter(is_published=True)
     
+    # Apply filters based on type
     if filter_type == 'price':
         games = games.order_by('price')
     elif filter_type == 'recent':
@@ -446,6 +692,7 @@ def filter_games(request):
             purchase_count=Count('orderline')
         ).order_by('-purchase_count')
 
+    # Setup pagination
     paginator = Paginator(games, 6)  # Show 6 games per page
     
     try:
@@ -455,6 +702,7 @@ def filter_games(request):
     except EmptyPage:
         games_page = paginator.page(paginator.num_pages)
 
+    # Prepare response data
     response_data = {
         'games': [{
             'game_id': game.game_id,
@@ -479,15 +727,32 @@ def filter_games(request):
 
 @login_required
 def user_profile(request):
+    """
+    Handle user profile viewing and editing.
+    
+    Features:
+    - Bio update
+    - Profile picture management
+    - Form-specific updates
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered profile page with forms
+    """
+    # Initialize forms with current user data
     bio_form = UserBioForm(instance=request.user)
     picture_form = UserProfilePictureForm(instance=request.user)
 
     if request.method == 'POST':
+        # Handle bio update
         if 'update_bio' in request.POST:
             bio_form = UserBioForm(request.POST, instance=request.user)
             if bio_form.is_valid():
                 bio_form.save()
                 messages.success(request, 'Your bio has been updated.')
+        # Handle profile picture update
         elif 'update_picture' in request.POST:
             picture_form = UserProfilePictureForm(request.POST, request.FILES, instance=request.user)
             if picture_form.is_valid():
@@ -503,6 +768,25 @@ def user_profile(request):
 
 @login_required
 def delete_account(request):
+    """
+    Handle user account deletion.
+    
+    Features:
+    - Password verification
+    - Complete account removal
+    - Session cleanup
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Redirect to index or profile based on success
+        
+    Security:
+    - Requires authentication
+    - Password verification
+    - Session invalidation
+    """
     if request.method == 'POST':
         password = request.POST.get('password')
         user = authenticate(username=request.user.username, password=password)
@@ -520,16 +804,42 @@ def delete_account(request):
     return redirect('user_profile')
 
 def view_cart(request):
+    """
+    Display the user's shopping cart.
+    
+    Features:
+    - Current cart contents
+    - Total price calculation
+    - Game availability checking
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered cart template
+    """
     return render(request, 'cart.html')
 
-from django.http import JsonResponse
-
-
 def add_to_cart(request, game_id):
-    """Add a game to the shopping cart"""
+    """
+    Add a game to the shopping cart.
+    
+    Features:
+    - Ownership verification
+    - Developer restrictions
+    - AJAX support
+    - Duplicate prevention
+    
+    Args:
+        request: HTTP request object
+        game_id: ID of game to add
+        
+    Returns:
+        JsonResponse or redirect based on request type
+    """
     game = get_object_or_404(Game, game_id=game_id)
     
-    # If user is logged in, check if they already own the game
+    # Check developer status and ownership for logged-in users
     if request.user.is_authenticated:
         if request.user.user_type == 'developer':
             message = "Developer accounts cannot purchase games."
@@ -542,6 +852,7 @@ def add_to_cart(request, game_id):
             messages.error(request, message)
             return redirect('game_detail', game_id=game_id)
             
+        # Check if user already owns the game
         if OrderLine.objects.filter(order__customer=request.user, game=game).exists():
             message = f'You already own {game.title}!'
             success = False
@@ -553,9 +864,10 @@ def add_to_cart(request, game_id):
             messages.error(request, message)
             return redirect('game_detail', game_id=game_id)
     
+    # Get or initialize cart
     cart = request.session.get('cart', {})
     
-    # Add game to cart or update quantity
+    # Add game to cart or handle duplicates
     if str(game_id) in cart:
         message = f'{game.title} is already in your cart!'
         success = False
@@ -564,8 +876,10 @@ def add_to_cart(request, game_id):
         message = f'Added {game.title} to your cart'
         success = True
 
+    # Update session
     request.session['cart'] = cart
     
+    # Handle AJAX requests
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({
             'success': success,
@@ -576,10 +890,25 @@ def add_to_cart(request, game_id):
     return redirect('game_detail', game_id=game_id)
 
 def remove_from_cart(request, game_id):
-    """Remove a game from the shopping cart"""
+    """
+    Remove a game from the shopping cart.
+    
+    Features:
+    - Session handling
+    - Error handling
+    - User feedback
+    
+    Args:
+        request: HTTP request object
+        game_id: ID of game to remove
+        
+    Returns:
+        Redirect to cart view
+    """
     try:
         cart = request.session.get('cart', {})
 
+        # Remove game if present
         if str(game_id) in cart:
             del cart[str(game_id)]
             request.session['cart'] = cart
@@ -594,7 +923,29 @@ def remove_from_cart(request, game_id):
 
 @gamer_required
 def checkout(request):
+    """
+    Handle the checkout process for game purchases.
+    
+    Features:
+    - Stripe integration
+    - Cart validation
+    - Ownership verification
+    - Order creation
+    - Payment processing
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered checkout page or redirect based on state
+        
+    Security:
+    - Requires gamer authentication
+    - Payment validation
+    - Ownership checks
+    """
     try:
+        # Validate Stripe configuration
         stripe_public_key = settings.STRIPE_PUBLIC_KEY
         stripe_secret_key = settings.STRIPE_SECRET_KEY
         
@@ -784,6 +1135,20 @@ def test_500(request):
 
 @gamer_required
 def library(request):
+    """
+    Display user's purchased games library.
+    
+    Features:
+    - Shows all purchased games
+    - Orders by most recent purchase
+    - Paginates results (9 per page)
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered library page with paginated games
+    """
     games_list = Game.objects.filter(
         orderline__order__customer=request.user
     ).distinct().order_by('-orderline__order__submitted_at')
@@ -799,6 +1164,21 @@ def library(request):
 
 @gamer_required
 def download_game_thumbnail(request, game_id):
+    """
+    Handle game thumbnail download for owned games.
+    
+    Features:
+    - Ownership verification
+    - Cloudinary image retrieval
+    - Content-type handling
+    
+    Args:
+        request: HTTP request object
+        game_id: ID of game to download thumbnail
+        
+    Returns:
+        Downloaded image file or redirect with error
+    """
     game = get_object_or_404(Game, game_id=game_id)
     
     # Check if user has purchased the game
@@ -824,6 +1204,20 @@ def download_game_thumbnail(request, game_id):
 
 @gamer_required
 def order_history(request):
+    """
+    Display user's purchase history.
+    
+    Features:
+    - Lists all past orders
+    - Orders by most recent first
+    - Paginates results (10 per page)
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered order history page with paginated orders
+    """
     orders_list = Order.objects.filter(customer=request.user).order_by('-submitted_at')
     paginator = Paginator(orders_list, 10)  # Show 10 orders per page
     
@@ -842,6 +1236,20 @@ def order_history(request):
 
 @gamer_required
 def wishlist(request):
+    """
+    Display user's game wishlist.
+    
+    Features:
+    - Shows all wishlisted games
+    - Filters out unpublished games
+    - Paginates results (9 per page)
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered wishlist page with paginated games
+    """
     try:
         wishlist_games = request.user.wishlist.games.filter(is_published=True)
     except:
@@ -862,9 +1270,24 @@ def wishlist(request):
     }
     return render(request, 'wishlist.html', context)
 
-@login_required
 @gamer_required
 def add_to_wishlist(request, game_id):
+    """
+    Add a game to user's wishlist.
+    
+    Features:
+    - Authentication check
+    - User type validation
+    - Duplicate prevention
+    - Wishlist creation if needed
+    
+    Args:
+        request: HTTP request object
+        game_id: ID of game to add
+        
+    Returns:
+        Redirect to previous page with status message
+    """
     if not request.user.is_authenticated:
         messages.warning(request, 'Please sign in as a gamer to add games to your wishlist.')
         return redirect('login')
@@ -889,29 +1312,25 @@ def add_to_wishlist(request, game_id):
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-# @gamer_required
-# def add_to_wishlist(request, game_id):
-#     game = get_object_or_404(Game, game_id=game_id)
-    
-#     # Check if user already owns the game
-#     if OrderLine.objects.filter(order__customer=request.user, game=game).exists():
-#         messages.error(request, f'You already own {game.title}!')
-#         return redirect('game_detail', game_id=game_id)
-    
-#     # Get or create wishlist for user
-#     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
-    
-#     # Check if game is already in wishlist
-#     if game in wishlist.games.all():
-#         messages.info(request, f'{game.title} is already in your wishlist!')
-#     else:
-#         wishlist.games.add(game)
-#         messages.success(request, f'Added {game.title} to your wishlist!')
-    
-#     return redirect('game_detail', game_id=game_id)
+
 
 @gamer_required
 def remove_from_wishlist(request, game_id):
+    """
+    Remove a game from user's wishlist.
+    
+    Features:
+    - Wishlist existence check
+    - Game presence validation
+    - Success/error messaging
+    
+    Args:
+        request: HTTP request object
+        game_id: ID of game to remove
+        
+    Returns:
+        Redirect to previous page with status message
+    """
     game = get_object_or_404(Game, game_id=game_id)
     
     try:
@@ -929,6 +1348,22 @@ def remove_from_wishlist(request, game_id):
 
 @gamer_required
 def add_review(request, game_id):
+    """
+    Add a review to a purchased game.
+    
+    Features:
+    - Game ownership verification
+    - Single review per user check
+    - Rating validation (1-5)
+    - Comment handling
+    
+    Args:
+        request: HTTP request object
+        game_id: ID of game to review
+        
+    Returns:
+        Redirect to game detail with status message
+    """
     game = get_object_or_404(Game, game_id=game_id)
     
     # Check if user owns the game
@@ -960,6 +1395,22 @@ def add_review(request, game_id):
 
 @gamer_required
 def edit_review(request, game_id, review_id):
+    """
+    Edit an existing game review.
+    
+    Features:
+    - Review ownership verification
+    - Rating validation (1-5)
+    - Comment update
+    
+    Args:
+        request: HTTP request object
+        game_id: ID of the reviewed game
+        review_id: ID of the review to edit
+        
+    Returns:
+        Redirect to game detail with status message
+    """
     review = get_object_or_404(Review, review_id=review_id, customer=request.user)
     
     if request.method == 'POST':
@@ -978,6 +1429,22 @@ def edit_review(request, game_id, review_id):
 
 @gamer_required
 def delete_review(request, game_id, review_id):
+    """
+    Delete a user's game review.
+    
+    Features:
+    - Review ownership verification
+    - POST method requirement
+    - Success messaging
+    
+    Args:
+        request: HTTP request object
+        game_id: ID of the reviewed game
+        review_id: ID of the review to delete
+        
+    Returns:
+        Redirect to game detail with status message
+    """
     if request.method == 'POST':
         review = get_object_or_404(Review, review_id=review_id, customer=request.user)
         review.delete()
@@ -987,16 +1454,52 @@ def delete_review(request, game_id, review_id):
 
 def faq_view(request):
     """
-    Render the FAQ page
+    Render the FAQ page.
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered FAQ template
     """
     return render(request, 'faq.html')
 
 def privacy_policy(request):
+    """
+    Render the privacy policy page.
+    
+    Args:
+        request: HTTP request object
+        
+    Returns:
+        Rendered privacy policy template
+    """
     return render(request, 'privacy_policy.html')
 
 @login_required
 def download_personal_data(request):
-    """Generate and download PDF of user's personal data"""
+    """
+    Generate and download a PDF containing user's personal data and activity.
+    
+    Features:
+    - Generates styled PDF document with reportlab
+    - Includes user's basic information (username, email, join date)
+    - For gamers: Lists purchased games with dates
+    - For developers: Lists published games with status
+    - Custom styling matching website theme
+    - Secure download with proper headers
+    
+    Args:
+        request: HTTP request object from authenticated user
+        
+    Returns:
+        HttpResponse: PDF file response with appropriate headers for download
+        
+    Notes:
+        - Requires user authentication
+        - Different content based on user_type (gamer/developer)
+        - Uses website color scheme (#F7B32B, #2D3142, #F7F7F2)
+    """
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter)
     
@@ -1116,6 +1619,24 @@ def download_personal_data(request):
 
 @gamer_required
 def vote_review(request, game_id, review_id, vote_type):
+    """
+    Handle voting on game reviews.
+    
+    Features:
+    - Prevents self-voting
+    - Handles vote changes
+    - Manages vote removal
+    - POST method required
+    
+    Args:
+        request: HTTP request object
+        game_id: ID of the game
+        review_id: ID of the review to vote on
+        vote_type: Type of vote ('up' or 'down')
+        
+    Returns:
+        Redirect to game detail page with status message
+    """
     if request.method == 'POST':
         review = get_object_or_404(Review, review_id=review_id)
         

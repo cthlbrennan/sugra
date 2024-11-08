@@ -6,7 +6,7 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/cthlbrennan/sugra)](https://github.com/cthlbrennan/sugra/commits/main)
 [![GitHub repo size](https://img.shields.io/github/repo-size/cthlbrennan/sugra)](https://github.com/cthlbrennan/sugra)
 
-![](documentation/readme_images/amiresponsive.gif)
+![](documentation/readme_images/amiresponsive.png)
 
 Source: [amiresponsive](https://ui.dev/amiresponsive?url=https://sugra-d21ca322fc38.herokuapp.com)
 
@@ -28,7 +28,7 @@ By carefully balancing the unique requirements of developers and gamers while ma
 
 ### Colour Scheme
 
-This color palette comprises a mix of bold, vibrant colors like auburn and teal, creating an eye-catching and dynamic aesthetic that grabs users' attention, all while visually referencing the bright, "plastic" aesthetic of old video game consoles such as the SNES, Mega Drive and Gameboy. The inclusion of softer tones like the champagne pink and white smoke offers balance, preventing the design from feeling overly intense or fatiguing for users browsing the site for extended periods. These calmer hues are effectively used for layout elements, typography, and backgrounds, ensuring a pleasant and comfortable viewing experience.
+This color palette comprises a mix of bold, vibrant colors like auburn and green, creating an eye-catching and dynamic aesthetic that grabs users' attention, all while visually referencing the bright, "plastic" aesthetic of old video game consoles such as the SNES, Mega Drive and Gameboy. The inclusion of softer tones like the champagne pink and white smoke offers balance, preventing the design from feeling overly intense or fatiguing for users browsing the site for extended periods. These calmer hues are effectively used for layout elements, typography, and backgrounds, ensuring a pleasant and comfortable viewing experience.
 
 Furthermore, the overall harmony of the palette creates a cohesive brand identity that is applied consistently across the website, from the landing pages to individual product listings. This coherence helps reinforce the professionalism and trustworthiness of the marketplace, crucial factors for convincing users to engage with and purchase from the platform. 
 The versatility of the color choices also allows for easy implementation across different user interface components, from navigation menus to call-to-action buttons.
@@ -72,24 +72,36 @@ Social media brand icons from [Font Awesome](https://fontawesome.com) are used i
 1. **Keyword Research**
    - Conduct comprehensive keyword research using tools like SEMrush and Google Trends to identify short-tail keywords (e.g., "video games marketplace," "buy video games online") and long-tail keywords (e.g., "best place to buy indie games online," "exclusive video game deals").
 
-   Examples of this go here
 
 2. **On-Page SEO**
    - Optimize meta tags, titles, descriptions, and URLs with relevant keywords.
    - Use descriptive file names and alt text for images to increase search relevance.
 
-   Examples of this go here
+   Implementation examples:
+   - Meta description and keywords implemented in base.html for site-wide SEO
+   - Keywords focused on indie gaming marketplace and developer-centric terms
+   - Alt text used consistently for game thumbnails and screenshots
+   - Descriptive URLs using game titles and developer names
+   - Structured data for game pricing, ratings, and reviews
+   - Mobile-responsive design for better search engine rankings
 
 3. **Technical SEO**
    - Implement a clean sitemap and `robots.txt` file to facilitate proper indexing by search engines.
    - Optimize for speed by compressing images and using pagination to ensure a fast, responsive user experience.
    
-   Examples of this go here
+   Implementation examples:
+   - Pagination implemented for game listings and reviews
+   - Image optimization through Cloudinary
+   - Responsive image loading using Bootstrap classes
+   - Clean URL structure throughout the application
+   - Fast loading times through efficient database queries
 
 
 ### Marketing Strategy
 
-For this project, I have created a Facebook Business Page, as seen below. 
+For this project, I created a simple wireframe of a Facebook Business Page, as seen below. 
+
+![Facebook Business Page](documentation/facebook-wireframe/facebook-wireframe.png)
 
 I have also added a MailChimp link in the footer. This is a means of encouraging users to sign up for the Sugra Newsletter, which would provide a direct means of communication between the product owner and the two target audiences. 
 
@@ -233,7 +245,7 @@ The options available on the navbar also change depending on whether the user is
 
 At mobile and tablet screen width, the menu options are accessed through a dropdown menu via a hamburger icon.
 
-#### Hero Image on Index Page
+#### Hero Image Carousel on Index Page
 
 ![Hero Image, index.html](documentation/features/hero-image-index.png)
 
@@ -250,12 +262,6 @@ The About page provides more information to users on the utility of the website,
 ![Call-to-Action Buttons](documentation/features/about-call-to-action-buttons.png)
 
 At the bottom of the About page, there are two large buttons which invite the user to register now, or log in if they have an account, underneath emboldened large text. These call-to-action buttons encourage interaction from the user. 
-
-#### Testimonials
-
-![Testimonials](documentation/features/testimonial-carousel.png)
-
-Located at the bottom of the home page and visible when not logged in, this section gives three reviews of Herdhub within a Bootstrap carousel component. This is visually engaging and adds extra sheen to the user experience. 
 
 #### Favicon
 
@@ -285,41 +291,94 @@ The footer contains icons from [Font Awesome](https://www.fontawesome.com) which
 
 If the user does anything substantive, like sign in, register, sign out, add an animal to the database, edit details, delete an animal, etc, a small message appears at the top of the screen informing the user that their action has been registered. This interaction with the user provides them with confidence in their use of the website, improving their user experience. 
 
-#### Dashboard
+#### Authentication System
+- **Dual User Types**: Users choose between Gamer or Developer profiles during registration
+- **Social Authentication**: Gmail integration for quick signup
+- **Custom Profile Pages**: Different dashboards and features based on user type
+- **Password Reset**: Secure password recovery system via email
+- **Profile Management**: Users can update their details and profile pictures
 
-![Dashboard](documentation/features/dashboard.png)
+#### Developer Features
+![Developer Dashboard](documentation/features/developer-dashboard.png)
+- **Game Submission System**:
+  - Multi-step game upload process
+  - Support for multiple screenshots and promotional images
+  - Rich text description editor
+  - Price setting and genre categorization
+  - Game file upload system
+- **Developer Dashboard**:
+  - Sales tracking with detailed statistics
+  - Review monitoring system
+  - Game management interface
+  - Revenue analytics
+- **Game Management**:
+  - Update game details and assets
+  - Respond to user reviews
+  - Track download statistics
+  - Monitor wishlist additions
 
-When signed in, the user is brought to the Dashboard. From here, they can get an overview of their herd, add animals and breeding events to the account, and edit/delete existing records. 
+#### Gamer Features
+![Gamer Dashboard](documentation/features/gamer-dashboard.png)
+- **Game Library**:
+  - Instant access to purchased games
+  - Download management
+  - Game launch tracking
+  - Purchase history
+- **Wishlist System**:
+  - Add/remove games
+  - Price tracking
+  - Automatic cleanup after purchase
+  - Share wishlist functionality
+- **Review System**:
+  - Star ratings (1-5)
+  - Written reviews
+  - Review voting (helpful/not helpful)
+  - Edit/delete own reviews
+  - Review history tracking
 
-#### Herd Overview
+#### Shopping Features
+![Shopping Cart](documentation/features/shopping-cart.png)
+- **Cart System**:
+  - Session-based shopping cart
+  - Multiple game purchases
+  - Price calculations
+  - Cart persistence
+- **Checkout Process**:
+  - Secure payment integration
+  - Order confirmation emails
+  - Digital delivery system
+  - Purchase history tracking
+- **Game Discovery**:
+  - Advanced search functionality
+  - Genre filtering
+  - Price range filters
+  - "You might also like" recommendations
+  - New releases section
 
-![Herd Overview](documentation/features/herd-overview.png)
+#### Admin Features
+![Admin Interface](documentation/features/admin-interface.png)
+- **Game Moderation**:
+  - Review new game submissions
+  - Quality control checks
+  - Developer verification
+  - Content moderation
+- **User Management**:
+  - User type management
+  - Account status control
+  - Purchase history access
+  - Support ticket system
 
-An overview of the user's herd is located at the top of the Dashboard. This changes dynamically based on the user's database.
-
-#### Dashboard Subsection
-
-![Dashboard Subsection](documentation/features/dashboard-subsection.png)
-
-Underneath the Herd Overview, there are four subsections where users can add details of an animal, edit existing records, or delete records.  
-
-#### Internal Links
-
-![Internal Links](documentation/features/internal-links-on-dashboard.png)
-
-Underneath the Herd Overview, there are internal links which allow users to get to the four subsections easily. 
-
-At the bottom of each subsection, there is similarly an internal link to get back to the top of the Dashboard. 
-
-![Internal Links](documentation/features/internal-link-back-to-top-of-dashboard.png)
-
-#### Dynamic Dashboard 
-
-![Dynamic Dashboard](documentation/features/dashboard-changes-dynamically.png)
-
-The user needs to have at least one cow and bull registered on their account before they can log a breeding event. Once a breeding event is logged, they can then update the Calves subsection, and relate that calf to a recorded breeding event. This is seen below.
-
-![Dynamic Dashboard](documentation/features/dashboard-changes-dynamically-two.png)
+#### Responsive Design
+- **Mobile-First Approach**:
+  - Responsive navigation
+  - Touch-friendly interfaces
+  - Optimized images
+  - Fluid layouts
+- **Cross-Browser Compatibility**:
+  - Tested across major browsers
+  - Consistent experience
+  - Progressive enhancement
+  - Fallback support
 
 #### 404.html
 
@@ -339,51 +398,28 @@ There is also a custom 500.html page which appears if a user encounters a server
 
 If a user tries to delete a record on any page, a modal appears which looks for additional confirmation that the user wants to permanently delete the record in question. This extra stage of interaction prevents the user from making a mistake either through absent-mindedness or clicking on a delete button by accident. 
 
-#### Sign Up
-
-![Sign Up](documentation/features/sign-up.png)
-
-The sign up page requires the new user to provide a username and password. 
-
-#### Sign In
-
-![Sign In](documentation/features/sign-in.png)
-
-The sign in page requires existing users to provide their credentials in order to access their database. 
-
-#### Sign Out
-
-![Sign Out](documentation/features/sign-out.png)
-
-The sign out page allows users to securely sign out of their accounts. 
-
 #### Contact Form
 
 ![Contact Form](documentation/features/contact-page.png)
 
 Accessible for signed in users, this page allows users to send messages to the site administrator in case of technical difficulty, feedback, etc. 
 
-#### Add Cow, Bull, Breeding and Calf Forms
-
-![Add Cow Form](documentation/features/add-cow-form.png)
-
-These pages all follow a similar layout. They allow users to add records to their database, with details such as their registration number, image, date of birth, milk production per annum, breed, etc. 
-
-#### View Cow, Bull, Breeding and Calf Pages
-
-![View Cow Page](documentation/features/view_cow.png)
-
-These pages all are also similar, allowing users to view the full details of an animal or breeding event selected from the Dashboard. 
-
-#### Edit Cow, Bull, Breeding and Calf Pages
-
-![Edit Cow Page](documentation/features/edit-cow.png)
-
-These pages similarly allow users to amend the details of an existing animal or breeding event.  
-
 ### Future Features
-
-In the future, I will introduce additional social media account sign up functionality for other apps, such as Twitch, Instagram, X and Facebook. 
+- **Community Features**:
+  - User forums
+  - Developer blogs
+  - Achievement system
+  - Friend lists
+- **Enhanced Developer Tools**:
+  - Analytics dashboard
+  - A/B testing tools
+  - Marketing integration
+  - Revenue projections
+- **Advanced Gaming Features**:
+  - Cloud saves
+  - Mod support
+  - Beta testing platform
+  - Early access program 
 
 ## Tools & Technologies Used
 
@@ -397,7 +433,6 @@ In the future, I will introduce additional social media account sign up function
 - [![Python](https://img.shields.io/badge/Python-grey?logo=python&logoColor=3776AB)](https://www.python.org) used as the back-end programming language.
 - [![Heroku](https://img.shields.io/badge/Heroku-grey?logo=heroku&logoColor=430098)](https://www.heroku.com) used for hosting the deployed back-end site.
 - [![Bootstrap](https://img.shields.io/badge/Bootstrap-grey?logo=bootstrap&logoColor=7952B3)](https://getbootstrap.com) used as the front-end CSS framework for modern responsiveness and pre-built components.
-- [![Jest](https://img.shields.io/badge/Jest-grey?logo=jest&logoColor=c21325)](https://jestjs.io) used for automated JavaScript testing.
 - [![Django](https://img.shields.io/badge/Django-grey?logo=django&logoColor=092E20)](https://www.djangoproject.com) used as the Python framework for the site.
 - [![PostgreSQL by Code Institute](https://img.shields.io/badge/PostgreSQL_by_Code_Institute-grey?logo=okta&logoColor=F05223)](https://dbs.ci-dbs.net) was used as the PostgreSQL database management system.
 - [![Cloudinary](https://img.shields.io/badge/Cloudinary-grey?logo=cloudinary&logoColor=3448C5)](https://cloudinary.com) used for online static file storage.
@@ -422,81 +457,108 @@ The ERD as included below reflects the finalised database architecture of the we
 
 ```mermaid
 erDiagram
-    USER {
-      int id PK
-      string username
-      string email
+    User ||--o{ Game : develops
+    User ||--o{ Order : places
+    User ||--o{ Review : writes
+    User ||--o{ Message : sends
+    User ||--o{ ReviewVote : makes
+    User ||--o{ InboxMessage : receives
+    User ||--|| Wishlist : has
+
+    Game ||--o{ Screenshot : has
+    Game ||--o{ Review : receives
+    Game ||--o{ OrderLine : contains
+
+    Order ||--|{ OrderLine : includes
+
+    Review ||--o{ ReviewVote : has
+
+    User {
+        int user_id PK
+        string username UK
+        string user_type
+        string email
+        text bio
+        string profile_picture
+        datetime account_created
     }
 
-    MESSAGE {
-      int message_id PK
-      int user_profile FK
-      string sent_on
-      text message
-      bool read
+    Game {
+        int game_id PK
+        string title UK
+        text description
+        string genre
+        decimal price
+        int developer_id FK
+        boolean is_published
+        string thumbnail
+        datetime created_at
     }
 
-    BULL {
-      int bull_id PK
-      int user_id FK
-      string image_id
-      string registration_number
-      date dob
-      string breed
-      string health_status
-      text comments
+    Order {
+        int order_id PK
+        int customer_id FK
+        datetime submitted_at
+        decimal total_price
+        string stripe_pid
     }
 
-    COW {
-      int cow_id PK
-      int user_id FK
-      string image_id
-      string registration_number
-      date dob
-      string breed
-      string health_status
-      string pregnancy_status
-      int number_of_calvings
-      date last_calving_date
-      int milk_production
-      text comments
+    OrderLine {
+        int orderline_id PK
+        int order_id FK
+        int game_id FK
+        decimal price
     }
 
-    BREEDING {
-      int breeding_id PK
-      int user_id FK
-      int bull_id FK
-      int cow_id FK
-      date breeding_date
-      string breeding_method
-      bool resulting_pregnancy
-      text comments
+    Review {
+        int review_id PK
+        int game_id FK
+        int customer_id FK
+        int rating
+        text comment
+        datetime submitted_at
+        int like_count
     }
 
-    CALF {
-      int calf_id PK
-      int user_id FK
-      string image_id
-      string registration_number
-      int breeding_id FK
-      string sex
-      date dob
-      string calving_method
-      text comments
+    Screenshot {
+        int screenshot_id PK
+        int game_id FK
+        string image
+        string alt_text
     }
 
-    USER ||--o{ MESSAGE: "can send many"
-    USER ||--o{ BULL: "owns many"
-    USER ||--o{ COW: "owns many"
-    USER ||--o{ BREEDING: "manages many"
-    USER ||--o{ CALF: "owns many"
-    
-    BULL ||--o{ BREEDING: "involved in"
-    COW ||--o{ BREEDING: "involved in"
-    BREEDING ||--o{ CALF: "results in"
-```
+    Message {
+        int message_id PK
+        int user_id FK
+        text content
+        datetime timestamp
+        boolean read
+    }
 
-Source: [Mermaid](https://mermaid.live/edit#pako:eNrNVVtv2jAU_iuWn2kVbqPkrV1pNY1dVFRNmpCiQ3IgVn2JbIfCKP99NiGMuHTlZdIQD9Z3vnzn4i8nG5qqDGlMUd8yWGgQU0nc73EyeiCb6kwIk5awjHz_XAPGaiYXpDSoJQgMYBTAeIVtp7I6fBlNJtf3o6amQGNggUlD2we8cFJoNWccyV2Y1qC0iZI1anF1kKqxmVKcaIQsKOPmcTxu1jArOX-jAIe-ys1EVXAAa1wwdwTLlExkKWaoa0YGFkmmZsETM40YquQI3OaJsWBL02gvVUK4rk3QzsdvP5rdpOr5v25mHytcCgkyXQdhX22VMFHzJAW-dGzTSM7B2DqSeKRhKMafvG-yMvXFnzPCm4fR6PbT1_vAFb4hn-GMYR67qInub-MPuOvgoH1c_fEgfUygzVUW2NmU3PrgYXxneeR6fBeYBPj8n7oknOCJN3j1jqPqG27O4W997lbWy8vFhdrU2yYmU5qDIQLkekpf0_w28Bz1LN8muXfsXU5tIk8sQFuWssL1ZdwkTkq6KzmpebSkTigzuVR8idmRql8A5zEPPg9qqFxVV0pbVKB2-ztz34SdaabU5uhWPPXkDPSTp20dD0qrJmuZ0tjqElu0LPxV7r8iNJ4DNw4tQNJ4Q1c07nSiy140-BBF3XbH_ftXLbqmcbd32e_1u8NoGLV7V-1Bp7dt0V9KOYno0qPDtnuoP-hHLrrT-7kLVkm1Khf5Ptn2N4QpHpk)
+    InboxMessage {
+        int message_id PK
+        int developer_id FK
+        string game_title
+        text content
+        datetime created_at
+        boolean is_read
+        string status
+    }
+
+    ReviewVote {
+        int review_id FK
+        int user_id FK
+        string vote_type
+        datetime created_at
+    }
+
+    Wishlist {
+        int wishlist_id PK
+        int user_id FK
+    }
+
+  ```
+Source: [Mermaid](https://mermaid.live/edit#pako:eNqNVttu2zAM_RXDz-0P5HnIMGTDhhXdXgIYiszYRHUxJCppkeTfJ8mOY8vKmjzEMcmQ5xyRtE8l1zWUqxLMF2SNYXKrCv95tWCK8_n5WZ-Kr0xCsSpqOIDQnV0G_DS1v1kVnWAcMv7fcEA4-oCjQcoF_ABrWROKWFD13Qx_NIUYyd5ySb6pnX6_ZTLAAQ-LwPO5-Iu2FWjJB7XM-_uIyHJI9cINgLKtHmPSiJHSvMw0JKryHVUAw7Uihmos1isW8cwDUXHhahgDhzo5GSbYI7tT_zt8UFHhvK3Cuvi1udktGVRNdKmA9DXvq-ijg4UHJENxsxK8U7FDvYjrjN6jgKpDTs5M8tSMgNCXZZxrp6jyKntT3UdcZgeRkGm87Q4ZQhJzJhGZ15Ab7Ai1WvylATXDBRwlEx44cpjXHXq-V3I9qbHTWgBTBdqqczvfTe2VxxRa6-ROzVQbNRi4V4wS-n1rJPx1MKYCBAd3lrRc4hvrWLeTSNNKU8qkiYkqIT6gD5cuHGOdQxj7NYdSeEcO6Uhhvcmf7Qz-8kguyUgktU205grn8v9PupiNkZcgaSmupQRFD4scEgl8gyp2e8JismISJnb0PMpmODCvWLM8RiaoCvCT-tdFmRSXvTlX-bpQ1puFLoryuoQvS0x2y8Hx7Z_21WyBP47r7oxepz0oFrfEw7jT4Uwm_oZ9Ni6MnM32alzYd_t1_YDOQ42DT5Qs588Xyvi4SxAcB_sjZ33pL-VT6QfGPwdq_8YQ021LakHCtlz5nzXsmRO0Lbfq4kOZI_3yoXi5IuPgqTTaNW252jNh_Z3rAvThpaMPufwDXGCryg)
 
 ## Agile Development Process
 

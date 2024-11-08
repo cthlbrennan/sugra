@@ -7,6 +7,16 @@ from cloudinary.forms import CloudinaryFileField
 from .models import User, Game
 
 class CustomSignupForm(SignupForm):
+    """
+    Custom registration form extending allauth's SignupForm.
+    Implements enhanced validation and styling for user registration.
+    
+    Features:
+    - Custom username validation with pattern matching
+    - Email confirmation
+    - User type selection (Gamer/Developer)
+    - Bootstrap styling integration
+    """
     USERNAME_PATTERN = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$'
     USER_TYPE_CHOICES = [
         ('gamer', 'Gamer'),
@@ -58,6 +68,12 @@ class CustomSignupForm(SignupForm):
     )
 
     def clean_username(self):
+        """
+        Validates username against pattern requirements and uniqueness.
+        
+        Raises:
+            ValidationError: If username doesn't meet length, pattern, or uniqueness requirements
+        """
         username = self.cleaned_data['username']
         
         if len(username) < 8:
@@ -78,6 +94,15 @@ class CustomSignupForm(SignupForm):
         return username
 
     def save(self, request):
+        """
+        Saves the user and sets additional attributes.
+        
+        Args:
+            request: The HTTP request object
+            
+        Returns:
+            User: The created user instance
+        """
         user = super(CustomSignupForm, self).save(request)
         user.user_type = self.cleaned_data['user_type']
         request.session['show_profile_setup'] = True
@@ -92,6 +117,16 @@ class CustomSignupForm(SignupForm):
                 field.widget.attrs['class'] = 'form-control w-100'
 
 class UserTypeAndPasswordForm(SetPasswordForm):
+    """
+    Combined form for setting user type and password.
+    Used for social authentication completion and password reset.
+    
+    Features:
+    - User type selection
+    - Username validation
+    - Bio and profile picture upload
+    - Password setting/reset
+    """
     USER_TYPE_CHOICES = [
         ('gamer', 'Gamer'),
         ('developer', 'Developer'),
@@ -139,6 +174,10 @@ class UserTypeAndPasswordForm(SetPasswordForm):
         self.fields['new_password2'].widget.attrs.update({'class': 'form-control'})
 
     def clean_username(self):
+        """
+        Validates username with pattern matching and uniqueness check.
+        Excludes current user when checking uniqueness.
+        """
         username = self.cleaned_data['username']
         if len(username) < 8:
             raise ValidationError(
@@ -160,6 +199,15 @@ class UserTypeAndPasswordForm(SetPasswordForm):
         return username
 
     def save(self, commit=True):
+        """
+        Saves user with additional profile information.
+        
+        Args:
+            commit: Whether to save to database immediately
+            
+        Returns:
+            User: The updated user instance
+        """
         user = super().save(commit=False)
         user.username = self.cleaned_data['username']
         user.user_type = self.cleaned_data['user_type']
@@ -180,6 +228,15 @@ class UserTypeAndPasswordForm(SetPasswordForm):
         return user
 
 class GameForm(forms.ModelForm):
+    """
+    Form for game creation and editing.
+    
+    Features:
+    - Basic game information fields
+    - Multiple screenshot uploads
+    - Price validation
+    - Bootstrap styling
+    """
     screenshot1 = CloudinaryFileField(
         options={'folder': 'game_screenshots'},
         required=False,
@@ -208,6 +265,10 @@ class GameForm(forms.ModelForm):
         }
 
     def clean_price(self):
+        """
+        Validates game price to ensure it meets minimum requirements.
+        Minimum price: €0.50
+        """
         price = self.cleaned_data.get('price')
         if price is None:
             raise forms.ValidationError("Price is required.")
@@ -216,6 +277,10 @@ class GameForm(forms.ModelForm):
         return price
 
 class UserBioForm(forms.ModelForm):
+    """
+    Form for updating user biography.
+    Provides styled textarea for bio input.
+    """
     class Meta:
         model = User
         fields = ['bio']
@@ -228,6 +293,14 @@ class UserBioForm(forms.ModelForm):
         }
 
 class UserProfilePictureForm(forms.ModelForm):
+    """
+    Form for updating user profile picture.
+    
+    Features:
+    - Cloudinary integration
+    - Automatic image cropping
+    - Size standardization (200x200)
+    """
     profile_picture = CloudinaryFileField(
         options={
             'crop': 'thumb',
