@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /socialaccount/
+Disallow: /usersessions/
+Sitemap: https://sugra-d21ca322fc38.herokuapp.com/sitemap.xml

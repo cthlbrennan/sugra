@@ -32,4 +32,29 @@ card.addEventListener('change', function (event) {
     }
 });
 
+// Add this after your existing code
+const form = document.getElementById('payment-form');
+form.addEventListener('submit', function(ev) {
+    ev.preventDefault();
+    card.update({ 'disabled': true});
+    document.getElementById('submit-button').disabled = true;
+
+    stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+            card: card,
+        }
+    }).then(function(result) {
+        if (result.error) {
+            const errorDiv = document.getElementById('card-errors');
+            errorDiv.textContent = result.error.message;
+            card.update({ 'disabled': false});
+            document.getElementById('submit-button').disabled = false;
+        } else {
+            if (result.paymentIntent.status === 'succeeded') {
+                form.submit();
+            }
+        }
+    });
+});
+
 
