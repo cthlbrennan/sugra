@@ -880,3 +880,248 @@ body {
     height: auto;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* Admin review specific styles */
+.review-thumbnail {
+    max-width: 200px;
+    margin-bottom: 10px;
+}
+
+.review-screenshot {
+    max-width: 200px;
+    margin: 5px;
+}
+
+/* Game detail page specific styles */
+.see-more-btn {
+    background-color: var(--main-bg-color);
+    color: var(--bright-yellow-color);
+}
+
+.developer-link {
+    color: var(--main-bg-color);
+}
+
+.submit-review-btn {
+    background-color: var(--main-bg-color);
+    color: var(--bright-yellow-color);
+}
+
+/* Gamer Dashboard styles */
+.welcome-heading {
+    color: var(--bright-yellow-color);
+}
+
+.dashboard-btn {
+    background-color: var(--main-bg-color);
+    color: var(--bright-yellow-color);
+}
+
+.game-card-img {
+    object-fit: cover;
+    height: 200px;
+}
+
+.game-card-body {
+    text-align: center;
+}
+
+.game-card-title {
+    margin-bottom: 0.5rem;
+}
+
+/* Search Results styles */
+.search-results-heading {
+    color: var(--bright-yellow-color);
+}
+
+.search-results-count {
+    color: var(--dark-accent-color);
+}
+
+.no-results-container {
+    height: 50vh;
+}
+
+.no-results-message {
+    color: var(--dark-accent-color);
+}
+
+/* Library page styles */
+.library-title {
+    color: var(--bright-yellow-color);
+}
+
+.library-card-img {
+    object-fit: cover;
+    height: 200px;
+}
+
+.library-download-btn {
+    background-color: var(--main-bg-color);
+    color: var(--bright-yellow-color);
+}
+
+.library-download-btn:hover,
+.library-download-btn:focus {
+    background-color: var(--bright-yellow-color);
+    color: var(--main-bg-color);
+}
+
+/* Order History styles */
+.order-history-title {
+    color: var(--bright-yellow-color);
+}
+
+.order-table {
+    background-color: var(--main-bg-color);
+    color: var(--off-white-color);
+}
+
+.order-table th {
+    background-color: var(--main-bg-color);
+    color: var(--off-white-color);
+}
+
+.order-table td {
+    vertical-align: middle;
+}
+
+.order-table .game-title {
+    color: var(--main-text-color);
+    font-size: 1rem;
+    margin: 0.25rem 0;
+}
+
+/* Submit Game styles */
+.submit-game-container {
+    background-color: var(--off-white-color);
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.submit-game-title {
+    color: var(--bright-yellow-color);
+}
+
+.submit-game-btn {
+    background-color: var(--main-bg-color);
+    color: var(--bright-yellow-color);
+}
+
+.submit-game-btn:hover,
+.submit-game-btn:focus {
+    background-color: var(--bright-yellow-color);
+    color: var(--main-bg-color);
+}
+
+.screenshot-count {
+    color: var(--main-text-color);
+}
+
+/* User Profile Setup styles */
+.profile-setup-container {
+    background-color: var(--off-white-color);
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-setup-title {
+    color: var(--bright-yellow-color);
+}
+
+.profile-setup-section {
+    margin-bottom: 2rem;
+}
+
+.profile-setup-heading {
+    font-family: var(--font-headers);
+    margin-bottom: 1rem;
+}
+
+.profile-radio-group {
+    display: flex;
+    gap: 2rem;
+    margin: 1rem 0;
+}
+
+.profile-radio-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profile-setup-btn {
+    background-color: var(--main-bg-color);
+    color: var(--bright-yellow-color);
+}
+
+.profile-setup-btn:hover,
+.profile-setup-btn:focus {
+    background-color: var(--bright-yellow-color);
+    color: var(--main-bg-color);
+}
+
+.profile-help-text {
+    color: var(--main-text-color);
+    opacity: 0.7;
+    margin-top: 0.5rem;
+}
+
+/* User Profile styles */
+.profile-picture-container {
+    width: 300px;
+}
+
+.profile-picture {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+}
+
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.profile-details-container {
+    text-align: left;
+}
+
+@media (min-width: 768px) {
+    .profile-container {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 3rem;
+    }
+}
+
+/* Wishlist styles */
+.wishlist-title {
+    color: var(--bright-yellow-color);
+}
+
+.wishlist-card-img {
+    object-fit: cover;
+    height: 200px;
+}
+
+.wishlist-card {
+    height: 100%;
+}
+
+.wishlist-card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.wishlist-buttons {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: auto;
+}

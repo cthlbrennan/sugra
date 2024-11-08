@@ -7,18 +7,17 @@ Your Wishlist
 
 {% block body %}
 <div class="container mt-4">
-    <h1 class="font-banner mb-4 text-center" style="color: var(--bright-yellow-color);">Your Wishlist</h1>
+    <h1 class="font-banner mb-4 text-center wishlist-title">Your Wishlist</h1>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
         {% for game in wishlist_games %}
         <div class="col">
-            <div class="card h-100">
-                <img src="{{ game.get_thumbnail }}" class="card-img-top" alt="{{ game.title }}" 
-                     style="object-fit: cover; height: 200px;">
-                <div class="card-body font-main text-center d-flex flex-column">
+            <div class="card wishlist-card">
+                <img src="{{ game.get_thumbnail }}" class="card-img-top wishlist-card-img" alt="{{ game.title }}">
+                <div class="card-body font-main text-center wishlist-card-body">
                     <h5 class="card-title font-banner text-break mb-2">{{ game.title }}</h5>
                     <p class="game-price font-cta mb-3">€{{ game.price|floatformat:2 }}</p>
-                    <div class="d-grid gap-2 mt-auto">
+                    <div class="wishlist-buttons">
                         <form action="{% url 'add_to_cart' game.game_id %}" method="POST" class="text-center">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-outline-custom font-cta w-100">

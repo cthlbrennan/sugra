@@ -49,14 +49,20 @@ Sugra Games
 
     {% if search_query %}
     <div class="container mt-4 text-center">
-        <h2 class="font-banner mb-3" style="color: var(--bright-yellow-color);">Search Results for "{{ search_query }}"
-        </h2>
+        <h2 class="font-banner mb-3 search-results-heading">Search Results for "{{ search_query }}"</h2>
         {% if games %}
-        <p class="font-main mb-3" style="color: var(--dark-accent-color)">Found {{ games|length }}
-            result{{games|length|pluralize }}</p>
+        <p class="font-main mb-3 search-results-count">Found {{ games|length }} result{{games|length|pluralize }}</p>
         {% else %}
-        <p class="font-main mb-3" style="color: var(--dark-accent-color);">No games found matching your search.</p>
+        <p class="font-main mb-3 search-results-count">No games found matching your search.</p>
         {% endif %}
+    </div>
+    {% endif %}
+
+    {% if not games %}
+    <div class="row justify-content-center align-items-center no-results-container">
+        <div class="col-12 text-center">
+            <p class="font-main mb-0 no-results-message">No games available.</p>
+        </div>
     </div>
     {% endif %}
 

@@ -96,28 +96,6 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 ACCOUNT_ADAPTER = 'allauth.account.adapter.DefaultAccountAdapter'
-
-# Provider specific settings
-# SOCIALACCOUNT_PROVIDERS = {
-#     'google': {
-#         # For each OAuth based provider, either add a ``SocialApp``
-#         # (``socialaccount`` app) containing the required client
-#         # credentials, or list them here:
-#         'APP': {
-#             'client_id': 'YOUR_GOOGLE_CLIENT_ID',
-#             'secret': 'YOUR_GOOGLE_CLIENT_SECRET',
-#             'key': ''
-#         }
-#     },
-#     'facebook': {
-#         'APP': {
-#             'client_id': 'YOUR_FACEBOOK_APP_ID',
-#             'secret': 'YOUR_FACEBOOK_APP_SECRET',
-#             'key': ''
-#         }
-#     }
-# }
-
 ROOT_URLCONF = 'sugra.urls'
 
 TEMPLATES = [

@@ -26,7 +26,7 @@
                 <td>${{ game.price }}</td>
                 <td>
                     {% if game.thumbnail %}
-                    <img src="{{ game.thumbnail.url }}" alt="Game thumbnail" style="max-width: 200px; margin-bottom: 10px;">
+                    <img src="{{ game.thumbnail.url }}" alt="Game thumbnail" class="review-thumbnail">
                     {% endif %}
                     
                     <div class="mb-3">
@@ -38,8 +38,7 @@
                     <div class="mb-3">
                         <strong>Screenshots:</strong><br>
                         {% for screenshot in game.screenshot_set.all %}
-                        <img src="{{ screenshot.image.url }}" alt="{{ screenshot.alt_text }}" 
-                             style="max-width: 200px; margin: 5px;">
+                        <img src="{{ screenshot.image.url }}" alt="{{ screenshot.alt_text }}" class="review-screenshot">
                         {% endfor %}
                     </div>
                     {% endif %}

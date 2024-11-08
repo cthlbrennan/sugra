@@ -7,11 +7,11 @@ Order History
 
 {% block body %}
 <div class="container mt-4">
-    <h1 class="font-banner mb-4 text-center" style="color: var(--bright-yellow-color);">Order History</h1>
+    <h1 class="font-banner mb-4 text-center order-history-title">Order History</h1>
 
     <div class="table-responsive">
-        <table class="table table-striped">
-            <thead class="bg-main text-off-white">
+        <table class="table table-striped order-table">
+            <thead>
                 <tr>
                     <th>Order ID</th>
                     <th>Date</th>
@@ -26,7 +26,7 @@ Order History
                     <td>{{ order.submitted_at|date:"d M Y H:i" }}</td>
                     <td>
                         {% for line in order.orderline_set.all %}
-                            <div>{{ line.game.title }}</div>
+                            <div class="game-title">{{ line.game.title }}</div>
                         {% endfor %}
                     </td>
                     <td>€{{ order.total_price|floatformat:2 }}</td>

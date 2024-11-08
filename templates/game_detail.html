@@ -70,9 +70,11 @@
     <div class="text-center">
         <p class="font-main"><strong>Description:</strong> {{ game.description }}</p>
         <p class="font-main"><strong>Genre:</strong> {{ game.genre }}</p>
-        <p class="font-main"><strong>Developer: </strong><a class="font-cta text-main-bg"
-                style="color: var(--main-bg-color);"
-                href="{% url 'developer_profile' username=game.developer.username %}">{{ game.get_developer_name }}</a>
+        <p class="font-main"><strong>Developer: </strong>
+            <a class="font-cta developer-link" 
+               href="{% url 'developer_profile' username=game.developer.username %}">
+                {{ game.get_developer_name }}
+            </a>
         </p>
     </div>
 
@@ -118,8 +120,7 @@
                                 <label for="comment" class="form-label">Your Review</label>
                                 <textarea class="form-control" name="comment" id="comment" rows="3" required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-outline-custom font-cta"
-                                style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
+                            <button type="submit" class="btn btn-outline-custom font-cta submit-review-btn">
                                 Submit Review
                             </button>
                         </form>
@@ -239,8 +240,7 @@
     <p>No related games found.</p>
     {% endif %}
     <div class="text-end mt-3">
-        <a href="{% url 'index' %}" class="btn btn-outline-custom font-cta"
-            style="background-color: var(--main-bg-color); color: var(--bright-yellow-color);">
+        <a href="{% url 'index' %}" class="btn btn-outline-custom font-cta see-more-btn">
             See more games
         </a>
     </div>

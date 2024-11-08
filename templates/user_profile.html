@@ -12,19 +12,18 @@
             <!-- Current Profile Section -->
             <div class="row mb-5">
                 <div class="col-12">
-                    <div class="profile-container d-flex flex-column flex-md-row align-items-center justify-content-center gap-5">
+                    <div class="profile-container">
                         <!-- Profile Picture Container -->
-                        <div class="profile-picture-container" style="width: 300px;">
+                        <div class="profile-picture-container">
                             {% if user.profile_picture %}
-                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3">
+                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="profile-picture">
                             {% else %}
-                            <img src="{% static 'images/default-profile-photo.png' %}" alt="Default Profile Picture"
-                                class="img-fluid rounded-circle mb-3">
+                            <img src="{% static 'images/default-profile-photo.png' %}" alt="Default Profile Picture" class="profile-picture">
                             {% endif %}
                         </div>
 
                         <!-- Profile Details Container -->
-                        <div class="profile-details-container text-start">
+                        <div class="profile-details-container">
                             <h2 class="font-headers">{{ user.username }}</h2>
                             <p class="font-main"><strong>Email:</strong> {{ user.email }}</p>
                             <p class="font-main"><strong>User Type:</strong> {{ user.get_user_type_display }}</p>
