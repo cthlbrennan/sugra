@@ -2,6 +2,7 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.account.utils import user_email
 from allauth.account.models import EmailAddress
 
+
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     """
     Custom adapter for handling social account authentication.
@@ -12,11 +13,11 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     def pre_social_login(self, request, sociallogin):
         """
         Handles pre-login operations for social authentication.
-        
+
         Args:
             request: The HTTP request object
             sociallogin: The social login object containing user information
-        
+
         This method:
         1. Preserves the user's shopping cart during social login
         2. Connects existing users if they login with a known email
@@ -24,7 +25,7 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         """
         # Store cart before social login to prevent loss during authentication
         old_cart = request.session.get('cart', {})
-        
+
         # Try to get the user's email from the social login data
         email = user_email(sociallogin.user)
         if email:
@@ -37,7 +38,7 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                 if old_cart:
                     request.session['cart'] = old_cart
             except EmailAddress.DoesNotExist:
-                # If no user exists with this email, continue with new user creation
+                # If no user exists with this email, continue with creation
                 pass
 
         # For new users, set a temporary username using their social account ID
@@ -48,12 +49,12 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     def save_user(self, request, sociallogin, form=None):
         """
         Saves the user after social login and handles user type setup.
-        
+
         Args:
             request: The HTTP request object
             sociallogin: The social login object containing user information
             form: Optional form data (default: None)
-            
+
         Returns:
             User: The saved user object
         """

@@ -2,7 +2,11 @@ from django.contrib import admin
 from django.urls import path
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import User, Game, Wishlist, Order, OrderLine, Review, Screenshot, Message, InboxMessage
+from .models import (
+    User, Game, Wishlist, Order, OrderLine, Review, Screenshot, Message,
+    InboxMessage
+)
+
 
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
@@ -26,15 +30,20 @@ class GameAdmin(admin.ModelAdmin):
         """
         urls = super().get_urls()
         custom_urls = [
-            path('review_games/', self.admin_site.admin_view(self.review_games_view), name='review_games'),
+            path(
+                'review_games/',
+                self.admin_site.admin_view(self.review_games_view),
+                name='review_games'
+            ),
         ]
         return custom_urls + urls
 
     def review_games_view(self, request):
         """
         Custom view for reviewing unpublished games.
-        Handles both GET requests (displaying games) and POST requests (approving/rejecting games).
-        
+        Handles both GET requests (displaying games) and POST requests
+        (approving/rejecting games).
+
         Features:
         - Game approval with developer notification
         - Game rejection with feedback
@@ -42,7 +51,7 @@ class GameAdmin(admin.ModelAdmin):
         """
         # Get all unpublished games
         games_to_review = Game.objects.filter(is_published=False)
-        
+
         if request.method == 'POST':
             action = request.POST.get('action')
             if action:
@@ -50,7 +59,7 @@ class GameAdmin(admin.ModelAdmin):
                 try:
                     game = Game.objects.get(game_id=game_id)
                     criticism = request.POST.get(f'criticism_{game_id}', '')
-                    
+
                     # Handle game approval
                     if action_type == 'approve':
                         game.is_published = True
@@ -59,14 +68,25 @@ class GameAdmin(admin.ModelAdmin):
                         InboxMessage.objects.create(
                             developer=game.developer,
                             game_title=game.title,
-                            content=f"Your game '{game.title}' was approved! It is now available for customers to purchase and review on the marketplace.",
+                            content=(
+                                f"Your game '{game.title}' was approved! "
+                                "It is now available for customers to purchase"
+                                " and review on the marketplace."
+                            ),
                             status='approved'
                         )
-                        self.message_user(request, f"Game '{game.title}' has been approved.", messages.SUCCESS)
-                    
+                        self.message_user(
+                            request,
+                            f"Game '{game.title}' has been approved.",
+                            messages.SUCCESS
+                        )
+
                     # Handle game rejection
                     elif action_type == 'reject':
-                        message_content = f"Your game '{game.title}' has been rejected. Reasons: {criticism}"
+                        message_content = (
+                            f"Your game '{game.title}' has been rejected. "
+                            f"Reasons: {criticism}"
+                        )
                         # Notify developer of rejection with feedback
                         InboxMessage.objects.create(
                             developer=game.developer,
@@ -75,9 +95,18 @@ class GameAdmin(admin.ModelAdmin):
                             status='rejected'
                         )
                         game.delete()
-                        self.message_user(request, f"Game '{game.title}' has been rejected and deleted.", messages.SUCCESS)
+                        self.message_user(
+                            request,
+                            f"Game '{game.title}' has been rejected "
+                            f"and deleted.",
+                            messages.SUCCESS
+                        )
                 except Game.DoesNotExist:
-                    self.message_user(request, f"Game with ID {game_id} not found.", messages.ERROR)
+                    self.message_user(
+                        request,
+                        f"Game with ID {game_id} not found.",
+                        messages.ERROR
+                    )
             return redirect('admin:review_games')
 
         context = {
@@ -91,7 +120,10 @@ class GameAdmin(admin.ModelAdmin):
         Bulk action to approve multiple games at once.
         """
         queryset.update(is_published=True)
-        self.message_user(request, f"{queryset.count()} games were approved.")
+        self.message_user(
+            request,
+            f"{queryset.count()} games were approved."
+        )
     approve_games.short_description = "Approve selected games"
 
     def index(self, request, extra_context=None):
@@ -102,6 +134,7 @@ class GameAdmin(admin.ModelAdmin):
         extra_context = extra_context or {}
         extra_context['games_to_review'] = games_to_review
         return super().index(request, extra_context=extra_context)
+
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
@@ -120,6 +153,7 @@ class MessageAdmin(admin.ModelAdmin):
         """
         queryset.update(read=True)
     mark_as_read.short_description = "Mark selected messages as read"
+
 
 # Register remaining models with default admin interface
 admin.site.register(User)

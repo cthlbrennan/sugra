@@ -2,6 +2,7 @@ from decimal import Decimal
 from django.shortcuts import get_object_or_404
 from .models import Game
 
+
 def cart_contents(request):
     """
     Context processor for shopping cart functionality.
@@ -15,7 +16,8 @@ def cart_contents(request):
             - cart_items: List of dictionaries with game and quantity
             - total: Total cost of all items
             - game_count: Total number of games in cart
-            - grand_total: Final total (same as total, prepared for future discounts)
+            - grand_total: Final total (same as total, prepared for future
+              discounts)
     """
     cart_items = []
     total = 0
